@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="docker," />
 
 
 
@@ -79,19 +79,27 @@
 
 
 
-<meta name="description" content="docker-machine使用 12docker-machine env demo使用 docker client 远程管理 docker-machine 1docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦">
+<meta name="description" content="远程 image 例如：  本地 dockFile 例如： 详细说明：示例11234567891011121314151617181920212223242526272829version: &apos;3&apos;services:  wordpress:     ##container 名称    image: wordpress  ##image名称 远程的    ports:  ##端口映射">
+<meta name="keywords" content="docker">
 <meta property="og:type" content="article">
-<meta property="og:title" content="docker-machine使用">
-<meta property="og:url" content="http://yoursite.com/2018/07/11/docker-machine/index.html">
+<meta property="og:title" content="Docker Compose">
+<meta property="og:url" content="http://yoursite.com/2018/07/11/Docker-Compose/index.html">
 <meta property="og:site_name" content="Evan&#39;s  技术blog">
-<meta property="og:description" content="docker-machine使用 12docker-machine env demo使用 docker client 远程管理 docker-machine 1docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦">
+<meta property="og:description" content="远程 image 例如：  本地 dockFile 例如： 详细说明：示例11234567891011121314151617181920212223242526272829version: &apos;3&apos;services:  wordpress:     ##container 名称    image: wordpress  ##image名称 远程的    ports:  ##端口映射">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fsvdhvhgwfj31kw188ajg.jpg">
-<meta property="og:updated_time" content="2018-07-11T07:12:49.085Z">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsy1fmufhxj30j50agju1.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsy1g0w74ej30hy0b6wg6.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fsy1jqewqwj30jj0b9tc7.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fsy1xfo1tdj30mq0c5ju9.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fsy1y4fkbtj30lp0c7djj.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fsy1ovdmngj30mh0cf79r.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsy1qccx18j30jw0cgmz9.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsy1u4l0ktj30nm0kwad6.jpg">
+<meta property="og:updated_time" content="2018-07-11T07:34:51.068Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="docker-machine使用">
-<meta name="twitter:description" content="docker-machine使用 12docker-machine env demo使用 docker client 远程管理 docker-machine 1docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦">
-<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fsvdhvhgwfj31kw188ajg.jpg">
+<meta name="twitter:title" content="Docker Compose">
+<meta name="twitter:description" content="远程 image 例如：  本地 dockFile 例如： 详细说明：示例11234567891011121314151617181920212223242526272829version: &apos;3&apos;services:  wordpress:     ##container 名称    image: wordpress  ##image名称 远程的    ports:  ##端口映射">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsy1fmufhxj30j50agju1.jpg">
 
 
 
@@ -121,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/11/docker-machine/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/11/Docker-Compose/"/>
 
 
 
 
 
-  <title>docker-machine使用 | Evan's  技术blog</title>
+  <title>Docker Compose | Evan's  技术blog</title>
   
 
 
@@ -284,7 +292,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/docker-machine/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/Docker-Compose/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Evan">
@@ -301,7 +309,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">docker-machine使用</h1>
+          <h1 class="post-title" itemprop="name headline">Docker Compose</h1>
         
 
         <div class="post-meta">
@@ -313,7 +321,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-11T15:09:09+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-11T15:34:32+08:00">
                 2018-07-11
               </time>
             
@@ -331,7 +339,7 @@
 
           
           
-             <span id="/2018/07/11/docker-machine/" class="leancloud_visitors" data-flag-title="docker-machine使用">
+             <span id="/2018/07/11/Docker-Compose/" class="leancloud_visitors" data-flag-title="Docker Compose">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -362,9 +370,16 @@
       
 
       
-        <h2 id="docker-machine使用"><a href="#docker-machine使用" class="headerlink" title="docker-machine使用"></a>docker-machine使用</h2><p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fsvdhvhgwfj31kw188ajg.jpg" alt="image"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker-machine env demo</span><br><span class="line">使用 docker client 远程管理 docker-machine</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦</span><br></pre></td></tr></table></figure>
+        <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsy1fmufhxj30j50agju1.jpg" alt="image"><br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsy1g0w74ej30hy0b6wg6.jpg" alt="image"><br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fsy1jqewqwj30jj0b9tc7.jpg" alt="image"></p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fsy1xfo1tdj30mq0c5ju9.jpg" alt="image"></p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fsy1y4fkbtj30lp0c7djj.jpg" alt="image"></p>
+<p>远程 image 例如：</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fsy1ovdmngj30mh0cf79r.jpg" alt="image"></p>
+<p>本地 dockFile 例如：<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsy1qccx18j30jw0cgmz9.jpg" alt="image"></p>
+<p>详细说明：<br>示例1<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">version: <span class="string">'3'</span></span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">  wordpress:     <span class="comment">##container 名称</span></span><br><span class="line">    image: wordpress  <span class="comment">##image名称 远程的</span></span><br><span class="line">    ports:  <span class="comment">##端口映射</span></span><br><span class="line">      - <span class="number">8080</span>:<span class="number">80</span></span><br><span class="line">    environment:  <span class="comment">##环境变量</span></span><br><span class="line">      WORDPRESS_DB_HOST: mysql</span><br><span class="line">      WORDPRESS_DB_PASSWORD: root</span><br><span class="line">    networks:   <span class="comment">##指定网络</span></span><br><span class="line">      - my-bridge  <span class="comment">## 对应最下面的networks</span></span><br><span class="line"></span><br><span class="line">  mysql:</span><br><span class="line">    image: mysql</span><br><span class="line">    environment:</span><br><span class="line">      MYSQL_ROOT_PASSWORD: root</span><br><span class="line">      MYSQL_DATABASE: wordpress</span><br><span class="line">    volumes:  <span class="comment">##制定挂在目录</span></span><br><span class="line">      - mysql-data:/var/lib/mysql  <span class="comment">## mysql-data 对应下面的volumes</span></span><br><span class="line">    networks:</span><br><span class="line">      - my-bridge</span><br><span class="line"></span><br><span class="line">volumes:</span><br><span class="line">  mysql-data:   <span class="comment">## 创建一个volumes</span></span><br><span class="line"></span><br><span class="line">networks:</span><br><span class="line">  my-bridge:   <span class="comment">## 创建一个名为my-bridge的networks</span></span><br><span class="line">    driver: bridge</span><br></pre></td></tr></table></figure></p>
+<p>示例2：<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsy1u4l0ktj30nm0kwad6.jpg" alt="image"></p>
+<p>docker-compose cli：<br><a href="http://www.cnblogs.com/liubin0509/p/6178351.html" target="_blank" rel="noopener">传送门</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose <span class="keyword">exec</span> mysql /bin/bash <span class="comment">##进去docker-compose中的mysql 执行/bin/bash</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -380,6 +395,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+        </div>
+      
 
       
       
@@ -389,8 +410,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/10/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2018/07/11/Docker-数据持久化/" rel="next" title="Docker 数据持久化：Data Volume and Bind Mouting">
+                <i class="fa fa-chevron-left"></i> Docker 数据持久化：Data Volume and Bind Mouting
               </a>
             
           </div>
@@ -398,10 +419,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/07/11/DockerFile/" rel="prev" title="DockerFile语法">
-                DockerFile语法 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -453,17 +470,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -518,22 +526,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-machine使用"><span class="nav-number">1.</span> <span class="nav-text">docker-machine使用</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       

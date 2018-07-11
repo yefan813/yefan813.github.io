@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="docker," />
 
 
 
@@ -79,19 +79,24 @@
 
 
 
-<meta name="description" content="docker-machine使用 12docker-machine env demo使用 docker client 远程管理 docker-machine 1docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦">
+<meta name="description" content="基本操作 1docker container ls  ##不包括退出的 1docker container ls -a ##列举所有的容器，包括退出的 1docker ps -a ##同上 1docker container rm 8dfc1a4e336e ##删除容器 1docker rm 8dfc1a4e336e ##删除容器 docker commit1docker container c">
+<meta name="keywords" content="docker">
 <meta property="og:type" content="article">
-<meta property="og:title" content="docker-machine使用">
-<meta property="og:url" content="http://yoursite.com/2018/07/11/docker-machine/index.html">
+<meta property="og:title" content="Docker Container 简介">
+<meta property="og:url" content="http://yoursite.com/2018/07/11/Docker-Container-introduce/index.html">
 <meta property="og:site_name" content="Evan&#39;s  技术blog">
-<meta property="og:description" content="docker-machine使用 12docker-machine env demo使用 docker client 远程管理 docker-machine 1docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦">
+<meta property="og:description" content="基本操作 1docker container ls  ##不包括退出的 1docker container ls -a ##列举所有的容器，包括退出的 1docker ps -a ##同上 1docker container rm 8dfc1a4e336e ##删除容器 1docker rm 8dfc1a4e336e ##删除容器 docker commit1docker container c">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fsvdhvhgwfj31kw188ajg.jpg">
-<meta property="og:updated_time" content="2018-07-11T07:12:49.085Z">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsvm2ziuswj30j10a80vu.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsvm8eeb2mj31gm0ywn3b.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fsvnmimrqgj30zi0a8abq.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fsvnpl3y0lj31kw0k9n37.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fswq163tk9j31kw053tae.jpg">
+<meta property="og:updated_time" content="2018-07-11T07:31:25.088Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="docker-machine使用">
-<meta name="twitter:description" content="docker-machine使用 12docker-machine env demo使用 docker client 远程管理 docker-machine 1docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦">
-<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fsvdhvhgwfj31kw188ajg.jpg">
+<meta name="twitter:title" content="Docker Container 简介">
+<meta name="twitter:description" content="基本操作 1docker container ls  ##不包括退出的 1docker container ls -a ##列举所有的容器，包括退出的 1docker ps -a ##同上 1docker container rm 8dfc1a4e336e ##删除容器 1docker rm 8dfc1a4e336e ##删除容器 docker commit1docker container c">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fsvm2ziuswj30j10a80vu.jpg">
 
 
 
@@ -121,13 +126,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/11/docker-machine/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/11/Docker-Container-introduce/"/>
 
 
 
 
 
-  <title>docker-machine使用 | Evan's  技术blog</title>
+  <title>Docker Container 简介 | Evan's  技术blog</title>
   
 
 
@@ -284,7 +289,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/docker-machine/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/Docker-Container-introduce/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Evan">
@@ -301,7 +306,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">docker-machine使用</h1>
+          <h1 class="post-title" itemprop="name headline">Docker Container 简介</h1>
         
 
         <div class="post-meta">
@@ -313,7 +318,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-11T15:09:09+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-11T15:30:51+08:00">
                 2018-07-11
               </time>
             
@@ -331,7 +336,7 @@
 
           
           
-             <span id="/2018/07/11/docker-machine/" class="leancloud_visitors" data-flag-title="docker-machine使用">
+             <span id="/2018/07/11/Docker-Container-introduce/" class="leancloud_visitors" data-flag-title="Docker Container 简介">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -362,9 +367,25 @@
       
 
       
-        <h2 id="docker-machine使用"><a href="#docker-machine使用" class="headerlink" title="docker-machine使用"></a>docker-machine使用</h2><p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fsvdhvhgwfj31kw188ajg.jpg" alt="image"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker-machine env demo</span><br><span class="line">使用 docker client 远程管理 docker-machine</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦</span><br></pre></td></tr></table></figure>
+        <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsvm2ziuswj30j10a80vu.jpg" alt="image"></p>
+<h2 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h2><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fsvm8eeb2mj31gm0ywn3b.jpg" alt="image"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker container ls  <span class="comment">##不包括退出的</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker container ls -a <span class="comment">##列举所有的容器，包括退出的</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a <span class="comment">##同上</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker container rm <span class="number">8</span>dfc1a4e336e <span class="comment">##删除容器</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rm <span class="number">8</span>dfc1a4e336e <span class="comment">##删除容器</span></span><br></pre></td></tr></table></figure>
+<h3 id="docker-commit"><a href="#docker-commit" class="headerlink" title="docker commit"></a>docker commit</h3><p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fsvnmimrqgj30zi0a8abq.jpg" alt="image"><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker container commit  <span class="comment">##把容器 container commit 成一个新的 image</span></span><br></pre></td></tr></table></figure></p>
+<p>例子：<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fsvnpl3y0lj31kw0k9n37.jpg" alt="image"></p>
+<p><strong>docker exec :</strong> 进去正在运行的 docker shell 中</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="keyword">exec</span> -it d07a10a60a0b /bin/bash  <span class="comment">##进去d07a10a60a0b 的 shell 中</span></span><br><span class="line"></span><br><span class="line"> docker <span class="keyword">exec</span> -it d07a10a60a0b python  <span class="comment">##进去d07a10a60a0b 的 python</span></span><br><span class="line"> </span><br><span class="line">  docker <span class="keyword">exec</span> -it d07a10a60a0b ip a  <span class="comment">##进去d07a10a60a0b 显示网络接口</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">docker stop container_ID <span class="comment">##停止 container</span></span><br></pre></td></tr></table></figure>
+<p><strong>docker run ：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --name xxx</span><br></pre></td></tr></table></figure>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fswq163tk9j31kw053tae.jpg" alt="image"></p>
+<p><strong>docker container inspect :</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker container inspect demo  <span class="comment">##显示容器的详细信息</span></span><br></pre></td></tr></table></figure>
+<p><strong>docker container logs：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker container logs demo <span class="comment">##显示 docker 容器运行日志</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -380,6 +401,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+        </div>
+      
 
       
       
@@ -389,8 +416,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/10/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2018/07/11/Docker-image-introduce/" rel="next" title="Docker image 简介">
+                <i class="fa fa-chevron-left"></i> Docker image 简介
               </a>
             
           </div>
@@ -399,8 +426,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/07/11/DockerFile/" rel="prev" title="DockerFile语法">
-                DockerFile语法 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/07/11/Docker-Network/" rel="prev" title="Docker Network">
+                Docker Network <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -528,7 +555,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-machine使用"><span class="nav-number">1.</span> <span class="nav-text">docker-machine使用</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本操作"><span class="nav-number">1.</span> <span class="nav-text">基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#docker-commit"><span class="nav-number">1.1.</span> <span class="nav-text">docker commit</span></a></li></ol></li></ol></div>
             
 
           </div>

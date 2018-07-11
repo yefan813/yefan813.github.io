@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="docker," />
 
 
 
@@ -79,19 +79,21 @@
 
 
 
-<meta name="description" content="docker-machine使用 12docker-machine env demo使用 docker client 远程管理 docker-machine 1docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦">
+<meta name="description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume   123sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql#创建一个 mysql container 别名mysql ，挂载到宿主机的/var/lib/mysql">
+<meta name="keywords" content="docker">
 <meta property="og:type" content="article">
-<meta property="og:title" content="docker-machine使用">
-<meta property="og:url" content="http://yoursite.com/2018/07/11/docker-machine/index.html">
+<meta property="og:title" content="Docker 数据持久化：Data Volume and Bind Mouting">
+<meta property="og:url" content="http://yoursite.com/2018/07/11/Docker-数据持久化/index.html">
 <meta property="og:site_name" content="Evan&#39;s  技术blog">
-<meta property="og:description" content="docker-machine使用 12docker-machine env demo使用 docker client 远程管理 docker-machine 1docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦">
+<meta property="og:description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume   123sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql#创建一个 mysql container 别名mysql ，挂载到宿主机的/var/lib/mysql">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fsvdhvhgwfj31kw188ajg.jpg">
-<meta property="og:updated_time" content="2018-07-11T07:12:49.085Z">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fsx5mzmlprj30f005xabi.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fsx53ne9s0j30hz088wf7.jpg">
+<meta property="og:updated_time" content="2018-07-11T07:34:19.712Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="docker-machine使用">
-<meta name="twitter:description" content="docker-machine使用 12docker-machine env demo使用 docker client 远程管理 docker-machine 1docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦">
-<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fsvdhvhgwfj31kw188ajg.jpg">
+<meta name="twitter:title" content="Docker 数据持久化：Data Volume and Bind Mouting">
+<meta name="twitter:description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume   123sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql#创建一个 mysql container 别名mysql ，挂载到宿主机的/var/lib/mysql">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fsx5mzmlprj30f005xabi.jpg">
 
 
 
@@ -121,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/11/docker-machine/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/11/Docker-数据持久化/"/>
 
 
 
 
 
-  <title>docker-machine使用 | Evan's  技术blog</title>
+  <title>Docker 数据持久化：Data Volume and Bind Mouting | Evan's  技术blog</title>
   
 
 
@@ -284,7 +286,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/docker-machine/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/Docker-数据持久化/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Evan">
@@ -301,7 +303,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">docker-machine使用</h1>
+          <h1 class="post-title" itemprop="name headline">Docker 数据持久化：Data Volume and Bind Mouting</h1>
         
 
         <div class="post-meta">
@@ -313,7 +315,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-11T15:09:09+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-11T15:33:33+08:00">
                 2018-07-11
               </time>
             
@@ -331,7 +333,7 @@
 
           
           
-             <span id="/2018/07/11/docker-machine/" class="leancloud_visitors" data-flag-title="docker-machine使用">
+             <span id="/2018/07/11/Docker-数据持久化/" class="leancloud_visitors" data-flag-title="Docker 数据持久化：Data Volume and Bind Mouting">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -362,9 +364,13 @@
       
 
       
-        <h2 id="docker-machine使用"><a href="#docker-machine使用" class="headerlink" title="docker-machine使用"></a>docker-machine使用</h2><p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fsvdhvhgwfj31kw188ajg.jpg" alt="image"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker-machine env demo</span><br><span class="line">使用 docker client 远程管理 docker-machine</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦</span><br></pre></td></tr></table></figure>
+        <p><strong>数据不会随着容器的消失而消失，例如 mysql ，redis</strong></p>
+<p><strong>docker volume</strong></p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fsx5mzmlprj30f005xabi.jpg" alt="image"></p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fsx53ne9s0j30hz088wf7.jpg" alt="image"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建一个 mysql container 别名mysql ，挂载到宿主机的/var/lib/mysql下</span></span><br></pre></td></tr></table></figure>
+<p><strong>docker bind mouting</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -v /home/aa:/root/aaa</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -v $(pwd):/usr/share/nginx/html -p <span class="number">80</span>:<span class="number">80</span> --name web yefan/my-nginx</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -380,6 +386,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+        </div>
+      
 
       
       
@@ -389,8 +401,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/10/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2018/07/11/Docker-多机通讯/" rel="next" title="Docker 多机通讯">
+                <i class="fa fa-chevron-left"></i> Docker 多机通讯
               </a>
             
           </div>
@@ -399,8 +411,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/07/11/DockerFile/" rel="prev" title="DockerFile语法">
-                DockerFile语法 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/07/11/Docker-Compose/" rel="prev" title="Docker Compose">
+                Docker Compose <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -453,17 +465,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -518,22 +521,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-machine使用"><span class="nav-number">1.</span> <span class="nav-text">docker-machine使用</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
