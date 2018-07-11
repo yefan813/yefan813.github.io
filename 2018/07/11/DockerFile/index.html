@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fswie7akpmj30cf07swgd.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fswim8mgmjj30hl09jtaq.jpg">
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fswiowks0uj30fx09imz1.jpg">
-<meta property="og:updated_time" content="2018-07-11T07:23:57.392Z">
+<meta property="og:updated_time" content="2018-07-11T07:27:19.386Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DockerFile语法">
 <meta name="twitter:description" content="FROM 1from scratch   ##制作base Image 1from centos ##使用 base Image ==尽量使用官方的Image作为base Image （安全）== LABEL: metadata 帮助信息，类似注释 1LABEL maintainer=&quot;yefan813@gmail.com&quot; 1LABEL version=&quot;1.0&quot; 1LABEL descript">
@@ -377,7 +377,8 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RUN yum update &amp;&amp; yum install -y vim \</span><br><span class="line">python-dev  <span class="comment">##反斜杠换行</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUN /bin/bash -c <span class="string">'source $HOME/.bashrc;echo $HOME'</span></span><br></pre></td></tr></table></figure>
 <p><strong>WORKDIR:</strong> 类似 Linux 中 cd</p>
-<figure class="highlight plain"><figcaption><span>/ROOT```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">WORKDIR /test #如果没有将会创建 test 目录</span><br><span class="line">WORKDIR demo</span><br><span class="line">RUN pwd  ##输出结果是/test/demo</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /ROOT</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /test <span class="comment">#如果没有将会创建 test 目录</span></span><br><span class="line">WORKDIR demo</span><br><span class="line">RUN pwd  <span class="comment">#输出结果是/test/demo</span></span><br></pre></td></tr></table></figure>
 <p>==<em>用 WORKDIR 不要用 RUN cd，尽量使用绝对目录</em>==</p>
 <p><strong>ADD and COPY</strong>：将文件添加到制定目录下，add 有解压的作用</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD hello /</span><br></pre></td></tr></table></figure>
