@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/jstat-gc-result-1.jpg">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/r_sun-jdk-memory-area1.png">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/r_heap1.png">
-<meta property="og:updated_time" content="2018-07-26T03:00:54.391Z">
+<meta property="og:updated_time" content="2018-07-26T10:01:44.899Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存泄漏分析系列之四：jstat命令的使用及VM Thread分析">
 <meta name="twitter:description" content="前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。 使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread： 1&amp;quot;VM Thread&amp;quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable 这个时候需要使用 jstat -gc    命令查看">
@@ -404,6 +404,7 @@
 </ul>
 <h3 id="非堆内存设置"><a href="#非堆内存设置" class="headerlink" title="非堆内存设置"></a>非堆内存设置</h3><p>非堆内存由 -XX:PermSize=n 和 -XX:MaxPermSize=n 分别设置最小和最大非堆内存大小</p>
 <h3 id="日志分析"><a href="#日志分析" class="headerlink" title="日志分析"></a>日志分析</h3><p>介绍完上面的概念之后，我们再来看最上面的日志信息，有两个地方有问题：<br>一是FGC（完全GC）的数量太大了，正常来说FGC应该占整个GC（YGC+FGC）的1%到5%才正常，上面日志上完全GC的次数太多了；二是日志中PU的值太大了，基本上已经达到设置的PC了，因此需要增大MaxPermSize的值。<br>不过这只是权宜之计，出现这么大的非堆内存，肯定什么地方出现了问题，还需要进一步找到占用内存的原因，这也是后面文章所要说的。</p>
+<h4 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h4><p><a href="http://just2do.iteye.com/blog/2275894" target="_blank" rel="noopener">性能分析之– JAVA Thread Dump 分析综述</a><br><a href="http://www.cnblogs.com/zhengyun_ustc/archive/2013/01/06/dumpanalysis.html" target="_blank" rel="noopener">三个实例演示 Java Thread Dump 日志分析</a><br><a href="http://www.cnblogs.com/zhengyun_ustc/archive/2013/03/18/tda.html" target="_blank" rel="noopener">各种 Java Thread State 第一分析法则</a><br><a href="https://dzone.com/articles/how-analyze-java-thread-dumps" target="_blank" rel="noopener">How to Analyze Java Thread Dumps | 中文版</a></p>
 
       
     </div>
@@ -573,7 +574,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用jstat命令"><span class="nav-number">1.</span> <span class="nav-text">使用jstat命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM内存模型"><span class="nav-number">2.</span> <span class="nav-text">JVM内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM内存参数设置"><span class="nav-number">3.</span> <span class="nav-text">JVM内存参数设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#堆内存设置"><span class="nav-number">3.1.</span> <span class="nav-text">堆内存设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非堆内存设置"><span class="nav-number">3.2.</span> <span class="nav-text">非堆内存设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日志分析"><span class="nav-number">3.3.</span> <span class="nav-text">日志分析</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用jstat命令"><span class="nav-number">1.</span> <span class="nav-text">使用jstat命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM内存模型"><span class="nav-number">2.</span> <span class="nav-text">JVM内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM内存参数设置"><span class="nav-number">3.</span> <span class="nav-text">JVM内存参数设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#堆内存设置"><span class="nav-number">3.1.</span> <span class="nav-text">堆内存设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非堆内存设置"><span class="nav-number">3.2.</span> <span class="nav-text">非堆内存设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日志分析"><span class="nav-number">3.3.</span> <span class="nav-text">日志分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参考资料："><span class="nav-number">3.3.1.</span> <span class="nav-text">参考资料：</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
