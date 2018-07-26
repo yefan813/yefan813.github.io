@@ -82,7 +82,7 @@
 <meta name="description" content="前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。 使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread： 1&amp;quot;VM Thread&amp;quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable 这个时候需要使用 jstat -gc    命令查看">
 <meta name="keywords" content="java 内存 jstat JVM">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java内存泄漏分析系列之三：jstat命令的使用及VM Thread分析">
+<meta property="og:title" content="Java内存泄漏分析系列之四：jstat命令的使用及VM Thread分析">
 <meta property="og:url" content="http://yoursite.com/2018/07/26/jstat-command/index.html">
 <meta property="og:site_name" content="Evan&#39;s  技术blog">
 <meta property="og:description" content="前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。 使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread： 1&amp;quot;VM Thread&amp;quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable 这个时候需要使用 jstat -gc    命令查看">
@@ -90,9 +90,9 @@
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/jstat-gc-result-1.jpg">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/r_sun-jdk-memory-area1.png">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/r_heap1.png">
-<meta property="og:updated_time" content="2018-07-25T17:16:59.105Z">
+<meta property="og:updated_time" content="2018-07-26T03:00:54.391Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java内存泄漏分析系列之三：jstat命令的使用及VM Thread分析">
+<meta name="twitter:title" content="Java内存泄漏分析系列之四：jstat命令的使用及VM Thread分析">
 <meta name="twitter:description" content="前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。 使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread： 1&amp;quot;VM Thread&amp;quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable 这个时候需要使用 jstat -gc    命令查看">
 <meta name="twitter:image" content="https://www.javatang.com/wp-content/uploads/2017/10/jstat-gc-result-1.jpg">
 
@@ -130,7 +130,7 @@
 
 
 
-  <title>Java内存泄漏分析系列之三：jstat命令的使用及VM Thread分析 | Evan's  技术blog</title>
+  <title>Java内存泄漏分析系列之四：jstat命令的使用及VM Thread分析 | Evan's  技术blog</title>
   
 
 
@@ -304,7 +304,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Java内存泄漏分析系列之三：jstat命令的使用及VM Thread分析</h1>
+          <h1 class="post-title" itemprop="name headline">Java内存泄漏分析系列之四：jstat命令的使用及VM Thread分析</h1>
         
 
         <div class="post-meta">
@@ -334,7 +334,7 @@
 
           
           
-             <span id="/2018/07/26/jstat-command/" class="leancloud_visitors" data-flag-title="Java内存泄漏分析系列之三：jstat命令的使用及VM Thread分析">
+             <span id="/2018/07/26/jstat-command/" class="leancloud_visitors" data-flag-title="Java内存泄漏分析系列之四：jstat命令的使用及VM Thread分析">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -444,6 +444,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/07/26/jstack3/" rel="prev" title="Java内存泄漏分析系列之三：jstack生成的Thread Dump日志线程状态">
+                Java内存泄漏分析系列之三：jstack生成的Thread Dump日志线程状态 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -523,7 +527,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -536,7 +540,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
