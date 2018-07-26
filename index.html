@@ -740,6 +740,7 @@
 <p>通常来说，当CPU很忙的时候关注 Runnable 状态的线程，反之则关注 waiting for monitor entry 状态的线程。</p>
 <h2 id="JVM线程运行状态-JVM-Thread-Status"><a href="#JVM线程运行状态-JVM-Thread-Status" class="headerlink" title="JVM线程运行状态 (JVM Thread Status)"></a>JVM线程运行状态 (JVM Thread Status)</h2><p><img src="https://www.javatang.com/wp-content/uploads/2017/10/thread-state-diagram.png" alt=""></p>
 <p>在 <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/Thread.State.html" target="_blank" rel="noopener">java.lang.Thread.State</a> 中定义了线程的状态：</p>
+<p>详细如下：<br><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1ftnm3dmli7j30w20mf7bd.jpg" alt=""></p>
 <h3 id="NEW"><a href="#NEW" class="headerlink" title="NEW"></a>NEW</h3><p>至今尚未启动的线程的状态。线程刚被创建，但尚未启动。</p>
 <h3 id="RUNNABLE"><a href="#RUNNABLE" class="headerlink" title="RUNNABLE"></a>RUNNABLE</h3><p>可运行线程的线程状态。线程正在JVM中执行，有可能在等待操作系统中的其他资源，比如处理器。</p>
 <h3 id="BLOCKED"><a href="#BLOCKED" class="headerlink" title="BLOCKED"></a>BLOCKED</h3><p>受阻塞并且正在等待监视器的某一线程的线程状态。处于受阻塞状态的某一线程正在等待监视器锁，以便进入一个同步的块/方法，或者在调用 Object.wait 之后再次进入同步的块/方法。<br>在Thread Dump日志中通常显示为 java.lang.Thread.State: BLOCKED (on object monitor) 。</p>
