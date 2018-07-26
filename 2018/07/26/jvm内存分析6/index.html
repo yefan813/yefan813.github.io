@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="MAT 内存泄漏," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位 JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。可以通过以下几种方式生成Heap Dump文件： 使用 jmap 命令生成jmap 命令是JDK提供的用于生">
+<meta name="keywords" content="MAT 内存泄漏">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用">
+<meta property="og:url" content="http://yoursite.com/2018/07/26/jvm内存分析6/index.html">
+<meta property="og:site_name" content="Evan&#39;s  技术blog">
+<meta property="og:description" content="前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位 JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。可以通过以下几种方式生成Heap Dump文件： 使用 jmap 命令生成jmap 命令是JDK提供的用于生">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/c78c2ca6e71557f5fd118a0a4f80903f.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/9ab49abb09fb99a66bf2612989e630c2.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/7ac5ffafea8488aa36df72fd0a8a2df6.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/56ae33d76a59bff56b92de705f3e0fc1.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/47fb011d433ddf4c295f4718adc8b4b5.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/843eb07db5728ab786cfbcb016d6809f.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/22d20d2d807b24c859b795846f587922.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/c9f7a5b311c473627ddd281f52907e0a.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/5e7a1762e03b51c263cb713f64461135.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/cc8cbe62f8e41bb9da95edeba1a25a1b.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/27e4a4532a75590d7e3a66f7101c9240.png">
+<meta property="og:updated_time" content="2018-07-26T10:24:06.354Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用">
+<meta name="twitter:description" content="前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位 JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。可以通过以下几种方式生成Heap Dump文件： 使用 jmap 命令生成jmap 命令是JDK提供的用于生">
+<meta name="twitter:image" content="https://www.javatang.com/wp-content/uploads/2017/10/c78c2ca6e71557f5fd118a0a4f80903f.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/26/jvm内存分析6/"/>
+
+
+
+
+
+  <title>Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用 | Evan's  技术blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4355be922665db7b085a291ab1396e63";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Evan's  技术blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-search">
+          <a href="/搜索" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-福利">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            福利
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/26/jvm内存分析6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1ft4z5dtoyqj30qn0qnjsb.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Evan's  技术blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-26T18:06:22+08:00">
+                2018-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/26/jvm内存分析6/" class="leancloud_visitors" data-flag-title="Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位</p>
+<h2 id="JVM-Heap-Dump（堆转储文件）的生成"><a href="#JVM-Heap-Dump（堆转储文件）的生成" class="headerlink" title="JVM Heap Dump（堆转储文件）的生成"></a>JVM Heap Dump（堆转储文件）的生成</h2><p>正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。<br>可以通过以下几种方式生成Heap Dump文件：</p>
+<h3 id="使用-jmap-命令生成"><a href="#使用-jmap-命令生成" class="headerlink" title="使用 jmap 命令生成"></a>使用 jmap 命令生成</h3><p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jmap.html" target="_blank" rel="noopener">jmap</a> 命令是JDK提供的用于生成堆内存信息的工具，可以执行下面的命令生成Heap Dump：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:live,format=b,file=heap-dump.bin &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+<p>其中的pid是JVM进程的id，<strong>heap-dump.bin</strong>是生成的文件名称，在执行命令的目录下面。推荐此种方法。</p>
+<h3 id="使用-JConsole-生成"><a href="#使用-JConsole-生成" class="headerlink" title="使用 JConsole 生成"></a>使用 JConsole 生成</h3><p>JConsole是JDK提供的一个基于GUI查看JVM系统信息的工具，既可以管理本地的JVM，也可以管理远程的JVM，可以通过下图的 <strong>dumpHeap</strong> 按钮生成 Heap Dump文件。</p>
+<p><img src="https://www.javatang.com/wp-content/uploads/2017/10/c78c2ca6e71557f5fd118a0a4f80903f.png" alt=""></p>
+<h2 id="在JVM中增加参数生成"><a href="#在JVM中增加参数生成" class="headerlink" title="在JVM中增加参数生成"></a>在JVM中增加参数生成</h2><p>在JVM的配置参数中可以添加 <strong>-XX:+HeapDumpOnOutOfMemoryError</strong> 参数，当应用抛出 OutOfMemoryError 时自动生成dump文件；<br>在JVM的配置参数中添加 <strong>-Xrunhprof:head=site</strong> 参数，会生成java.hprof.txt 文件，不过这样会影响JVM的运行效率，不建议在生产环境中使用（未亲测）。</p>
+<h2 id="常见的Heap-Dump文件分析工具"><a href="#常见的Heap-Dump文件分析工具" class="headerlink" title="常见的Heap Dump文件分析工具"></a>常见的Heap Dump文件分析工具</h2><p>JVM Heap Dump文件可以使用常用的分析工具如下：</p>
+<h3 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h3><p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jhat.html" target="_blank" rel="noopener">jhat</a> 是JDK自带的用于分析JVM Heap Dump文件的工具，使用下面的命令可以将堆文件的分析结果以HTML网页的形式进行展示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jhat &lt;heap-dump-file&gt;</span><br></pre></td></tr></table></figure>
+<p>其中 heap-dump-file 是文件的路径和文件名，可以使用 <strong>-J-Xmx512m</strong> 参数设置命令的内存大小。执行成功之后显示如下结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Snapshot resolved.</span><br><span class="line">Started HTTP server on port 7000</span><br><span class="line">Server is ready.</span><br></pre></td></tr></table></figure>
+<p>这个时候访问 <a href="http://localhost:7000/" target="_blank" rel="noopener">http://localhost:7000/</a> 就可以看到结果了。</p>
+<h3 id="Eclipse-Memory-Analyzer-MAT"><a href="#Eclipse-Memory-Analyzer-MAT" class="headerlink" title="Eclipse Memory Analyzer(MAT)"></a>Eclipse Memory Analyzer(MAT)</h3><p><a href="http://www.eclipse.org/mat/" target="_blank" rel="noopener">Eclipse Memory Analyzer(MAT)</a>是Eclipse提供的一款用于Heap Dump文件的工具，操作简单明了，下面将详细进行介绍。</p>
+<h3 id="IBM-Heap-Analyzer"><a href="#IBM-Heap-Analyzer" class="headerlink" title="IBM Heap Analyzer"></a>IBM Heap Analyzer</h3><p><a href="https://www.ibm.com/developerworks/community/alphaworks/tech/heapanalyzer" target="_blank" rel="noopener">IBM Heap Analyzer</a> 是IBM公司推出的一款用于分析Heap Dump信息的工具，下载之后是一个jar文件，执行结果如下：</p>
+<p><img src="https://www.javatang.com/wp-content/uploads/2017/10/9ab49abb09fb99a66bf2612989e630c2.png" alt=""></p>
+<h2 id="Memory-Analyzer的安装和使用"><a href="#Memory-Analyzer的安装和使用" class="headerlink" title="Memory Analyzer的安装和使用"></a>Memory Analyzer的安装和使用</h2><p>如前文所述，Eclipse Memory Analyzer（简称MAT）是一个功能丰富且操作简单的JVM Heap Dump分析工具，可以用来辅助发现内存泄漏减少内存占用。<br>使用 Memory Analyzer 来分析生产环境的 Java 堆转储文件，可以从数以百万计的对象中快速计算出对象的 Retained Size，查看是谁在阻止垃圾回收，并自动生成一个 Leak Suspect（内存泄露可疑点）报表。</p>
+<h3 id="下载与安装"><a href="#下载与安装" class="headerlink" title="下载与安装"></a>下载与安装</h3><p>Eclipse Memory Analyzer（MAT）支持两种安装方式，一是Eclipse插件的方式，另外一个就是独立运行的方式，建议使用独立运行的方式。<br>在 <a href="http://www.eclipse.org/mat/downloads.php" target="_blank" rel="noopener">http://www.eclipse.org/mat/downloads.php</a> 下载安装MAT，启动之后打开 File - Open Heap Dump… 菜单，然后选择生成的Heap DUmp文件，选择 “Leak Suspects Report”，然后点击 “Finish” 按钮。<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/7ac5ffafea8488aa36df72fd0a8a2df6.png" alt=""></p>
+<h3 id="主界面"><a href="#主界面" class="headerlink" title="主界面"></a>主界面</h3><p>第一次打开因为需要分析dump文件，所以需要等待一段时间进行分析，分析完成之后dump文件目录下面的文件信息如下：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/56ae33d76a59bff56b92de705f3e0fc1.png" alt=""></p>
+<p>上图中 heap-27311.bin 文件是原始的Heap Dump文件，zip文件是生成的html形式的报告文件。</p>
+<p>打开之后，主界面如下所示：</p>
+<p><img src="https://www.javatang.com/wp-content/uploads/2017/10/47fb011d433ddf4c295f4718adc8b4b5.png" alt=""></p>
+<p>接下来介绍界面中常用到的功能：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/843eb07db5728ab786cfbcb016d6809f.png" alt=""></p>
+<h3 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h3><p>Overview视图，即概要界面，显示了概要的信息，并展示了MAT常用的一些功能。</p>
+<ul>
+<li>Details 显示了一些统计信息，包括整个堆内存的大小、类（Class）的数量、对象（Object）的数量、类加载器（Class Loader)的数量。</li>
+<li>Biggest Objects by Retained Size 使用饼图的方式直观地显示了在JVM堆内存中最大的几个对象，当光标移到饼图上的时候会在左边Inspector和Attributes窗口中显示详细的信息。</li>
+<li>Actions 这里显示了几种常用到的操作，算是功能的快捷方式，包括 Histogram、Dominator Tree、Top Consumers、Duplicate Classes，具体的含义和用法见下面；</li>
+<li>Reports 列出了常用的报告信息，包括 Leak Suspects和Top Components，具体的含义和内容见下；</li>
+<li>Step By Step 以向导的方式引导使用功能。</li>
+</ul>
+<h3 id="Histogram"><a href="#Histogram" class="headerlink" title="Histogram"></a>Histogram</h3><p>直方图，可以查看每个类的实例（即对象）的数量和大小。</p>
+<h3 id="Dominator-Tree"><a href="#Dominator-Tree" class="headerlink" title="Dominator Tree"></a>Dominator Tree</h3><p>支配树，列出Heap Dump中处于活跃状态中的最大的几个对象，默认按 retained size进行排序，因此很容易找到占用内存最多的对象。</p>
+<h3 id="OQL"><a href="#OQL" class="headerlink" title="OQL"></a>OQL</h3><p>MAT提供了一个对象查询语言（OQL），跟SQL语言类似，将类当作表、对象当作记录行、成员变量当作表中的字段。通过OQL可以方便快捷的查询一些需要的信息，是一个非常有用的工具。</p>
+<h3 id="Thread-Overview"><a href="#Thread-Overview" class="headerlink" title="Thread Overview"></a>Thread Overview</h3><p>此工具可以查看生成Heap Dump文件的时候线程的运行情况，用于线程的分析。</p>
+<h3 id="Run-Expert-System-Test"><a href="#Run-Expert-System-Test" class="headerlink" title="Run Expert System Test"></a>Run Expert System Test</h3><p>可以查看分析完成的HTML形式的报告，也可以打开已经产生的分析报告文件，子菜单项如下图所示<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/22d20d2d807b24c859b795846f587922.png" alt=""></p>
+<p>常用的主要有Leak Suspects和Top Components两种报告：</p>
+<ul>
+<li>Leak Suspects 可以说是非常常用的报告了，该报告分析了 Heap Dump并尝试找出内存泄漏点，最后在生成的报告中对检测到的可疑点做了详细的说明；</li>
+<li>Top Components 列出占用总堆内存超过1%的对象。</li>
+</ul>
+<h3 id="Open-Query-Browser"><a href="#Open-Query-Browser" class="headerlink" title="Open Query Browser"></a>Open Query Browser</h3><p>提供了在分析过程中用到的工具，通常都集成在了右键菜单中，在后面具体举例分析的时候会做详细的说明。如下图：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/c9f7a5b311c473627ddd281f52907e0a.png" alt=""><br>这里仅针对在 Overview 界面中的 Acations中列出的两项进行说明：</p>
+<p>Top Consumers 按类、类加载器和包分别进行查询，并以饼图的方式列出最大的几个对象。菜单打开方式如下：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/5e7a1762e03b51c263cb713f64461135.png" alt=""></p>
+<p>Duplicate Classes 列出被加载多次的类，结果按类加载器进行分组，目标是加载同一个类多次被类加载器加载。使用该工具很容易找到部署应用的时候使用了同一个库的多个版本。菜单打开方式如下图：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/cc8cbe62f8e41bb9da95edeba1a25a1b.png" alt=""></p>
+<h3 id="Find-Object-by-address"><a href="#Find-Object-by-address" class="headerlink" title="Find Object by address"></a>Find Object by address</h3><p>通过十六进制的地址查找对应的对象，见下图：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/27e4a4532a75590d7e3a66f7101c9240.png" alt=""></p>
+<p>参考资料：<br><a href="http://blog.csdn.net/zapldy/article/details/7727572" target="_blank" rel="noopener">利用MemoryAnalyzer进行OutOfMemoryError的诊断分析</a><br><a href="https://eclipsesource.com/blogs/2013/01/21/10-tips-for-using-the-eclipse-memory-analyzer/" target="_blank" rel="noopener">10 Tips for using the Eclipse Memory Analyzer</a><br><a href="https://www.ibm.com/developerworks/cn/opensource/os-cn-ecl-ma/" target="_blank" rel="noopener">使用 Eclipse Memory Analyzer 进行堆转储文件分析</a><br><a href="http://www.cnblogs.com/xianzhedeyu/p/5800666.html" target="_blank" rel="noopener">Java内存分析</a><br><a href="http://tivan.iteye.com/blog/1487855" target="_blank" rel="noopener">一次使用Eclipse Memory Analyzer分析Tomcat内存溢出</a><br><a href="http://wensong.iteye.com/blog/1986449" target="_blank" rel="noopener">Memory Analyzer Tool 使用手记</a><br><a href="http://www.zhyea.com/2016/07/17/memory-analyzer-all.html" target="_blank" rel="noopener">MemoryAnalyzer介绍及使用</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MAT-内存泄漏/" rel="tag"># MAT 内存泄漏</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/26/jvm内存分析5/" rel="next" title="Java内存泄漏分析系列之五：常见的Thread Dump日志案例分析">
+                <i class="fa fa-chevron-left"></i> Java内存泄漏分析系列之五：常见的Thread Dump日志案例分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://ws2.sinaimg.cn/large/006tKfTcgy1ft4z5dtoyqj30qn0qnjsb.jpg"
+                alt="Evan" />
+            
+              <p class="site-author-name" itemprop="name">Evan</p>
+              <p class="site-description motion-element" itemprop="description">记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM-Heap-Dump（堆转储文件）的生成"><span class="nav-number">1.</span> <span class="nav-text">JVM Heap Dump（堆转储文件）的生成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-jmap-命令生成"><span class="nav-number">1.1.</span> <span class="nav-text">使用 jmap 命令生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-JConsole-生成"><span class="nav-number">1.2.</span> <span class="nav-text">使用 JConsole 生成</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在JVM中增加参数生成"><span class="nav-number">2.</span> <span class="nav-text">在JVM中增加参数生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见的Heap-Dump文件分析工具"><span class="nav-number">3.</span> <span class="nav-text">常见的Heap Dump文件分析工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#jhat"><span class="nav-number">3.1.</span> <span class="nav-text">jhat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Eclipse-Memory-Analyzer-MAT"><span class="nav-number">3.2.</span> <span class="nav-text">Eclipse Memory Analyzer(MAT)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IBM-Heap-Analyzer"><span class="nav-number">3.3.</span> <span class="nav-text">IBM Heap Analyzer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-Analyzer的安装和使用"><span class="nav-number">4.</span> <span class="nav-text">Memory Analyzer的安装和使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下载与安装"><span class="nav-number">4.1.</span> <span class="nav-text">下载与安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主界面"><span class="nav-number">4.2.</span> <span class="nav-text">主界面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Overview"><span class="nav-number">4.3.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Histogram"><span class="nav-number">4.4.</span> <span class="nav-text">Histogram</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dominator-Tree"><span class="nav-number">4.5.</span> <span class="nav-text">Dominator Tree</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OQL"><span class="nav-number">4.6.</span> <span class="nav-text">OQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Thread-Overview"><span class="nav-number">4.7.</span> <span class="nav-text">Thread Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-Expert-System-Test"><span class="nav-number">4.8.</span> <span class="nav-text">Run Expert System Test</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Open-Query-Browser"><span class="nav-number">4.9.</span> <span class="nav-text">Open Query Browser</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-Object-by-address"><span class="nav-number">4.10.</span> <span class="nav-text">Find Object by address</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Evan</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("hhxOVlDXQ63y03ixWfnRLjw7-gzGzoHsz", "QyN5gx9XKuiE7LCLglTqWlHl");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
