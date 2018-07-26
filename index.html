@@ -282,6 +282,163 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/26/jvm内存分析5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1ft4z5dtoyqj30qn0qnjsb.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Evan's  技术blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/26/jvm内存分析5/" itemprop="url">Java内存泄漏分析系列之五：常见的Thread Dump日志案例分析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-26T17:10:11+08:00">
+                2018-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/26/jvm内存分析5/" class="leancloud_visitors" data-flag-title="Java内存泄漏分析系列之五：常见的Thread Dump日志案例分析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="症状及解决方案"><a href="#症状及解决方案" class="headerlink" title="症状及解决方案"></a>症状及解决方案</h2><p>下面列出几种常见的症状即对应的解决方案：</p>
+<h3 id="CPU占用率很高，响应很慢"><a href="#CPU占用率很高，响应很慢" class="headerlink" title="CPU占用率很高，响应很慢"></a>CPU占用率很高，响应很慢</h3><p>按照<a href="https://yefan813.github.io/2018/07/25/jstack%E4%BD%BF%E7%94%A8/" target="_blank" rel="noopener">《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》</a>中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。<br>在同一时间多次使用上述的方法，然后进行对比分析，从代码中找到问题所在的原因。如果线程指向的是”VM Thread”或者无法从代码中直接找到原因，就需要进行内存分析，具体的见下一篇文章。</p>
+<h3 id="CPU占用率不高，但响应很慢"><a href="#CPU占用率不高，但响应很慢" class="headerlink" title="CPU占用率不高，但响应很慢"></a>CPU占用率不高，但响应很慢</h3><p>在整个请求的过程中多次执行Thread Dump然后进行对比，取得<strong>BLOCKED</strong> 状态的线程列表，通常是因为线程停在了I/O、数据库连接或网络连接的地方。</p>
+<h3 id="关注点概况"><a href="#关注点概况" class="headerlink" title="关注点概况"></a>关注点概况</h3><p>在Thread Dump文件中，线程的状态分成两种：<strong>Native Thread Status（系统线程状态）</strong>和<strong>JVM Thread Status（JVM 线程状态）</strong>，具体的含义可以参考<a href="https://yefan813.github.io/2018/07/26/jstack3/" target="_blank" rel="noopener">上一篇文章</a>。在分析日志的时候需要重点关注如下几种线程状态：</p>
+<h3 id="系统线程状态为-deadlock"><a href="#系统线程状态为-deadlock" class="headerlink" title="系统线程状态为 deadlock"></a>系统线程状态为 deadlock</h3><p>线程处于死锁状态，将占用系统大量资源。</p>
+<h3 id="系统线程状态为-waiting-for-monitor-entry-或-in-Object-wait"><a href="#系统线程状态为-waiting-for-monitor-entry-或-in-Object-wait" class="headerlink" title="系统线程状态为 waiting for monitor entry 或 in Object.wait()"></a>系统线程状态为 waiting for monitor entry 或 in Object.wait()</h3><p>如上一篇文章中所说，系统线程处于这种状态说明它在等待进入一个临界区，此时JVM线程的状态通常都是 <strong>java.lang.Thread.State: BLOCKED。</strong></p>
+<p>如果大量线程处于这种状态的话，可能是一个全局锁阻塞了大量线程。如果短期内多次打印Thread Dump信息，发现<strong>waiting for monitor entry</strong>状态的线程越来越多，没有减少的趋势，可能意味着某些线程在临界区里呆得时间太长了，以至于越来越多新线程迟迟无法进入。</p>
+<h3 id="系统线程状态为-waiting-on-condition"><a href="#系统线程状态为-waiting-on-condition" class="headerlink" title="系统线程状态为 waiting on condition"></a>系统线程状态为 waiting on condition</h3><p>系统线程处于此种状态说明它在等待另一个条件的发生来唤醒自己，或者自己调用了sleep()方法。此时JVM线程的状态通常是java.lang.Thread.State: WAITING (parking)（等待唤醒条件）或java.lang.Thread.State: TIMED_WAITING (parking或sleeping)（等待定时唤醒条件）。</p>
+<p>如果大量线程处于此种状态，说明这些线程又去获取第三方资源了，比如第三方的网络资源或读取数据库的操作，长时间无法获得响应，导致大量线程进入等待状态。因此，这说明系统处于一个网络瓶颈或读取数据库操作时间太长。</p>
+<h3 id="系统线程状态为-blocked"><a href="#系统线程状态为-blocked" class="headerlink" title="系统线程状态为 blocked"></a>系统线程状态为 blocked</h3><p>线程处于阻塞状态，需要根据实际情况进行判断。</p>
+<h2 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h2><p>下面通过几个案例进行分解来获得解决问题的方法。</p>
+<h3 id="waiting-for-monitor-entry-和-java-lang-Thread-State-BLOCKED"><a href="#waiting-for-monitor-entry-和-java-lang-Thread-State-BLOCKED" class="headerlink" title="waiting for monitor entry 和 java.lang.Thread.State: BLOCKED"></a>waiting for monitor entry 和 java.lang.Thread.State: BLOCKED</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&quot;DB-Processor-13&quot; daemon prio=5 tid=0x003edf98 nid=0xca waiting for monitor entry [0x000000000825f000]</span><br><span class="line">java.lang.Thread.State: BLOCKED (on object monitor)</span><br><span class="line">                at beans.ConnectionPool.getConnection(ConnectionPool.java:102)</span><br><span class="line">                - waiting to lock &lt;0xe0375410&gt; (a beans.ConnectionPool)</span><br><span class="line">                at beans.cus.ServiceCnt.getTodayCount(ServiceCnt.java:111)</span><br><span class="line">                at beans.cus.ServiceCnt.insertCount(ServiceCnt.java:43)</span><br><span class="line"></span><br><span class="line">&quot;DB-Processor-14&quot; daemon prio=5 tid=0x003edf98 nid=0xca waiting for monitor entry [0x000000000825f020]</span><br><span class="line">java.lang.Thread.State: BLOCKED (on object monitor)</span><br><span class="line">                at beans.ConnectionPool.getConnection(ConnectionPool.java:102)</span><br><span class="line">                - waiting to lock &lt;0xe0375410&gt; (a beans.ConnectionPool)</span><br><span class="line">                at beans.cus.ServiceCnt.getTodayCount(ServiceCnt.java:111)</span><br><span class="line">                at beans.cus.ServiceCnt.insertCount(ServiceCnt.java:43)</span><br><span class="line"></span><br><span class="line">&quot;DB-Processor-3&quot; daemon prio=5 tid=0x00928248 nid=0x8b waiting for monitor entry [0x000000000825d080]</span><br><span class="line">java.lang.Thread.State: RUNNABLE</span><br><span class="line">                at oracle.jdbc.driver.OracleConnection.isClosed(OracleConnection.java:570)</span><br><span class="line">                - waiting to lock &lt;0xe03ba2e0&gt; (a oracle.jdbc.driver.OracleConnection)</span><br><span class="line">                at beans.ConnectionPool.getConnection(ConnectionPool.java:112)</span><br><span class="line">                - locked &lt;0xe0386580&gt; (a java.util.Vector)</span><br><span class="line">                - locked &lt;0xe0375410&gt; (a beans.ConnectionPool)</span><br><span class="line">                at beans.cus.Cue_1700c.GetNationList(Cue_1700c.java:66)</span><br><span class="line">                at org.apache.jsp.cue_1700c_jsp._jspService(cue_1700c_jsp.java:120)</span><br></pre></td></tr></table></figure>
+<p>上面系统线程的状态是 <strong>waiting for monitor entry</strong>，说明此线程通过 synchronized(obj) { } 申请进入临界区，但obj对应的 Monitor 被其他线程所拥有，所以 JVM线程的状态是 <strong>java.lang.Thread.State: BLOCKED (on object monitor)</strong>，说明线程等待资源超时。</p>
+<p>下面的 <strong>waiting to lock <0xe0375410></0xe0375410></strong> 说明线程在等待给 <strong>0xe0375410</strong> 这个地址上锁（<strong>trying to obtain 0xe0375410 lock</strong>），如果在日志中发现有大量的线程都在等待给 现有大量的线程都在等 上锁的话，这个时候需要在日志中查找那个线程获取了这个锁 <strong>locked <0xe0375410></0xe0375410></strong>，如上面的例子中是 <strong>“DB-Processor-14”</strong> 这个线程，这样就可以顺藤摸瓜了。上面的例子是因为获取数据库操作等待的时间太长所致的，这个时候就需要修改数据库连接的配置信息。</p>
+<p>如果两个线程相互都被对方的线程锁锁住，这样就造成了 <strong>死锁</strong> 现象，如下面的例子所示：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/thread-deadlock-1.png" alt=""></p>
+<h3 id="waiting-on-condition-和-java-lang-Thread-State-TIMED-WAITING"><a href="#waiting-on-condition-和-java-lang-Thread-State-TIMED-WAITING" class="headerlink" title="waiting on condition 和 java.lang.Thread.State: TIMED_WAITING"></a>waiting on condition 和 java.lang.Thread.State: TIMED_WAITING</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&quot;RMI TCP Connection(idle)&quot; daemon prio=10 tid=0x00007fd50834e800 nid=0x56b2 waiting on condition [0x00007fd4f1a59000]</span><br><span class="line">java.lang.Thread.State: TIMED_WAITING (parking)</span><br><span class="line">                at sun.misc.Unsafe.park(Native Method)</span><br><span class="line">                - parking to wait for  &lt;0x00000000acd84de8&gt; (a java.util.concurrent.SynchronousQueue$TransferStack)</span><br><span class="line">                at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:198)</span><br><span class="line">                at java.util.concurrent.SynchronousQueue$TransferStack.awaitFulfill(SynchronousQueue.java:424)</span><br><span class="line">                at java.util.concurrent.SynchronousQueue$TransferStack.transfer(SynchronousQueue.java:323)</span><br><span class="line">                at java.util.concurrent.SynchronousQueue.poll(SynchronousQueue.java:874)</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:945)</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:907)</span><br><span class="line">                at java.lang.Thread.run(Thread.java:662)</span><br></pre></td></tr></table></figure>
+<p>JVM线程的状态是 java.lang.Thread.State: TIMED_WAITING (parking)，说明线程处于定时等待的状态，parking指线程处于挂起中。</p>
+<p><strong>waiting on condition</strong>需要结合堆栈中的 parking to wait for <0x00000000acd84de8> (a java.util.concurrent.SynchronousQueue$TransferStack) 一起来分析。首先，本线程肯定是在等待某个条件的发生来把自己唤醒。其次，SynchronousQueue并不是一个队列，只是线程之间移交信息的机制，当我们把一个元素放入到 SynchronousQueue 中的时候必须有另一个线程正在等待接受移交的任务，因此这就是本线程在等待的条件。</0x00000000acd84de8></p>
+<p>in Object.wait() 和 java.lang.Thread.State: TIMED_WAITING</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&quot;RMI RenewClean-[172.16.5.19:28475]&quot; daemon prio=10 tid=0x0000000041428800 nid=0xb09 in Object.wait() [0x00007f34f4bd0000]</span><br><span class="line">java.lang.Thread.State: TIMED_WAITING (on object monitor)</span><br><span class="line">                at java.lang.Object.wait(Native Method)</span><br><span class="line">                - waiting on &lt;0x00000000aa672478&gt; (a java.lang.ref.ReferenceQueue$Lock)</span><br><span class="line">                at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:118)</span><br><span class="line">                - locked &lt;0x00000000aa672478&gt; (a java.lang.ref.ReferenceQueue$Lock)</span><br><span class="line">                at sun.rmi.transport.DGCClient$EndpointEntry$RenewCleanThread.run(DGCClient.java:516)</span><br><span class="line">                at java.lang.Thread.run(Thread.java:662)</span><br></pre></td></tr></table></figure>
+<p>本例中JVM线程的状态是 <strong>java.lang.Thread.State: TIMED_WAITING (on object monitor)</strong>，说明线程调用了 <strong>java.lang.Object.wait(long timeout)</strong> 方法而进入了等待状态。</p>
+<p>“Wait Set”中等待的线程状态就是 <strong>in Object.wait()</strong>，当线程获得了 Monitor进入临界区之后，如果发现线程继续运行的条件没有满足，它就调用对象（通常是被 synchronized 的对象）的wait()方法，放弃了Monitor，进入 “Wait Set” 队列中。只有当别的线程在该对象上调用了 notify()或notifyAll()方法， “Wait Set” 队列中线程才得到机会去竞争，但是只有一个线程获得对象的 Monitor，恢复到的运行态。</p>
+<p>另外需要注意的是，是先 locked <0x00000000aa672478> 然后再 waiting on <0x00000000aa672478>，之所以如此，可以通过下面的代码进行演示：</0x00000000aa672478></0x00000000aa672478></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">static private class  Lock &#123; &#125;;</span><br><span class="line">private Lock lock = new Lock();</span><br><span class="line">public Reference&lt;? extends T&gt; remove(long timeout) &#123;</span><br><span class="line">    synchronized (lock) &#123;</span><br><span class="line">        Reference&lt;? extends T&gt; r = reallyPoll();</span><br><span class="line">        if (r != null) return r;</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            lock.wait(timeout);</span><br><span class="line">            r = reallyPoll();</span><br><span class="line">            // ……</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>线程在执行的过程中，先用 synchronized 获得了这个对象的 Monitor（对应 locked <0x00000000aa672478>），当执行到 <strong>lock.wait(timeout);</strong> 的时候，线程就放弃了Monitor的所有权，进入 “Wait Set” 队列（对应 waiting on <0x00000000aa672478>）。</0x00000000aa672478></0x00000000aa672478></p>
+<p>前面几篇文章详细说明了如何分析Thread Dump文件，除此之外还可以通过分析JVM堆内存信息来进一步找到问题的原因。</p>
+<p>参考资料：<br><a href="http://just2do.iteye.com/blog/2275894" target="_blank" rel="noopener">性能分析之– JAVA Thread Dump 分析综述</a><br><a href="http://www.cnblogs.com/zhengyun_ustc/archive/2013/01/06/dumpanalysis.html" target="_blank" rel="noopener">三个实例演示 Java Thread Dump 日志分析</a><br><a href="http://sesame.iteye.com/blog/428012" target="_blank" rel="noopener">如何分析Java虚拟机死锁</a><br><a href="http://www.cnblogs.com/zhengyun_ustc/archive/2013/03/18/tda.html" target="_blank" rel="noopener">各种 Java Thread State 第一分析法则</a><br><a href="https://dzone.com/articles/how-analyze-java-thread-dumps" target="_blank" rel="noopener">How to Analyze Java Thread Dumps | 中文版</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/26/jstack3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1802,160 +1959,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/Docker-多机通讯/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Evan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1ft4z5dtoyqj30qn0qnjsb.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Evan's  技术blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/11/Docker-多机通讯/" itemprop="url">Docker 多机通讯</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-11T15:32:46+08:00">
-                2018-07-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/07/11/Docker-多机通讯/" class="leancloud_visitors" data-flag-title="Docker 多机通讯">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fswyvl9r6fj30l90cgju0.jpg" alt="image"></p>
-<p><strong>etcd：</strong>  开源分布存储</p>
-<h1 id="Mutil-host-networking-with-etcd"><a href="#Mutil-host-networking-with-etcd" class="headerlink" title="Mutil-host networking with etcd"></a>Mutil-host networking with etcd</h1><h2 id="setup-etcd-cluster"><a href="#setup-etcd-cluster" class="headerlink" title="setup etcd cluster"></a>setup etcd cluster</h2><p>在docker-node1上</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">vagrant@docker-node1:~$ wget https://github.com/coreos/etcd/releases/download/v3.0.12/etcd-v3.0.12-linux-amd64.tar.gz</span><br><span class="line">vagrant@docker-node1:~$ tar zxvf etcd-v3.0.12-linux-amd64.tar.gz</span><br><span class="line">vagrant@docker-node1:~$ cd etcd-v3.0.12-linux-amd64</span><br><span class="line">vagrant@docker-node1:~$ nohup ./etcd --name docker-node1 --initial-advertise-peer-urls http://192.168.205.10:2380 \</span><br><span class="line">--listen-peer-urls http://192.168.205.10:2380 \</span><br><span class="line">--listen-client-urls http://192.168.205.10:2379,http://127.0.0.1:2379 \</span><br><span class="line">--advertise-client-urls http://192.168.205.10:2379 \</span><br><span class="line">--initial-cluster-token etcd-cluster \</span><br><span class="line">--initial-cluster docker-node1=http://192.168.205.10:2380,docker-node2=http://192.168.205.11:2380 \</span><br><span class="line">--initial-cluster-state new&amp;</span><br></pre></td></tr></table></figure>
-<p>在docker-node2上</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">vagrant@docker-node2:~$ wget https://github.com/coreos/etcd/releases/download/v3.0.12/etcd-v3.0.12-linux-amd64.tar.gz</span><br><span class="line">vagrant@docker-node2:~$ tar zxvf etcd-v3.0.12-linux-amd64.tar.gz</span><br><span class="line">vagrant@docker-node2:~$ cd etcd-v3.0.12-linux-amd64/</span><br><span class="line">vagrant@docker-node2:~$ nohup ./etcd --name docker-node2 --initial-advertise-peer-urls http://192.168.205.11:2380 \</span><br><span class="line">--listen-peer-urls http://192.168.205.11:2380 \</span><br><span class="line">--listen-client-urls http://192.168.205.11:2379,http://127.0.0.1:2379 \</span><br><span class="line">--advertise-client-urls http://192.168.205.11:2379 \</span><br><span class="line">--initial-cluster-token etcd-cluster \</span><br><span class="line">--initial-cluster docker-node1=http://192.168.205.10:2380,docker-node2=http://192.168.205.11:2380 \</span><br><span class="line">--initial-cluster-state new&amp;</span><br></pre></td></tr></table></figure>
-<p>检查cluster状态</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vagrant@docker-node2:~/etcd-v3.0.12-linux-amd64$ ./etcdctl cluster-health</span><br><span class="line">member 21eca106efe4caee is healthy: got healthy result from http://192.168.205.10:2379</span><br><span class="line">member 8614974c83d1cc6d is healthy: got healthy result from http://192.168.205.11:2379</span><br><span class="line">cluster is healthy</span><br></pre></td></tr></table></figure>
-<h2 id="重启docker服务"><a href="#重启docker服务" class="headerlink" title="重启docker服务"></a>重启docker服务</h2><p>在docker-node1上</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo service docker stop</span><br><span class="line">$ sudo /usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store=etcd://192.168.205.10:2379 --cluster-advertise=192.168.205.10:2375&amp;</span><br></pre></td></tr></table></figure>
-<p>在docker-node2上</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo service docker stop</span><br><span class="line">$ sudo /usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store=etcd://192.168.205.11:2379 --cluster-advertise=192.168.205.11:2375&amp;</span><br></pre></td></tr></table></figure>
-<h2 id="创建overlay-network"><a href="#创建overlay-network" class="headerlink" title="创建overlay network"></a>创建overlay network</h2><p>在docker-node1上创建一个demo的overlay network</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">vagrant@docker-node1:~$ sudo docker network ls</span><br><span class="line">NETWORK ID          NAME                DRIVER              SCOPE</span><br><span class="line">0e7bef3f143a        bridge              bridge              local</span><br><span class="line">a5c7daf62325        host                host                local</span><br><span class="line">3198cae88ab4        none                null                local</span><br><span class="line">vagrant@docker-node1:~$ sudo docker network create -d overlay demo</span><br><span class="line">3d430f3338a2c3496e9edeccc880f0a7affa06522b4249497ef6c4cd6571eaa9</span><br><span class="line">vagrant@docker-node1:~$ sudo docker network ls</span><br><span class="line">NETWORK ID          NAME                DRIVER              SCOPE</span><br><span class="line">0e7bef3f143a        bridge              bridge              local</span><br><span class="line">3d430f3338a2        demo                overlay             global</span><br><span class="line">a5c7daf62325        host                host                local</span><br><span class="line">3198cae88ab4        none                null                local</span><br><span class="line">vagrant@docker-node1:~$ sudo docker network inspect demo</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;Name&quot;: &quot;demo&quot;,</span><br><span class="line">        &quot;Id&quot;: &quot;3d430f3338a2c3496e9edeccc880f0a7affa06522b4249497ef6c4cd6571eaa9&quot;,</span><br><span class="line">        &quot;Scope&quot;: &quot;global&quot;,</span><br><span class="line">        &quot;Driver&quot;: &quot;overlay&quot;,</span><br><span class="line">        &quot;EnableIPv6&quot;: false,</span><br><span class="line">        &quot;IPAM&quot;: &#123;</span><br><span class="line">            &quot;Driver&quot;: &quot;default&quot;,</span><br><span class="line">            &quot;Options&quot;: &#123;&#125;,</span><br><span class="line">            &quot;Config&quot;: [</span><br><span class="line">                &#123;</span><br><span class="line">                    &quot;Subnet&quot;: &quot;10.0.0.0/24&quot;,</span><br><span class="line">                    &quot;Gateway&quot;: &quot;10.0.0.1/24&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;Internal&quot;: false,</span><br><span class="line">        &quot;Containers&quot;: &#123;&#125;,</span><br><span class="line">        &quot;Options&quot;: &#123;&#125;,</span><br><span class="line">        &quot;Labels&quot;: &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<p>我们会看到在node2上，这个demo的overlay network会被同步创建</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vagrant@docker-node2:~$ sudo docker network ls</span><br><span class="line">NETWORK ID          NAME                DRIVER              SCOPE</span><br><span class="line">c9947d4c3669        bridge              bridge              local</span><br><span class="line">3d430f3338a2        demo                overlay             global</span><br><span class="line">fa5168034de1        host                host                local</span><br><span class="line">c2ca34abec2a        none                null                local</span><br></pre></td></tr></table></figure>
-<p>通过查看etcd的key-value, 我们获取到，这个demo的network是通过etcd从node1同步到node2的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">vagrant@docker-node2:~/etcd-v3.0.12-linux-amd64$ ./etcdctl ls /docker</span><br><span class="line">/docker/network</span><br><span class="line">/docker/nodes</span><br><span class="line">vagrant@docker-node2:~/etcd-v3.0.12-linux-amd64$ ./etcdctl ls /docker/nodes</span><br><span class="line">/docker/nodes/192.168.205.11:2375</span><br><span class="line">/docker/nodes/192.168.205.10:2375</span><br><span class="line">vagrant@docker-node2:~/etcd-v3.0.12-linux-amd64$ ./etcdctl ls /docker/network/v1.0/network</span><br><span class="line">/docker/network/v1.0/network/3d430f3338a2c3496e9edeccc880f0a7affa06522b4249497ef6c4cd6571eaa9</span><br><span class="line">vagrant@docker-node2:~/etcd-v3.0.12-linux-amd64$ ./etcdctl get /docker/network/v1.0/network/3d430f3338a2c3496e9edeccc880f0a7affa06522b4249497ef6c4cd6571eaa9 | jq .</span><br><span class="line">&#123;</span><br><span class="line">  &quot;addrSpace&quot;: &quot;GlobalDefault&quot;,</span><br><span class="line">  &quot;enableIPv6&quot;: false,</span><br><span class="line">  &quot;generic&quot;: &#123;</span><br><span class="line">    &quot;com.docker.network.enable_ipv6&quot;: false,</span><br><span class="line">    &quot;com.docker.network.generic&quot;: &#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;id&quot;: &quot;3d430f3338a2c3496e9edeccc880f0a7affa06522b4249497ef6c4cd6571eaa9&quot;,</span><br><span class="line">  &quot;inDelete&quot;: false,</span><br><span class="line">  &quot;ingress&quot;: false,</span><br><span class="line">  &quot;internal&quot;: false,</span><br><span class="line">  &quot;ipamOptions&quot;: &#123;&#125;,</span><br><span class="line">  &quot;ipamType&quot;: &quot;default&quot;,</span><br><span class="line">  &quot;ipamV4Config&quot;: &quot;[&#123;\&quot;PreferredPool\&quot;:\&quot;\&quot;,\&quot;SubPool\&quot;:\&quot;\&quot;,\&quot;Gateway\&quot;:\&quot;\&quot;,\&quot;AuxAddresses\&quot;:null&#125;]&quot;,</span><br><span class="line">  &quot;ipamV4Info&quot;: &quot;[&#123;\&quot;IPAMData\&quot;:\&quot;&#123;\\\&quot;AddressSpace\\\&quot;:\\\&quot;GlobalDefault\\\&quot;,\\\&quot;Gateway\\\&quot;:\\\&quot;10.0.0.1/24\\\&quot;,\\\&quot;Pool\\\&quot;:\\\&quot;10.0.0.0/24\\\&quot;&#125;\&quot;,\&quot;PoolID\&quot;:\&quot;GlobalDefault/10.0.0.0/24\&quot;&#125;]&quot;,</span><br><span class="line">  &quot;labels&quot;: &#123;&#125;,</span><br><span class="line">  &quot;name&quot;: &quot;demo&quot;,</span><br><span class="line">  &quot;networkType&quot;: &quot;overlay&quot;,</span><br><span class="line">  &quot;persist&quot;: true,</span><br><span class="line">  &quot;postIPv6&quot;: false,</span><br><span class="line">  &quot;scope&quot;: &quot;global&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="创建连接demo网络的容器"><a href="#创建连接demo网络的容器" class="headerlink" title="创建连接demo网络的容器"></a>创建连接demo网络的容器</h2><p>在docker-node1上</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">vagrant@docker-node1:~$ sudo docker run -d --name test1 --net demo busybox sh -c &quot;while true; do sleep 3600; done&quot;</span><br><span class="line">Unable to find image &apos;busybox:latest&apos; locally</span><br><span class="line">latest: Pulling from library/busybox</span><br><span class="line">56bec22e3559: Pull complete</span><br><span class="line">Digest: sha256:29f5d56d12684887bdfa50dcd29fc31eea4aaf4ad3bec43daf19026a7ce69912</span><br><span class="line">Status: Downloaded newer image for busybox:latest</span><br><span class="line">a95a9466331dd9305f9f3c30e7330b5a41aae64afda78f038fc9e04900fcac54</span><br><span class="line">vagrant@docker-node1:~$ sudo docker ps</span><br><span class="line">CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES</span><br><span class="line">a95a9466331d        busybox             &quot;sh -c &apos;while true; d&quot;   4 seconds ago       Up 3 seconds                            test1</span><br><span class="line">vagrant@docker-node1:~$ sudo docker exec test1 ifconfig</span><br><span class="line">eth0      Link encap:Ethernet  HWaddr 02:42:0A:00:00:02</span><br><span class="line">          inet addr:10.0.0.2  Bcast:0.0.0.0  Mask:255.255.255.0</span><br><span class="line">          inet6 addr: fe80::42:aff:fe00:2/64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1450  Metric:1</span><br><span class="line">          RX packets:15 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0</span><br><span class="line">          RX bytes:1206 (1.1 KiB)  TX bytes:648 (648.0 B)</span><br><span class="line"></span><br><span class="line">eth1      Link encap:Ethernet  HWaddr 02:42:AC:12:00:02</span><br><span class="line">          inet addr:172.18.0.2  Bcast:0.0.0.0  Mask:255.255.0.0</span><br><span class="line">          inet6 addr: fe80::42:acff:fe12:2/64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:8 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0</span><br><span class="line">          RX bytes:648 (648.0 B)  TX bytes:648 (648.0 B)</span><br><span class="line"></span><br><span class="line">lo        Link encap:Local Loopback</span><br><span class="line">          inet addr:127.0.0.1  Mask:255.0.0.0</span><br><span class="line">          inet6 addr: ::1/128 Scope:Host</span><br><span class="line">          UP LOOPBACK RUNNING  MTU:65536  Metric:1</span><br><span class="line">          RX packets:0 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1</span><br><span class="line">          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)</span><br><span class="line"></span><br><span class="line">vagrant@docker-node1:~$</span><br></pre></td></tr></table></figure>
-<p>在docker-node2上</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">vagrant@docker-node2:~$ sudo docker run -d --name test1 --net demo busybox sh -c &quot;while true; do sleep 3600; done&quot;</span><br><span class="line">Unable to find image &apos;busybox:latest&apos; locally</span><br><span class="line">latest: Pulling from library/busybox</span><br><span class="line">56bec22e3559: Pull complete</span><br><span class="line">Digest: sha256:29f5d56d12684887bdfa50dcd29fc31eea4aaf4ad3bec43daf19026a7ce69912</span><br><span class="line">Status: Downloaded newer image for busybox:latest</span><br><span class="line">fad6dc6538a85d3dcc958e8ed7b1ec3810feee3e454c1d3f4e53ba25429b290b</span><br><span class="line">docker: Error response from daemon: service endpoint with name test1 already exists.</span><br><span class="line">vagrant@docker-node2:~$ sudo docker run -d --name test2 --net demo busybox sh -c &quot;while true; do sleep 3600; done&quot;</span><br><span class="line">9d494a2f66a69e6b861961d0c6af2446265bec9b1d273d7e70d0e46eb2e98d20</span><br></pre></td></tr></table></figure>
-<p>验证连通性。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">vagrant@docker-node2:~$ sudo docker exec -it test2 ifconfig</span><br><span class="line">eth0      Link encap:Ethernet  HWaddr 02:42:0A:00:00:03</span><br><span class="line">          inet addr:10.0.0.3  Bcast:0.0.0.0  Mask:255.255.255.0</span><br><span class="line">          inet6 addr: fe80::42:aff:fe00:3/64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1450  Metric:1</span><br><span class="line">          RX packets:208 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:201 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0</span><br><span class="line">          RX bytes:20008 (19.5 KiB)  TX bytes:19450 (18.9 KiB)</span><br><span class="line"></span><br><span class="line">eth1      Link encap:Ethernet  HWaddr 02:42:AC:12:00:02</span><br><span class="line">          inet addr:172.18.0.2  Bcast:0.0.0.0  Mask:255.255.0.0</span><br><span class="line">          inet6 addr: fe80::42:acff:fe12:2/64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:8 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0</span><br><span class="line">          RX bytes:648 (648.0 B)  TX bytes:648 (648.0 B)</span><br><span class="line"></span><br><span class="line">lo        Link encap:Local Loopback</span><br><span class="line">          inet addr:127.0.0.1  Mask:255.0.0.0</span><br><span class="line">          inet6 addr: ::1/128 Scope:Host</span><br><span class="line">          UP LOOPBACK RUNNING  MTU:65536  Metric:1</span><br><span class="line">          RX packets:0 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1</span><br><span class="line">          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)</span><br><span class="line"></span><br><span class="line">  vagrant@docker-node1:~$ sudo docker exec test1 sh -c &quot;ping 10.0.0.3&quot;</span><br><span class="line">  PING 10.0.0.3 (10.0.0.3): 56 data bytes</span><br><span class="line">  64 bytes from 10.0.0.3: seq=0 ttl=64 time=0.579 ms</span><br><span class="line">  64 bytes from 10.0.0.3: seq=1 ttl=64 time=0.411 ms</span><br><span class="line">  64 bytes from 10.0.0.3: seq=2 ttl=64 time=0.483 ms</span><br><span class="line">  ^C</span><br><span class="line">  vagrant@docker-node1:~$</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2010,7 +2013,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2023,7 +2026,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
