@@ -79,13 +79,13 @@
 
 
 
-<meta name="description" content="前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位 JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。可以通过以下几种方式生成Heap Dump文件： 使用 jmap 命令生成jmap 命令是JDK提供的用于生">
+<meta name="description" content="转载自：传送门 前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位 JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。可以通过以下几种方式生成Heap Dump文件： 使用 jmap 命令生成jmap 命令是J">
 <meta name="keywords" content="MAT 内存泄漏">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用">
 <meta property="og:url" content="http://yoursite.com/2018/07/26/jvm内存分析6/index.html">
 <meta property="og:site_name" content="Evan&#39;s  技术blog">
-<meta property="og:description" content="前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位 JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。可以通过以下几种方式生成Heap Dump文件： 使用 jmap 命令生成jmap 命令是JDK提供的用于生">
+<meta property="og:description" content="转载自：传送门 前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位 JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。可以通过以下几种方式生成Heap Dump文件： 使用 jmap 命令生成jmap 命令是J">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/c78c2ca6e71557f5fd118a0a4f80903f.png">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/9ab49abb09fb99a66bf2612989e630c2.png">
@@ -98,10 +98,10 @@
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/5e7a1762e03b51c263cb713f64461135.png">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/cc8cbe62f8e41bb9da95edeba1a25a1b.png">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/27e4a4532a75590d7e3a66f7101c9240.png">
-<meta property="og:updated_time" content="2018-07-26T10:24:06.354Z">
+<meta property="og:updated_time" content="2018-07-26T10:30:02.817Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用">
-<meta name="twitter:description" content="前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位 JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。可以通过以下几种方式生成Heap Dump文件： 使用 jmap 命令生成jmap 命令是JDK提供的用于生">
+<meta name="twitter:description" content="转载自：传送门 前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位 JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。可以通过以下几种方式生成Heap Dump文件： 使用 jmap 命令生成jmap 命令是J">
 <meta name="twitter:image" content="https://www.javatang.com/wp-content/uploads/2017/10/c78c2ca6e71557f5fd118a0a4f80903f.png">
 
 
@@ -373,7 +373,8 @@
       
 
       
-        <p>前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位</p>
+        <p>转载自：<a href="https://www.javatang.com/archives/2017/10/30/53562102.html" target="_blank" rel="noopener">传送门</a></p>
+<p>前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位</p>
 <h2 id="JVM-Heap-Dump（堆转储文件）的生成"><a href="#JVM-Heap-Dump（堆转储文件）的生成" class="headerlink" title="JVM Heap Dump（堆转储文件）的生成"></a>JVM Heap Dump（堆转储文件）的生成</h2><p>正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。<br>可以通过以下几种方式生成Heap Dump文件：</p>
 <h3 id="使用-jmap-命令生成"><a href="#使用-jmap-命令生成" class="headerlink" title="使用 jmap 命令生成"></a>使用 jmap 命令生成</h3><p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jmap.html" target="_blank" rel="noopener">jmap</a> 命令是JDK提供的用于生成堆内存信息的工具，可以执行下面的命令生成Heap Dump：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:live,format=b,file=heap-dump.bin &lt;pid&gt;</span><br></pre></td></tr></table></figure>

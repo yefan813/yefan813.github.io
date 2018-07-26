@@ -79,13 +79,13 @@
 
 
 
-<meta name="description" content="前面文章中只分析了Thread Dump日志文件的结构，今天针对日志文件中 Java EE middleware, third party &amp;amp; custom application Threads 部分线程的状态进行详细的分析。 Thread Dump日志的线程信息以下面的日志为例： 12345678910111213141516&amp;quot;resin-22129&amp;quot; daemon">
+<meta name="description" content="转载自：传送门 前面文章中只分析了Thread Dump日志文件的结构，今天针对日志文件中 Java EE middleware, third party &amp;amp; custom application Threads 部分线程的状态进行详细的分析。 Thread Dump日志的线程信息以下面的日志为例： 12345678910111213141516&amp;quot;resin-22129&amp;quot">
 <meta name="keywords" content="java 内存 jstack thread dump 内存泄露">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java内存泄漏分析系列之三：jstack生成的Thread Dump日志线程状态">
 <meta property="og:url" content="http://yoursite.com/2018/07/26/jstack3/index.html">
 <meta property="og:site_name" content="Evan&#39;s  技术blog">
-<meta property="og:description" content="前面文章中只分析了Thread Dump日志文件的结构，今天针对日志文件中 Java EE middleware, third party &amp;amp; custom application Threads 部分线程的状态进行详细的分析。 Thread Dump日志的线程信息以下面的日志为例： 12345678910111213141516&amp;quot;resin-22129&amp;quot; daemon">
+<meta property="og:description" content="转载自：传送门 前面文章中只分析了Thread Dump日志文件的结构，今天针对日志文件中 Java EE middleware, third party &amp;amp; custom application Threads 部分线程的状态进行详细的分析。 Thread Dump日志的线程信息以下面的日志为例： 12345678910111213141516&amp;quot;resin-22129&amp;quot">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/java-monitor.png">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/thread-state-diagram.png">
@@ -93,10 +93,10 @@
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/thread-dump-blocked-status.png">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/thread-dump-deadlock-status.png">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/thread-dump-runnable-waiting-status.png">
-<meta property="og:updated_time" content="2018-07-26T09:54:09.138Z">
+<meta property="og:updated_time" content="2018-07-26T10:32:28.711Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存泄漏分析系列之三：jstack生成的Thread Dump日志线程状态">
-<meta name="twitter:description" content="前面文章中只分析了Thread Dump日志文件的结构，今天针对日志文件中 Java EE middleware, third party &amp;amp; custom application Threads 部分线程的状态进行详细的分析。 Thread Dump日志的线程信息以下面的日志为例： 12345678910111213141516&amp;quot;resin-22129&amp;quot; daemon">
+<meta name="twitter:description" content="转载自：传送门 前面文章中只分析了Thread Dump日志文件的结构，今天针对日志文件中 Java EE middleware, third party &amp;amp; custom application Threads 部分线程的状态进行详细的分析。 Thread Dump日志的线程信息以下面的日志为例： 12345678910111213141516&amp;quot;resin-22129&amp;quot">
 <meta name="twitter:image" content="https://www.javatang.com/wp-content/uploads/2017/10/java-monitor.png">
 
 
@@ -368,7 +368,8 @@
       
 
       
-        <p>前面<a href="https://yefan813.github.io/2018/07/25/jstack2/" target="_blank" rel="noopener">文章</a>中只分析了Thread Dump日志文件的结构，今天针对日志文件中 Java EE middleware, third party &amp; custom application Threads 部分线程的状态进行详细的分析。</p>
+        <p>转载自：<a href="https://www.javatang.com/archives/2017/10/20/12131956.html" target="_blank" rel="noopener">传送门</a></p>
+<p>前面<a href="https://yefan813.github.io/2018/07/25/jstack2/" target="_blank" rel="noopener">文章</a>中只分析了Thread Dump日志文件的结构，今天针对日志文件中 Java EE middleware, third party &amp; custom application Threads 部分线程的状态进行详细的分析。</p>
 <h2 id="Thread-Dump日志的线程信息"><a href="#Thread-Dump日志的线程信息" class="headerlink" title="Thread Dump日志的线程信息"></a>Thread Dump日志的线程信息</h2><p>以下面的日志为例：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&quot;resin-22129&quot; daemon prio=10 tid=0x00007fbe5c34e000 nid=0x4cb1 waiting on condition [0x00007fbe4ff7c000]</span><br><span class="line">   java.lang.Thread.State: WAITING (parking)</span><br><span class="line">    at sun.misc.Unsafe.park(Native Method)</span><br><span class="line">    at java.util.concurrent.locks.LockSupport.park(LockSupport.java:315)</span><br><span class="line">    at com.caucho.env.thread2.ResinThread2.park(ResinThread2.java:196)</span><br><span class="line">    at com.caucho.env.thread2.ResinThread2.runTasks(ResinThread2.java:147)</span><br><span class="line">    at com.caucho.env.thread2.ResinThread2.run(ResinThread2.java:118)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&quot;Timer-20&quot; daemon prio=10 tid=0x00007fe3a4bfb800 nid=0x1a31 in Object.wait() [0x00007fe3a077a000]</span><br><span class="line">   java.lang.Thread.State: TIMED_WAITING (on object monitor)</span><br><span class="line">    at java.lang.Object.wait(Native Method)</span><br><span class="line">    - waiting on &lt;0x00000006f0620ff0&gt; (a java.util.TaskQueue)</span><br><span class="line">    at java.util.TimerThread.mainLoop(Timer.java:552)</span><br><span class="line">    - locked &lt;0x00000006f0620ff0&gt; (a java.util.TaskQueue)</span><br><span class="line">    at java.util.TimerThread.run(Timer.java:505)</span><br></pre></td></tr></table></figure>
 <p>以上依次是：</p>

@@ -79,21 +79,21 @@
 
 
 
-<meta name="description" content="前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。 使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread： 1&amp;quot;VM Thread&amp;quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable 这个时候需要使用 jstat -gc    命令查看">
+<meta name="description" content="转载自：传送门 前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。 使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread： 1&amp;quot;VM Thread&amp;quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable 这个时候需要使用 jstat -gc">
 <meta name="keywords" content="java 内存 jstat JVM">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java内存泄漏分析系列之四：jstat命令的使用及VM Thread分析">
 <meta property="og:url" content="http://yoursite.com/2018/07/26/jstat-command/index.html">
 <meta property="og:site_name" content="Evan&#39;s  技术blog">
-<meta property="og:description" content="前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。 使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread： 1&amp;quot;VM Thread&amp;quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable 这个时候需要使用 jstat -gc    命令查看">
+<meta property="og:description" content="转载自：传送门 前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。 使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread： 1&amp;quot;VM Thread&amp;quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable 这个时候需要使用 jstat -gc">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/jstat-gc-result-1.jpg">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/r_sun-jdk-memory-area1.png">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/r_heap1.png">
-<meta property="og:updated_time" content="2018-07-26T10:01:44.899Z">
+<meta property="og:updated_time" content="2018-07-26T10:31:48.642Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存泄漏分析系列之四：jstat命令的使用及VM Thread分析">
-<meta name="twitter:description" content="前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。 使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread： 1&amp;quot;VM Thread&amp;quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable 这个时候需要使用 jstat -gc    命令查看">
+<meta name="twitter:description" content="转载自：传送门 前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。 使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread： 1&amp;quot;VM Thread&amp;quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable 这个时候需要使用 jstat -gc">
 <meta name="twitter:image" content="https://www.javatang.com/wp-content/uploads/2017/10/jstat-gc-result-1.jpg">
 
 
@@ -365,7 +365,8 @@
       
 
       
-        <p>前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。</p>
+        <p>转载自：<a href="https://www.javatang.com/archives/2017/10/25/36441958.html" target="_blank" rel="noopener">传送门</a></p>
+<p>前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。</p>
 <h2 id="使用jstat命令"><a href="#使用jstat命令" class="headerlink" title="使用jstat命令"></a>使用jstat命令</h2><p>当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;VM Thread&quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable</span><br></pre></td></tr></table></figure>
 <p>这个时候需要使用 jstat -gc <pid> <period> <times> 命令查看gc的信息，显示结果如下：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/jstat-gc-result-1.jpg" alt=""></times></period></pid></p>
