@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="转载自：传送门 手动构建堆内存溢出：使用 asm 构造 class，后面模拟非堆内存溢出 123456789101112131415161718192021222324252627282930313233343536/* * https://blog.csdn.net/bolg_hero/article/details/78189621 * 继承ClassLoader是为了方便调用defineCl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存泄漏分析系列之七：jmap + MAT 内存溢出">
+<meta property="og:url" content="http://yoursite.com/2018/07/24/jmap-MAT-内存溢出/index.html">
+<meta property="og:site_name" content="Evan&#39;s  技术blog">
+<meta property="og:description" content="转载自：传送门 手动构建堆内存溢出：使用 asm 构造 class，后面模拟非堆内存溢出 123456789101112131415161718192021222324252627282930313233343536/* * https://blog.csdn.net/bolg_hero/article/details/78189621 * 继承ClassLoader是为了方便调用defineCl">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1ftlxgs9q5xj30qs04uq4d.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1ftlxl6lctoj31100rcgqd.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1ftlxn9h6nbj30rs04s0ti.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1ftlxptn6b9j30sa03e3yz.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1ftlyk4nfx3j31kw0sf11f.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1ftlynwu1qoj30oy0cq76m.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1ftlytnxktvj30zr0n3dkv.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1ftlz0ctbz8j30m30j27a5.jpg">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/11/retained_objects.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/11/gc-roots.jpg">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/fe892b246b43fa64b866790a2f256859.png">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1ftlzb7iod1j30tj0mwn36.jpg">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/11/332724b74c697a72e19c94cf4188bee2.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/11/b0f463b6011fdfb7cc6c7b0826ac97e5.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/11/548db33968616d6ce2ea2d87f8b8bb57.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/11/1e3ec66f66b72a05eec686a24c2c4df6.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/11/cb8e6e3c8bc871bd0d65a952aa572b94.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/5931b0544ead20fc50aba5efd828385e.png">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1ftlzl15q38j30tf0lm47m.jpg">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/11/2235da535545f94b3233c22f0eea1302.png">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/11/0a35317d8a0291b8c5c6672ff6d17d0e.png">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1ftlzp79sm7j30sp0kdgsc.jpg">
+<meta property="og:updated_time" content="2018-07-29T09:27:54.522Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java内存泄漏分析系列之七：jmap + MAT 内存溢出">
+<meta name="twitter:description" content="转载自：传送门 手动构建堆内存溢出：使用 asm 构造 class，后面模拟非堆内存溢出 123456789101112131415161718192021222324252627282930313233343536/* * https://blog.csdn.net/bolg_hero/article/details/78189621 * 继承ClassLoader是为了方便调用defineCl">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1ftlxgs9q5xj30qs04uq4d.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/24/jmap-MAT-内存溢出/"/>
+
+
+
+
+
+  <title>Java内存泄漏分析系列之七：jmap + MAT 内存溢出 | Evan's  技术blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4355be922665db7b085a291ab1396e63";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Evan's  技术blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-search">
+          <a href="/搜索" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-福利">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            福利
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/24/jmap-MAT-内存溢出/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1ft4z5dtoyqj30qn0qnjsb.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Evan's  技术blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java内存泄漏分析系列之七：jmap + MAT 内存溢出</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-24T23:45:47+08:00">
+                2018-07-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/24/jmap-MAT-内存溢出/" class="leancloud_visitors" data-flag-title="Java内存泄漏分析系列之七：jmap + MAT 内存溢出">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>转载自：<a href="https://www.javatang.com/archives/2017/11/08/11582145.html" target="_blank" rel="noopener">传送门</a></p>
+<h3 id="手动构建堆内存溢出："><a href="#手动构建堆内存溢出：" class="headerlink" title="手动构建堆内存溢出："></a>手动构建堆内存溢出：</h3><p>使用 asm 构造 class，后面模拟非堆内存溢出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line"> * https://blog.csdn.net/bolg_hero/article/details/78189621</span><br><span class="line"> * 继承ClassLoader是为了方便调用defineClass方法，因为该方法的定义为protected</span><br><span class="line"> * */</span><br><span class="line">public class Metaspace extends ClassLoader &#123;</span><br><span class="line">	</span><br><span class="line">    public static List&lt;Class&lt;?&gt;&gt; createClasses() &#123;</span><br><span class="line">        // 类持有</span><br><span class="line">        List&lt;Class&lt;?&gt;&gt; classes = new ArrayList&lt;Class&lt;?&gt;&gt;();</span><br><span class="line">        // 循环1000w次生成1000w个不同的类。</span><br><span class="line">        for (int i = 0; i &lt; 10000000; ++i) &#123;</span><br><span class="line">            ClassWriter cw = new ClassWriter(0);</span><br><span class="line">            // 定义一个类名称为Class&#123;i&#125;，它的访问域为public，父类为java.lang.Object，不实现任何接口</span><br><span class="line">            cw.visit(Opcodes.V1_1, Opcodes.ACC_PUBLIC, &quot;Class&quot; + i, null,</span><br><span class="line">                    &quot;java/lang/Object&quot;, null);</span><br><span class="line">            // 定义构造函数&lt;init&gt;方法</span><br><span class="line">            MethodVisitor mw = cw.visitMethod(Opcodes.ACC_PUBLIC, &quot;&lt;init&gt;&quot;,</span><br><span class="line">                    &quot;()V&quot;, null, null);</span><br><span class="line">            // 第一个指令为加载this</span><br><span class="line">            mw.visitVarInsn(Opcodes.ALOAD, 0);</span><br><span class="line">            // 第二个指令为调用父类Object的构造函数</span><br><span class="line">            mw.visitMethodInsn(Opcodes.INVOKESPECIAL, &quot;java/lang/Object&quot;,</span><br><span class="line">                    &quot;&lt;init&gt;&quot;, &quot;()V&quot;);</span><br><span class="line">            // 第三条指令为return</span><br><span class="line">            mw.visitInsn(Opcodes.RETURN);</span><br><span class="line">            mw.visitMaxs(1, 1);</span><br><span class="line">            mw.visitEnd();</span><br><span class="line">            Metaspace test = new Metaspace();</span><br><span class="line">            byte[] code = cw.toByteArray();</span><br><span class="line">            // 定义类</span><br><span class="line">            Class&lt;?&gt; exampleClass = test.defineClass(&quot;Class&quot; + i, code, 0, code.length);</span><br><span class="line">            classes.add(exampleClass);</span><br><span class="line">        &#125;</span><br><span class="line">        return classes;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>内存溢出使用的对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public class User &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 名称</span><br><span class="line">     */</span><br><span class="line">    private String name;</span><br><span class="line">    /**</span><br><span class="line">     * 年龄</span><br><span class="line">     */</span><br><span class="line">    private int age;</span><br><span class="line"></span><br><span class="line">    public User() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public User(String name, int age) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getName() &#123;</span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setName(String name) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getAge() &#123;</span><br><span class="line">        return age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAge(int age) &#123;</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="http-请求"><a href="#http-请求" class="headerlink" title="http 请求"></a>http 请求</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">@RestController</span><br><span class="line">@RequestMapping(&quot;/&quot;)</span><br><span class="line">public class MemoryController &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    private List&lt;User&gt; userList = new ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    private List&lt;Class&lt;?&gt;&gt; clazzList = new ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 记得设置启动参数 -Xmx16M -Xms16M</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    @GetMapping(&quot;/heap&quot;)</span><br><span class="line">    public String heap()&#123;</span><br><span class="line">        int i = 0 ;</span><br><span class="line">        while(true)&#123;</span><br><span class="line">            userList.add(new User(UUID.randomUUID().toString(), i++));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 记得设置启动参数 -XX:MetaspaceSize=32M -XX:MaxMetaspaceSize=32M</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    @GetMapping(&quot;/nonHeap&quot;)</span><br><span class="line">    public String nonHeap()&#123;</span><br><span class="line">        while(true)&#123;</span><br><span class="line">            clazzList.addAll(Metaspace.createClasses());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>模拟堆内存溢出时设置启动参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xmx16M -Xms16M</span><br></pre></td></tr></table></figure>
+<p>模拟非堆内存溢出时设置启动参数:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-XX:MetaspaceSize=32M </span><br><span class="line">-XX:MaxMetaspaceSize=32M</span><br></pre></td></tr></table></figure>
+<p>内存溢出自动导出映像文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-XX:+HeapDumpOnOutOfMemoryError</span><br><span class="line">-XX:HeapDumpPath=./</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftlxgs9q5xj30qs04uq4d.jpg" alt=""></p>
+<p>可以看到这里自动导出了堆内存快照</p>
+<h3 id="还可以-jmap-手动导出快照"><a href="#还可以-jmap-手动导出快照" class="headerlink" title="还可以 jmap 手动导出快照"></a>还可以 jmap 手动导出快照</h3><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftlxl6lctoj31100rcgqd.jpg" alt=""></p>
+<p>使用说明：<a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jmap.html#CEGCECJB" target="_blank" rel="noopener">链接</a></p>
+<p>使用方式：<br>1，jps 查看 java 进程<br><code>jps -l</code><br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftlxn9h6nbj30rs04s0ti.jpg" alt=""></p>
+<p>2, jmap导出堆快照<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftlxptn6b9j30sa03e3yz.jpg" alt=""></p>
+<h2 id="堆内存导出之后使用-MAT-分析内存溢出"><a href="#堆内存导出之后使用-MAT-分析内存溢出" class="headerlink" title="堆内存导出之后使用 MAT 分析内存溢出"></a>堆内存导出之后使用 MAT 分析内存溢出</h2><p>MAT 打开之后是这样<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftlyk4nfx3j31kw0sf11f.jpg" alt=""></p>
+<p>MAT 分析结果<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftlynwu1qoj30oy0cq76m.jpg" alt=""></p>
+<p>这里可以看到最大对象的相关信息<br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftlytnxktvj30zr0n3dkv.jpg" alt=""></p>
+<p>界面功能介绍：<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftlz0ctbz8j30m30j27a5.jpg" alt=""></p>
+<h3 id="这里需要介绍一下-Shallow-Heap-和-Retained-Heap概念"><a href="#这里需要介绍一下-Shallow-Heap-和-Retained-Heap概念" class="headerlink" title="这里需要介绍一下 Shallow Heap 和 Retained Heap概念"></a>这里需要介绍一下 Shallow Heap 和 Retained Heap概念</h3><p>Shallow Heap 和 Retained Heap</p>
+<p>Shallow Heap表示对象本身占用内存的大小，不包含对其他对象的引用，也就是对象头加成员变量（不是成员变量的值）的总和。</p>
+<p>Retained Heap是该对象自己的Shallow Heap，并加上从该对象能直接或间接访问到对象的Shallow Heap之和。换句话说，Retained Heap是该对象GC之后所能回收到内存的总和。</p>
+<p>把内存中的对象看成下图中的节点，并且对象和对象之间互相引用。这里有一个特殊的节点GC Roots，这就是reference chain的起点。</p>
+<p><img src="https://www.javatang.com/wp-content/uploads/2017/11/retained_objects.png" alt=""></p>
+<p>从obj1入手，上图中蓝色节点代表仅仅只有通过obj1才能直接或间接访问的对象。因为可以通过GC Roots访问，所以左图的obj3不是蓝色节点；而在右图却是蓝色，因为它已经被包含在retained集合内。所以对于左图，obj1的retained size是obj1、obj2、obj4的shallow size总和；右图的retained size是obj1、obj2、obj3、obj4的shallow size总和。obj2的retained size可以通过相同的方式计算。</p>
+<h4 id="对象引用（Reference）"><a href="#对象引用（Reference）" class="headerlink" title="对象引用（Reference）"></a>对象引用（Reference）</h4><p>对象引用按从最强到最弱有如下级别，不同的引用（可到达性）级别反映了对象的生命周期：</p>
+<ol>
+<li>强引用（Strong Ref）：通常我们编写的代码都是强引用，于此相对应的是强可达性，只有去掉强可达性，对象才能被回收。</li>
+<li>软引用（Soft Ref）：对应软可达性，只要有足够的内存就一直保持对象，直到发现内存不足且没有强引用的时候才回收对象。</li>
+<li>弱引用（Weak Ref）：比软引用更弱，当发现不存在强引用的时候会立即回收此类型的对象，而不需要等到内存不足。通过java.lang.ref.WeakReference和java.util.WeakHashMap类实现。</li>
+<li>虚引用（Phantom Ref）：根本不会在内存中保持该类型的对象，只能使用虚引用本身，一般用于在进入finalize()方法后进行特殊的清理过程，通过java.lang.ref.PhantomReference实现。</li>
+</ol>
+<h3 id="GC-Roots和Reference-Chain"><a href="#GC-Roots和Reference-Chain" class="headerlink" title="GC Roots和Reference Chain"></a>GC Roots和Reference Chain</h3><p>JVM在进行GC的时候是通过使用可达性来判断对象是否存活，通过GC Roots（GC根节点）的对象作为起始点，从这些节点开始进行向下搜索，搜索所走过的路径成为Reference Chain（引用链），当一个对象到GC Roots没有任何引用链相连（用图论的话来说就是从GC Roots到这个对象不可达）时，则证明此对象是不可用的。</p>
+<p>如下图所示，对象object 5、object 6、object 7虽然互相有关联，它们的引用并不为0，但是它们到GC Roots是不可达的，因此它们将会被判定为是可回收的对象。<br><img src="https://www.javatang.com/wp-content/uploads/2017/11/gc-roots.jpg" alt=""></p>
+<h3 id="Histogram（直方图）视图"><a href="#Histogram（直方图）视图" class="headerlink" title="Histogram（直方图）视图"></a>Histogram（直方图）视图</h3><p>点击工具栏上的<img src="https://www.javatang.com/wp-content/uploads/2017/10/fe892b246b43fa64b866790a2f256859.png" alt="">图标可以打开Histogram（直方图）视图，可以列出每个类产生的实例数量，以及所占用的内存大小和百分比。主界面如下图所示：<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftlzb7iod1j30tj0mwn36.jpg" alt=""></p>
+<p>图中Shallow Heap 和 Retained Heap分别表示对象自身不包含引用的大小和对象自身并包含引用的大小，具体请参考下面 Shallow Heap 和 Retained Heap 部分的内容。默认的大小单位是 Bytes，可以在 Window - Preferences 菜单中设置单位。</p>
+<p>通过直方图视图可以很容易找到占用内存最多的几个类（通过Retained Heap排序），还可以通过其他方式进行分组（见下图）。<br><img src="https://www.javatang.com/wp-content/uploads/2017/11/332724b74c697a72e19c94cf4188bee2.png" alt=""><br>如果存在内存溢出，时间久了溢出类的实例数量或者内存占比会越来越多，排名也越来越靠前。可以点击工具类上的<img src="https://www.javatang.com/wp-content/uploads/2017/11/b0f463b6011fdfb7cc6c7b0826ac97e5.png" alt="">图标进行对比，通过多次对比不同时间点下的直方图对比就很容易把溢出的类找出来，这里是对比多个对快照。</p>
+<p>还有一种对比直方图的方式，首先通过 Window 菜单打开 Navigation History 视图，选中直方图右键并选中 Add to Compare Basket项目，将直方图添加到 Compare Basket 中。</p>
+<p><img src="https://www.javatang.com/wp-content/uploads/2017/11/548db33968616d6ce2ea2d87f8b8bb57.png" alt=""><br>然后在 Compare Basket 中点击右上角的  按钮，可以分别列出对比的所有结果，见下图：<br><img src="https://www.javatang.com/wp-content/uploads/2017/11/1e3ec66f66b72a05eec686a24c2c4df6.png" alt=""><br>并且在上面的可以设置不同的对比方式。<br><img src="https://www.javatang.com/wp-content/uploads/2017/11/cb8e6e3c8bc871bd0d65a952aa572b94.png" alt=""></p>
+<h3 id="Dominator-Tree视图"><a href="#Dominator-Tree视图" class="headerlink" title="Dominator Tree视图"></a>Dominator Tree视图</h3><p>点击工具栏上的<img src="https://www.javatang.com/wp-content/uploads/2017/10/5931b0544ead20fc50aba5efd828385e.png" alt="">图标可以打开Dominator Tree（支配树）视图，在此视图中列出了每个对象（Object Instance）与其引用关系的树状结构，同时包含了占用内存的大小和百分比。<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftlzl15q38j30tf0lm47m.jpg" alt=""><br>通过Dominator Tree视图可以很容易的找出占用内存最多的几个对象（根据Retained Heap或Percentage排序），和Histogram类似，可以通过不同的方式进行分组显示：<br><img src="https://www.javatang.com/wp-content/uploads/2017/11/2235da535545f94b3233c22f0eea1302.png" alt=""></p>
+<h3 id="重点：定位溢出源"><a href="#重点：定位溢出源" class="headerlink" title="重点：定位溢出源"></a>重点：定位溢出源</h3><p>Histogram视图和Dominator Tree视图的角度不同，前者是基于类的角度，后者是基于对象实例的角度，并且可以更方便的看出其引用关系。</p>
+<p>首先，在两个视图中找出疑似溢出的对象或者类（可以通过Retained Heap排序，并且可以在Class Name中输入正则表达式的关键词只显示指定的类名），然后右键选择Path To GC Roots（Histogram中没有此项）或Merge Shortest Paths to GC Roots，然后选择 exclude all phantom/weak/soft etc. reference：<br><img src="https://www.javatang.com/wp-content/uploads/2017/11/0a35317d8a0291b8c5c6672ff6d17d0e.png" alt=""><br>GC Roots意为GC根节点，其含义见上面的 GC Roots和Reference Chain 部分，后面的 exclude all phantom/weak/soft etc. reference 意思是排除虚引用、弱引用和软引用，即只剩下强引用，因为除了强引用之外，其他的引用都可以被JVM GC掉，如果一个对象始终无法被GC，就说明有强引用存在，从而导致在GC的过程中一直得不到回收，最终就内存溢出了。</p>
+<p>通过结果就可以很方便的定位到具体的代码，然后分析是什么原因无法释放该对象，比如被缓存了或者没有使用单例模式等等。</p>
+<p>下面是执行的结果：<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftlzp79sm7j30sp0kdgsc.jpg" alt=""><br>上图中保留了大量的user 引用，和我们手动制造的内存溢出对应</p>
+<h3 id="后续观察"><a href="#后续观察" class="headerlink" title="后续观察"></a>后续观察</h3><p>上面是一个非常简单的内存异常分析过程，生产环境情况会复杂很多。<br>生产环境根据上面分析的结果对问题进行处理之后，再对照之前的操作，看看对象是否还再持续增长，如果没有就说明这个地方的问题已经解决了。</p>
+<p>最后再用 jstat 持续跟踪一段时间，看看Old和Perm区的内存是否最终稳定在一个范围之内，如果长时间稳定在一个范围说明溢出问题得到了解决，否则还要继续进行分析和处理，一直到稳定为止。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/23/jvm概览/" rel="next" title="jvm概览">
+                <i class="fa fa-chevron-left"></i> jvm概览
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/25/jstack使用/" rel="prev" title="Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息">
+                Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://ws2.sinaimg.cn/large/006tKfTcgy1ft4z5dtoyqj30qn0qnjsb.jpg"
+                alt="Evan" />
+            
+              <p class="site-author-name" itemprop="name">Evan</p>
+              <p class="site-description motion-element" itemprop="description">记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#手动构建堆内存溢出："><span class="nav-number">1.</span> <span class="nav-text">手动构建堆内存溢出：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http-请求"><span class="nav-number">2.</span> <span class="nav-text">http 请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#还可以-jmap-手动导出快照"><span class="nav-number">3.</span> <span class="nav-text">还可以 jmap 手动导出快照</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#堆内存导出之后使用-MAT-分析内存溢出"><span class="nav-number"></span> <span class="nav-text">堆内存导出之后使用 MAT 分析内存溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#这里需要介绍一下-Shallow-Heap-和-Retained-Heap概念"><span class="nav-number">1.</span> <span class="nav-text">这里需要介绍一下 Shallow Heap 和 Retained Heap概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#对象引用（Reference）"><span class="nav-number">1.1.</span> <span class="nav-text">对象引用（Reference）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC-Roots和Reference-Chain"><span class="nav-number">2.</span> <span class="nav-text">GC Roots和Reference Chain</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Histogram（直方图）视图"><span class="nav-number">3.</span> <span class="nav-text">Histogram（直方图）视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dominator-Tree视图"><span class="nav-number">4.</span> <span class="nav-text">Dominator Tree视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重点：定位溢出源"><span class="nav-number">5.</span> <span class="nav-text">重点：定位溢出源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后续观察"><span class="nav-number">6.</span> <span class="nav-text">后续观察</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Evan</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("hhxOVlDXQ63y03ixWfnRLjw7-gzGzoHsz", "QyN5gx9XKuiE7LCLglTqWlHl");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
