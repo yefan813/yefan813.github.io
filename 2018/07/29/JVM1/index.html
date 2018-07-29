@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="JVM 内存结构," />
 
 
 
@@ -79,12 +79,13 @@
 
 
 
-<meta name="description" content="运行时数据区 程序计数器注：线程私有 虚拟机栈注：线程私有 堆 注：线程共享 方法区 注：线程共享，JDK8中是 Meta Space ，在 JDK8之前是 Perm Space 永久区 运行时常量池 本地方法栈 非堆区">
+<meta name="description" content="运行时数据区 程序计数器注：线程私有 虚拟机栈注：线程私有 堆 注：线程共享 方法区 注：线程共享，JDK8中是 Meta Space ，在 JDK8之前是 Perm Space 永久区 运行时常量池 本地方法栈 非堆区 参考文章：JVM架构和GC垃圾回收机制">
+<meta name="keywords" content="JVM 内存结构">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM内存结构">
+<meta property="og:title" content="JVM之内存结构">
 <meta property="og:url" content="http://yoursite.com/2018/07/29/JVM1/index.html">
 <meta property="og:site_name" content="Evan&#39;s  技术blog">
-<meta property="og:description" content="运行时数据区 程序计数器注：线程私有 虚拟机栈注：线程私有 堆 注：线程共享 方法区 注：线程共享，JDK8中是 Meta Space ，在 JDK8之前是 Perm Space 永久区 运行时常量池 本地方法栈 非堆区">
+<meta property="og:description" content="运行时数据区 程序计数器注：线程私有 虚拟机栈注：线程私有 堆 注：线程共享 方法区 注：线程共享，JDK8中是 Meta Space ，在 JDK8之前是 Perm Space 永久区 运行时常量池 本地方法栈 非堆区 参考文章：JVM架构和GC垃圾回收机制">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1ftqvmlyu0uj30tu0l3tfs.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1ftqv5mutquj30qy0e9q6b.jpg">
@@ -95,10 +96,10 @@
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvin3ygbj30xv07ejwv.jpg">
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvkjcrq6j30x806mgpu.jpg">
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvpdj5i8j30xe0eagpu.jpg">
-<meta property="og:updated_time" content="2018-07-29T09:52:44.965Z">
+<meta property="og:updated_time" content="2018-07-29T10:17:13.505Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM内存结构">
-<meta name="twitter:description" content="运行时数据区 程序计数器注：线程私有 虚拟机栈注：线程私有 堆 注：线程共享 方法区 注：线程共享，JDK8中是 Meta Space ，在 JDK8之前是 Perm Space 永久区 运行时常量池 本地方法栈 非堆区">
+<meta name="twitter:title" content="JVM之内存结构">
+<meta name="twitter:description" content="运行时数据区 程序计数器注：线程私有 虚拟机栈注：线程私有 堆 注：线程共享 方法区 注：线程共享，JDK8中是 Meta Space ，在 JDK8之前是 Perm Space 永久区 运行时常量池 本地方法栈 非堆区 参考文章：JVM架构和GC垃圾回收机制">
 <meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1ftqvmlyu0uj30tu0l3tfs.jpg">
 
 
@@ -135,7 +136,7 @@
 
 
 
-  <title>JVM内存结构 | Evan's  技术blog</title>
+  <title>JVM之内存结构 | Evan's  技术blog</title>
   
 
 
@@ -309,7 +310,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">JVM内存结构</h1>
+          <h1 class="post-title" itemprop="name headline">JVM之内存结构</h1>
         
 
         <div class="post-meta">
@@ -339,7 +340,7 @@
 
           
           
-             <span id="/2018/07/29/JVM1/" class="leancloud_visitors" data-flag-title="JVM内存结构">
+             <span id="/2018/07/29/JVM1/" class="leancloud_visitors" data-flag-title="JVM之内存结构">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -381,6 +382,7 @@
 <h4 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h4><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvin3ygbj30xv07ejwv.jpg" alt=""></p>
 <h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvkjcrq6j30x806mgpu.jpg" alt=""></p>
 <h3 id="非堆区"><a href="#非堆区" class="headerlink" title="非堆区"></a>非堆区</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvpdj5i8j30xe0eagpu.jpg" alt=""></p>
+<p>参考文章：<br><a href="https://blog.csdn.net/aijiudu/article/details/72991993" target="_blank" rel="noopener">JVM架构和GC垃圾回收机制</a></p>
 
       
     </div>
@@ -395,6 +397,12 @@
     
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM-内存结构/" rel="tag"># JVM 内存结构</a>
+          
+        </div>
       
 
       
@@ -414,6 +422,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/29/JVM2/" rel="prev" title="JVM之垃圾回收算法">
+                JVM之垃圾回收算法 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -494,7 +506,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -507,7 +519,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
