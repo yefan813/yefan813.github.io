@@ -282,6 +282,195 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/31/filer-interceptor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1ft4z5dtoyqj30qn0qnjsb.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Evan's  技术blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/31/filer-interceptor/" itemprop="url">Filter 和 Interceptor 比较</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-31T10:55:42+08:00">
+                2018-07-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/31/filer-interceptor/" class="leancloud_visitors" data-flag-title="Filter 和 Interceptor 比较">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ol>
+<li>过滤器（Filter）</li>
+<li>拦截器（Interceptor</li>
+</ol>
+<h1 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h1><ul>
+<li><p>Filter是servlet规范中定义的java web组件, 在所有支持java web的容器中都可以使用</p>
+</li>
+<li><p>Filter和Filter Chain是密不可分的, Filter可以实现依次调用正是因为有了Filter Chain</p>
+</li>
+</ul>
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1ftsv1u5fihj30hh089abw.jpg" alt=""></p>
+<p>上图是Filter对请求进行拦截的原理图, 那么java web容器(以tomcat为例子)是如何实现这个功能的呢?</p>
+<p>下面看下Filter和Filter Chain的源码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// Filter</span><br><span class="line">     public interface Filter &#123;</span><br><span class="line"></span><br><span class="line">         // 容器创建的时候调用, 即启动tomcat的时候调用</span><br><span class="line">         public void init(FilterConfig filterConfig) throws ServletException;</span><br><span class="line"></span><br><span class="line">         // 由FilterChain调用, 并且传入Filter Chain本身</span><br><span class="line">         public void doFilter(ServletRequest request, ServletResponse response,</span><br><span class="line">                 FilterChain chain) throws IOException, ServletException;</span><br><span class="line"></span><br><span class="line">         // 容器销毁的时候调用, 即关闭tomcat的时候调用</span><br><span class="line">         public void destroy();</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     // FilterChain</span><br><span class="line">     public interface FilterChain &#123;</span><br><span class="line"></span><br><span class="line">         // 由Filter.doFilter()中的chain.doFilter调用</span><br><span class="line">         public void doFilter(ServletRequest request, ServletResponse response)</span><br><span class="line">             throws IOException, ServletException;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>正是因为Filter Chain在调用每一个Filter.doFilter()时将自身引用传递进去, 才实现了Filter的依次调用, 在Filter全部调用完之后再调用真正处理请求的servlet, 并且再次逆序回调Filter. 可能这么看还是不太明白是怎么实现Filter的顺序调用, 调用真正的servlet, 逆序调用Filter的, 一起看下Tomcat的源码就一目了然了.</p>
+</li>
+<li><p>在tomcat中Filter Chain的默认实现是ApplicationFilterChain, 在ApplicationFilterChain中最关键的方法就是internalDoFilter, 整个Filter流程的实现就是由这个方法完成.</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">// internalDoFilter(只保留关键代码)</span><br><span class="line">     private void internalDoFilter(ServletRequest request, ServletResponse response)</span><br><span class="line">         throws IOException, ServletException &#123;</span><br><span class="line"></span><br><span class="line">         // Call the next filter if there is one</span><br><span class="line">         // pos: 当前的filter的索引, n: 调用链中所有的Filter的数量</span><br><span class="line">         // 如果调用链中还有没有调用的Filter就继续调用, 否则跳过if语句</span><br><span class="line">         if (pos &lt; n) &#123;</span><br><span class="line">             ApplicationFilterConfig filterConfig = filters[pos++];</span><br><span class="line">             try &#123;</span><br><span class="line">                 // 获取Filter</span><br><span class="line">                 Filter filter = filterConfig.getFilter();</span><br><span class="line">                 if( Globals.IS_SECURITY_ENABLED ) &#123;</span><br><span class="line">                     ...</span><br><span class="line">                     其他代码</span><br><span class="line">                     ...    </span><br><span class="line">                 &#125; else &#123;</span><br><span class="line">                     // 这句话是重点, 调用Filter的doFilter方法并把Filter Chain本身传进去(this)</span><br><span class="line">                     filter.doFilter(request, response, this);</span><br><span class="line">                 &#125;</span><br><span class="line">             &#125; catch (IOException | ServletException | RuntimeException e) &#123;</span><br><span class="line">                 ...</span><br><span class="line">                 异常处理代码</span><br><span class="line">                 ...    </span><br><span class="line">             &#125;</span><br><span class="line">             return;</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         // We fell off the end of the chain -- call the servlet instance</span><br><span class="line">         try &#123;</span><br><span class="line">             ...</span><br><span class="line">             其他代码</span><br><span class="line">             ...</span><br><span class="line">             // Use potentially wrapped request from this point</span><br><span class="line">             if ((request instanceof HttpServletRequest) &amp;&amp;</span><br><span class="line">                     (response instanceof HttpServletResponse) &amp;&amp;</span><br><span class="line">                     Globals.IS_SECURITY_ENABLED ) &#123;</span><br><span class="line">                 ...</span><br><span class="line">                 其他代码</span><br><span class="line">                 ...</span><br><span class="line">             &#125; else &#123;</span><br><span class="line">                        // 调用真正的Filter</span><br><span class="line">                 servlet.service(request, response);</span><br><span class="line">             &#125;</span><br><span class="line">         &#125; catch (IOException | ServletException | RuntimeException e) &#123;</span><br><span class="line">             ...</span><br><span class="line">             异常处理代码</span><br><span class="line">             ...</span><br><span class="line">         &#125; finally &#123;</span><br><span class="line">             ...</span><br><span class="line">             始终要执行的代码</span><br><span class="line">             ...</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Filter的正序调用的过程和调用真正的servlet的过程了, 但是Filter的逆序调用在哪里体现了呢?</p>
+</blockquote>
+<ul>
+<li>假设下面的Filter就是调用链中的最后一个Filter</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class LogFilter implements Filter &#123;</span><br><span class="line">        public void doFilter(ServletRequest request, ServletResponse response,</span><br><span class="line">            FilterChain chain) throws IOException, ServletException &#123;</span><br><span class="line"></span><br><span class="line">        Log.info(&quot;before&quot;);</span><br><span class="line">             chain.doFilter(request, response);       </span><br><span class="line">            Log.info(&quot;after&quot;);</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么在调用chain.doFilter之后就跳过了if语句从而调用了真正的servlet, 然后internalDoFilter方法就结束(出栈)了, 紧接着就是调用Log.info(“after”)了, 然后LogFilter的doFilter就结束了(也出栈了), 紧接着就是internalDoFilter中filter.doFilter(request, response, this)的结束然后return, 然后就是调用上一个filter的chain.doFilter()之后的代码, 以此类推.</p>
+<p>因此Filter调用链的实现其实就是一个方法调用链的过程. 刚开始, Filter Chain每调用一个Filter.doFilter()方法就是向方法调用栈中进行压栈操作(代码上的体现就是执行Filter.doFilter之前的代码), 当Filter全部调用完成之后就调用真正处理请求的servlet, 然后由方法调用链自动进行出栈操作(代码上的体现就是执行Filter.doFilter之后的代码), 从而完成整个Filter的调用链. 因为Filter功能实现实际上就是利用了方法的压栈出栈, 所以可以在调用chain.doFilter之前将方法返回, 让容器不在调用servlet方法, 从而实现权限的控制, 关键词的过滤等功能.</p>
+<h1 id="Interceptor"><a href="#Interceptor" class="headerlink" title="Interceptor"></a>Interceptor</h1><ul>
+<li>Interceptor不是servlet规范中的java web组件, 而是Spring提供的组件, 功能上和Filter差不多. 但是实现上和Filter不一样.</li>
+</ul>
+<p>Interceptor功能的实现主要是在Spring Mvc的DispatcherServelt.doDispatch方法中, 让我们来看看源码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">// Interceptor的源码</span><br><span class="line">public interface HandlerInterceptor &#123;</span><br><span class="line"></span><br><span class="line">    // 在调用真正的处理请求类之前调用</span><br><span class="line">    boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)</span><br><span class="line">            throws Exception;</span><br><span class="line"></span><br><span class="line">    // 在调用真正的处理请求类之后调用</span><br><span class="line">    void postHandle(</span><br><span class="line">            HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)</span><br><span class="line">            throws Exception;</span><br><span class="line"></span><br><span class="line"> // 在完成渲染或者出错之后调用</span><br><span class="line">    void afterCompletion(</span><br><span class="line">            HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)</span><br><span class="line">            throws Exception;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>doDispatch</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"> doDispatch源码(只保留关键代码)</span><br><span class="line"></span><br><span class="line">protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            ModelAndView mv = null;</span><br><span class="line">            Exception dispatchException = null;</span><br><span class="line"></span><br><span class="line">            try &#123;</span><br><span class="line">                ....</span><br><span class="line">                其它的处理代码</span><br><span class="line">                ....</span><br><span class="line"></span><br><span class="line">                // 调用拦截器的前置处理方法</span><br><span class="line">                if (!mappedHandler.applyPreHandle(processedRequest, response)) &#123;</span><br><span class="line">                    return;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                // Actually invoke the handler.</span><br><span class="line">                // 调用真正的处理请求的方法</span><br><span class="line">                mv = ha.handle(processedRequest, response, mappedHandler.getHandler());</span><br><span class="line"></span><br><span class="line">                // 找到渲染模版</span><br><span class="line">                applyDefaultViewName(processedRequest, mv);</span><br><span class="line"></span><br><span class="line">                // 调用拦截器的后置处理方法</span><br><span class="line">                mappedHandler.applyPostHandle(processedRequest, response, mv);</span><br><span class="line">            &#125;</span><br><span class="line">            catch (Exception ex) &#123;</span><br><span class="line">                ....</span><br><span class="line">                异常处理代码</span><br><span class="line">                ....</span><br><span class="line">        &#125;</span><br><span class="line">        finally &#123;</span><br><span class="line">            ....</span><br><span class="line">            始终要执行的代码</span><br><span class="line">            ....</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>其实看了doDispatch的关键代码, Spring Mvc对整个请求的处理流程已经很清楚了:</p>
+<blockquote>
+<p>调用拦截器的前置方法 -&gt; 调用处理请求的方法 -&gt; 渲染模版 -&gt; 调用拦截器的后置处理方法 -&gt; 调用拦截器的完成方法</p>
+</blockquote>
+<p>接下来看一看Spring Mvc是如何实现依次调用这么多拦截器的前置方法, 后置方法, 完成方法的。</p>
+<p>进入到mapperHandler.applyPreHandle()方法中(调用拦截器的前置方法)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception &#123;</span><br><span class="line">        HandlerInterceptor[] interceptors = getInterceptors();</span><br><span class="line">        // 如果拦截器数组不为空</span><br><span class="line">        if (!ObjectUtils.isEmpty(interceptors)) &#123;</span><br><span class="line">           // 按顺序调用拦截器数组中的preHandle方法</span><br><span class="line">            for (int i = 0; i &lt; interceptors.length; i++) &#123;</span><br><span class="line">                HandlerInterceptor interceptor = interceptors[i];</span><br><span class="line">                // 如果拦截器的preHandle方法返回false, 则调用当前拦截器的triggerAfterCompletion方法, 然后返回, 并且不再调用后续的拦截器</span><br><span class="line">                if (!interceptor.preHandle(request, response, this.handler)) &#123;</span><br><span class="line">                    triggerAfterCompletion(request, response, null);</span><br><span class="line">                    return false;</span><br><span class="line">                &#125;</span><br><span class="line">                this.interceptorIndex = i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>进入到mappedHandler.applyPostHandle()方法中(调用拦截器的后置方法)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">void applyPostHandle(HttpServletRequest request, HttpServletResponse response, ModelAndView mv) throws Exception &#123;</span><br><span class="line">        HandlerInterceptor[] interceptors = getInterceptors();</span><br><span class="line">        // 如果拦截器数组不为空</span><br><span class="line">        if (!ObjectUtils.isEmpty(interceptors)) &#123;</span><br><span class="line">            // 倒序调用拦截器数组中拦截器的postHandle方法</span><br><span class="line">            for (int i = interceptors.length - 1; i &gt;= 0; i--) &#123;</span><br><span class="line">                HandlerInterceptor interceptor = interceptors[i];</span><br><span class="line">                interceptor.postHandle(request, response, this.handler, mv);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>不管是否出异常triggerAfterCompletion方法始终会被调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">void triggerAfterCompletion(HttpServletRequest request, HttpServletResponse response, Exception ex)</span><br><span class="line">            throws Exception &#123;</span><br><span class="line"></span><br><span class="line">        HandlerInterceptor[] interceptors = getInterceptors();</span><br><span class="line">        // 拦截器数组不为空</span><br><span class="line">        if (!ObjectUtils.isEmpty(interceptors)) &#123;</span><br><span class="line">           // 从成功执行的最后一个拦截器开始“逆序”调用afterCompletion方法</span><br><span class="line">            for (int i = this.interceptorIndex; i &gt;= 0; i--) &#123;</span><br><span class="line">                HandlerInterceptor interceptor = interceptors[i];</span><br><span class="line">                try &#123;</span><br><span class="line">                    interceptor.afterCompletion(request, response, this.handler, ex);</span><br><span class="line">                &#125;</span><br><span class="line">                catch (Throwable ex2) &#123;</span><br><span class="line">                    logger.error(&quot;HandlerInterceptor.afterCompletion threw exception&quot;, ex2);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>注：triggerAfterCompletion会逆序调用afterCompletion方法</strong></p>
+<p>看过以上三个方法之后, Spring Mvc如何处理拦截器的前置, 后置, 完成方法就一目了然了. 其实Spring Mvc就是将拦截器统一放到了拦截器数组中, 然后在调用真正的处理请求方法之前和之后正序或者倒序遍历拦截器, 同时调用拦截器的相应的方法. 最后不管是否正常结束这个流程还是出异常都会从成功的最后一个拦截器开始逆序调用afterCompletion方法</p>
+<p>Filter 和 Inteceptor 调用流程<br><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1ftsuzrys62j30mc0ct105.jpg" alt=""></p>
+<h1 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h1><ol>
+<li>从以上分析可以看到过滤器和拦截器实现的方式的不同. Filter是利用了方法的调用(入栈出栈)完成整个流程, 而Interceptor是利用了for循环完成了整个流程.</li>
+<li>Filter的实现比较占用栈空间, 在Filter多的情况下可能会有栈溢出的风险存在.</li>
+<li>Interceptor的实现逻辑更加的清晰简单</li>
+<li>Filter组件更加的通用, 只要支持java servlet的容器都可以使用, 而Interceptor必须依赖于Spring</li>
+<li>Filter的优先级是高于Interceptor, 即请求是先到Filter再到Interceptor的, 因为Interceptor的实现主体还是一个servlet</li>
+<li>Filter 不能使用 spring</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/29/JVM4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1765,167 +1954,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/25/jstack使用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Evan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1ft4z5dtoyqj30qn0qnjsb.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Evan's  技术blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/25/jstack使用/" itemprop="url">Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-25T16:36:19+08:00">
-                2018-07-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/07/25/jstack使用/" class="leancloud_visitors" data-flag-title="Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>转载自<a href="https://www.javatang.com/archives/2017/10/19/33151873.html" target="_blank" rel="noopener">这里</a></p>
-<p>上线的系统升级之后，出现了严重的高CPU的问题</p>
-<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>在对Java内存泄漏进行分析的时候，需要对jvm运行期间的内存占用、线程执行等情况进行记录的dump文件，常用的主要有thread dump和heap dump。</p>
-<blockquote>
-<ul>
-<li>thread dump 主要记录JVM在某一时刻各个线程执行的情况，以栈的形式显示，是一个文本文件。通过对thread dump文件可以分析出程序的问题出现在什么地方，从而定位具体的代码然后进行修正。thread dump需要结合占用系统资源的线程id进行分析才有意义。</li>
-<li>heap dump 主要记录了在某一时刻JVM堆中对象使用的情况，即某个时刻JVM堆的快照，是一个二进制文件，主要用于分析哪些对象占用了太对的堆空间，从而发现导致内存泄漏的对象。</li>
-</ul>
-</blockquote>
-<p>上面两种dump文件都具有实时性，因此需要在服务器出现问题的时候生成，并且多生成几个文件，方便进行对比分析。下面我们先来说一下如何生成 thread dump。</p>
-<h2 id="使用jstack生成thread-dump"><a href="#使用jstack生成thread-dump" class="headerlink" title="使用jstack生成thread dump"></a>使用<a href="http://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstack.html" target="_blank" rel="noopener">jstack</a>生成thread dump</h2><p>当服务器出现高CPU的时候，首先执行 top -c 命令动态显示进程及占用资源的排行，如下图：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/top-result.png" alt=""><br>top后面的参数-c可以显示进程详细的信息。top命令执行的时候还可以执行一些快捷键：</p>
-<blockquote>
-<ul>
-<li>1 对于多核服务器，可以显示各个CPU占用资源的情况</li>
-<li>shift+h 显示所有的线程信息</li>
-<li>shift+w 将当前 top 命令的设置保存到 ~/.toprc 文件中，这样不用每次都执行快捷键了</li>
-</ul>
-</blockquote>
-<p>以上图为例，pid为1503的进程占用了大量的CPU资源，接下来需要将占用CPU最高进程中的”线程”打印出来，可以用 top -bn1 -H -p <pid> 命令，执行结果如下：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/top-threads.png" alt=""></pid></p>
-<p>上面 -bn1 参数的含义是只输出一次结果，而不是显示一个动态的结果。</p>
-<p>我个人请喜欢用 ps -mp <pid> -o THREAD,tid,time | sort -k2r 命令查看，后面的sort参数根据线程占用的cpu比例进行排序，结果如下：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/ps-mp-threads.png" alt=""><br>接下来我们清楚今天的主角 jstack，这是一个在JDK5开始提供的内置工具，可以打印指定进程中线程运行的状态，包括线程数量、是否存在死锁、资源竞争情况和线程的状态等等。有下面的几个常用的参数：</pid></p>
-<ul>
-<li>-l 长列表，打印关于锁的附加信息</li>
-<li>-m 打印java和jni框架的所有栈信息</li>
-</ul>
-<p>因为thread id在栈信息中是以十六进制的形式显示的，因此需要使用 printf “%x \n” “tid” 命令将现场id转成十六进制的值，然后执行 jstack -l “pid” | grep “thread-hex-id” -A 10 命令显示出错的堆栈信息，如下图<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/jstack-thread-id-result.png" alt=""></p>
-<p>上面命令中 -A 10 参数用来指定显示行数，否则只会显示一行信息。</p>
-<p>这样通过上图，可以很快地定位到程序问题的代码，然后对代码进行分析和改进即可。<strong>注意：需要在多个时间段提出多个 Thread Dump信息，然后综合进行对比分析，单独分析一个文件是没有意义的。</strong></p>
-<p>上面讲述了整个的分析过程，不过所有的命令就是实时的，所以最好创建一个shell脚本瞬间执行完成，下面对 <a href="https://www.jianshu.com/p/90579ec3113f" target="_blank" rel="noopener">当CPU飙高时，它在做什么</a> 这篇文章中所提供的shell进行了改进如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">if [ $# -ne 1 ]; then</span><br><span class="line">    echo &quot;usage: $0 &lt;pid&gt; [line-number]&quot;</span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># java home</span><br><span class="line">if test -z $JAVA_HOME </span><br><span class="line">then</span><br><span class="line">    JAVA_HOME=&apos;/usr/local/jdk&apos;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">#pid</span><br><span class="line">pid=$1</span><br><span class="line"># checking pid</span><br><span class="line">if test -z &quot;$($JAVA_HOME/bin/jps -l | cut -d &apos;&apos; -f 1 | grep $pid)&quot;</span><br><span class="line">then</span><br><span class="line">    echo &quot;process of $pid is not exists&quot;</span><br><span class="line">    exit</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">#line number</span><br><span class="line">if test -z $linenum</span><br><span class="line">then</span><br><span class="line">    linenum=10</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">stackfile=stack$pid.dump</span><br><span class="line">threadsfile=threads$pid.dump</span><br><span class="line"></span><br><span class="line"># generate java stack</span><br><span class="line">$JAVA_HOME/bin/jstack -l $pid &gt;&gt; $stackfile</span><br><span class="line">ps -mp $pid -o THREAD,tid,time | sort -k2r | awk &apos;&#123;if ($1 !=&quot;USER&quot; &amp;&amp; $2 != &quot;0.0&quot; &amp;&amp; $8 !=&quot;-&quot;) print $8;&#125;&apos; | xargs printf &quot;%x\n&quot; &gt;&gt; $threadsfile</span><br><span class="line">tids=&quot;$(cat $threadsfile)&quot;</span><br><span class="line">for tid in $tids</span><br><span class="line">do</span><br><span class="line">    echo &quot;------------------------------ ThreadId ($tid) ------------------------------&quot;</span><br><span class="line">    cat $stackfile | grep 0x$tid -A $linenum</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">rm -f $stackfile $threadsfile</span><br></pre></td></tr></table></figure>
-<h4 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h4><p><a href="http://www.cnblogs.com/toSeeMyDream/p/7151635.html" target="_blank" rel="noopener">java程序性能分析之thread dump和heap dump</a><br><a href="http://www.cnblogs.com/chengJAVA/p/5821218.html" target="_blank" rel="noopener">JVM调优之jstack找出最耗cpu的线程并定位代码</a><br><a href="https://www.jianshu.com/p/90579ec3113f" target="_blank" rel="noopener">当CPU飙高时，它在做什么</a><br><a href="http://www.blogjava.net/ldwblog/archive/2016/12/22/432166.html" target="_blank" rel="noopener">JAVA应用CPU占用100%|内存泄漏分析总结</a><br><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstack.html" target="_blank" rel="noopener">官网</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1980,7 +2008,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1993,7 +2021,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
