@@ -415,6 +415,7 @@
 <p><strong>注：triggerAfterCompletion会逆序调用afterCompletion方法</strong></p>
 <p>看过以上三个方法之后, Spring Mvc如何处理拦截器的前置, 后置, 完成方法就一目了然了. 其实Spring Mvc就是将拦截器统一放到了拦截器数组中, 然后在调用真正的处理请求方法之前和之后正序或者倒序遍历拦截器, 同时调用拦截器的相应的方法. 最后不管是否正常结束这个流程还是出异常都会从成功的最后一个拦截器开始逆序调用afterCompletion方法</p>
 <p>Filter 和 Inteceptor 调用流程<br><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1ftsuzrys62j30mc0ct105.jpg" alt=""></p>
+<p><img src="http://s2.51cto.com/wyfs02/M02/8B/3D/wKiom1hHhbmxseDtAACidU9Y84s787.png" alt=""></p>
 <h1 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h1><ol>
 <li>从以上分析可以看到过滤器和拦截器实现的方式的不同. Filter是利用了方法的调用(入栈出栈)完成整个流程, 而Interceptor是利用了for循环完成了整个流程.</li>
 <li>Filter的实现比较占用栈空间, 在Filter多的情况下可能会有栈溢出的风险存在.</li>
