@@ -83,7 +83,7 @@
 <meta name="keywords" content="JVM 内存泄露">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java内存泄漏分析系列之五：常见的Thread Dump日志案例分析">
-<meta property="og:url" content="http://yoursite.com/2018/07/26/jvm内存分析5/index.html">
+<meta property="og:url" content="https://yefan813.github.io/2018/07/26/jvm内存分析5/index.html">
 <meta property="og:site_name" content="奋斗不息">
 <meta property="og:description" content="转载自：传送门 症状及解决方案下面列出几种常见的症状即对应的解决方案： CPU占用率很高，响应很慢按照《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。在同一时间多次使用上述的方法，然后进行对比分析，从代码中找到问题所在的原因。如果线程指向的是”VM Thread”或者无法从代码中直接找到原因，">
 <meta property="og:locale" content="zh-Hans">
@@ -122,7 +122,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/26/jvm内存分析5/"/>
+  <link rel="canonical" href="https://yefan813.github.io/2018/07/26/jvm内存分析5/"/>
 
 
 
@@ -255,7 +255,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/26/jvm内存分析5/">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2018/07/26/jvm内存分析5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Evan">
@@ -335,10 +335,10 @@
       
         <p>转载自：<a href="https://www.javatang.com/archives/2017/10/26/08572060.html" target="_blank" rel="noopener">传送门</a></p>
 <h2 id="症状及解决方案"><a href="#症状及解决方案" class="headerlink" title="症状及解决方案"></a>症状及解决方案</h2><p>下面列出几种常见的症状即对应的解决方案：</p>
-<h3 id="CPU占用率很高，响应很慢"><a href="#CPU占用率很高，响应很慢" class="headerlink" title="CPU占用率很高，响应很慢"></a>CPU占用率很高，响应很慢</h3><p>按照<a href="https://yefan813.github.io/2018/07/25/jstack%E4%BD%BF%E7%94%A8/" target="_blank" rel="noopener">《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》</a>中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。<br>在同一时间多次使用上述的方法，然后进行对比分析，从代码中找到问题所在的原因。如果线程指向的是”VM Thread”或者无法从代码中直接找到原因，就需要进行内存分析，具体的见下一篇文章。</p>
+<h3 id="CPU占用率很高，响应很慢"><a href="#CPU占用率很高，响应很慢" class="headerlink" title="CPU占用率很高，响应很慢"></a>CPU占用率很高，响应很慢</h3><p>按照<a href="https://yefan813.github.io/2018/07/25/jstack%E4%BD%BF%E7%94%A8/">《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》</a>中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。<br>在同一时间多次使用上述的方法，然后进行对比分析，从代码中找到问题所在的原因。如果线程指向的是”VM Thread”或者无法从代码中直接找到原因，就需要进行内存分析，具体的见下一篇文章。</p>
 <a id="more"></a>
 <h3 id="CPU占用率不高，但响应很慢"><a href="#CPU占用率不高，但响应很慢" class="headerlink" title="CPU占用率不高，但响应很慢"></a>CPU占用率不高，但响应很慢</h3><p>在整个请求的过程中多次执行Thread Dump然后进行对比，取得<strong>BLOCKED</strong> 状态的线程列表，通常是因为线程停在了I/O、数据库连接或网络连接的地方。</p>
-<h3 id="关注点概况"><a href="#关注点概况" class="headerlink" title="关注点概况"></a>关注点概况</h3><p>在Thread Dump文件中，线程的状态分成两种：<strong>Native Thread Status（系统线程状态）</strong>和<strong>JVM Thread Status（JVM 线程状态）</strong>，具体的含义可以参考<a href="https://yefan813.github.io/2018/07/26/jstack3/" target="_blank" rel="noopener">上一篇文章</a>。在分析日志的时候需要重点关注如下几种线程状态：</p>
+<h3 id="关注点概况"><a href="#关注点概况" class="headerlink" title="关注点概况"></a>关注点概况</h3><p>在Thread Dump文件中，线程的状态分成两种：<strong>Native Thread Status（系统线程状态）</strong>和<strong>JVM Thread Status（JVM 线程状态）</strong>，具体的含义可以参考<a href="https://yefan813.github.io/2018/07/26/jstack3/">上一篇文章</a>。在分析日志的时候需要重点关注如下几种线程状态：</p>
 <h3 id="系统线程状态为-deadlock"><a href="#系统线程状态为-deadlock" class="headerlink" title="系统线程状态为 deadlock"></a>系统线程状态为 deadlock</h3><p>线程处于死锁状态，将占用系统大量资源。</p>
 <h3 id="系统线程状态为-waiting-for-monitor-entry-或-in-Object-wait"><a href="#系统线程状态为-waiting-for-monitor-entry-或-in-Object-wait" class="headerlink" title="系统线程状态为 waiting for monitor entry 或 in Object.wait()"></a>系统线程状态为 waiting for monitor entry 或 in Object.wait()</h3><p>如上一篇文章中所说，系统线程处于这种状态说明它在等待进入一个临界区，此时JVM线程的状态通常都是 <strong>java.lang.Thread.State: BLOCKED。</strong></p>
 <p>如果大量线程处于这种状态的话，可能是一个全局锁阻塞了大量线程。如果短期内多次打印Thread Dump信息，发现<strong>waiting for monitor entry</strong>状态的线程越来越多，没有减少的趋势，可能意味着某些线程在临界区里呆得时间太长了，以至于越来越多新线程迟迟无法进入。</p>
