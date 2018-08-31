@@ -339,7 +339,12 @@
 基本概念在对Java内存泄漏进行分析的时候，需要对jvm运行期间的内存占用、线程执行等情况进行记录的dump文件，常用的主要有thread dump和heap dump。
 
 
-thread dump 主要记录JVM在某一时刻各个线程执行的情
+thread dump 主要记录JVM在某一时刻各个线程执行的情况，以栈的形式显示，是一个文本文件。通过对thread dump文件可以分析出程序的问题出现在什么地方，从而定位具体的代码然后进行修正。thread dump需要结合占用系统资源的线程id进行分析才有意义。
+heap dump 主要记录了在某一时刻JVM堆中对象使用的情况，即某个时刻JVM堆的快照，是一个二进制文件，主要用于分析哪些对象占用了太对的堆空间，从而发现导致内存泄漏的对象。
+
+
+上面两种dump文件都具有实时性，因此需要在服务器出现问题的时候生成，并且多生成几个文件，方便进行对比分析。下面我们先来说一下如何生成 thread dump。
+使用jstack生成thread dump当服务器出现高CPU的时候，首先执行 top -c 命令动态显示进程及占用资源的排行，如下图：top后面
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -478,7 +483,7 @@ thread dump 主要记录JVM在某一时刻各个线程执行的情
           
           转载自：传送门
 手动构建堆内存溢出：使用 asm 构造 class，后面模拟非堆内存溢出
-123456789101112131415161718192021222324252627282930313233343536/* * https://blog.csdn.net/bolg_hero/artic
+123456789101112131415161718192021222324252627282930313233343536/* * https://blog.csdn.net/bolg_hero/article/details/78189621 * 继承ClassLoader是为了方便调用defineClass方法，因为该方法的定义为protected * */public class Metaspace extends ClassLoader &#123;	    public static List&lt;Class&lt;?&gt;&gt; createClasses() &#123;        // 类持有        List&lt;Class&lt;?&gt;&gt; classes = new ArrayList&lt;Class&lt;?&gt;&gt;();        // 循环1000w次生成1000w个不同的类。        for (int i = 0; i
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -626,7 +631,30 @@ XX 参数
 -client
 -version :输出产品版本并退出
 -showversion :输出产品版本并继续
--cp :&l
+-cp :&lt;目录和 zip/jar 文件的类搜索路径&gt;
+-classpath:&lt;目录和 zip/jar 文件的类搜索路径&gt;用 : 分隔的目录, JAR 档案和 ZIP 档案列表, 用于搜索类文件。
+
+非标准参数: -X例如：
+XX参数分类
+Boolean类型
+
+
+
+非 Boolean 类型
+
+-Xmx -Xms
+
+
+查看 JVM 运行时参数
+-XX:+PrintFlagsInitial 打印初始值
+
+1#java  -XX:+PrintFlagsInitial -version ##显示当前命令进程的参数信息
+
+-XX:+PrintFlagsFinal 打印最终值
+
+1#java  -XX:+PrintFlagsFinal -version ##显示当前命令进程的参数信息
+
+-XX
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -771,7 +799,12 @@ XX 参数
 虚引用(Phantom Reference)
 
 这四个引用定义在java.lang.ref的包下
-强引用（ Final Reference ）
+强引用（ Final Reference ） 就是指在程序代码中普遍存在的，类似Object obj = new Object()这类的引用，只要强引用还存在，垃圾收集器永远不会回收掉被引用的对象。  强引用具备以下三个个特点：
+
+1.强引用可以直接访问目标对象；2.强引用锁指向的对象在任何时候都不会被系统回收。JVM宁愿抛出OOM异常也不回收强引用所指向的对象；3.强应用可能导致内存泄露；
+
+整个FinalReference类的定义如下
+1234567package java.lang.ref;/* Final references, used to implement finalization */class FinalReference&lt;T&gt; extends Reference&lt;T&gt; &#123;    
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -914,7 +947,7 @@ XX 参数
 远程 image 例如：
 
 本地 dockFile 例如：
-详细说明：示例11234567891011121314151617181920212223242526272829version: '3'services:  wordpress:     ##container 名称    imag
+详细说明：示例11234567891011121314151617181920212223242526272829version: '3'services:  wordpress:     ##container 名称    image: wordpress  ##image名称 远程的    ports:  ##端口映射      - 8080:80    environment:  ##环境变量      WORDPRESS_DB_HOST: mysql      WORDPRESS_DB_PASSWORD: root    networks:   ##指定网络      - my-bridge  ## 对应最下面的networks  mysql:    image: mysql    environment:      MYSQL_ROOT_PASSWORD: root      MYSQL_DATABASE: wordpress    volumes:  ##制定挂在目录      - mysql-data:/v
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1055,8 +1088,11 @@ XX 参数
 docker volume
 
 
-123sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql#创
-          ...
+123sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql#创建一个 mysql container 别名mysql ，挂载到宿主机的/var/lib/mysql下
+docker bind mouting1docker run -v /home/aa:/root/aaa
+1docker run -d -v $(pwd):/usr/share/nginx/html -p 80:80 --name web yefan/my-nginx
+
+          
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/07/11/Docker-数据持久化/#more" rel="contents">
@@ -1195,7 +1231,7 @@ docker volume
           
 etcd：  开源分布存储
 Mutil-host networking with etcdsetup etcd cluster在docker-node1上
-12345678910vagrant@docker-node1:~$ wget https://github.com/coreos/etcd/
+12345678910vagrant@docker-node1:~$ wget https://github.com/coreos/etcd/releases/download/v3.0.12/etcd-v3.0.12-linux-amd64.tar.gzvagrant@docker-node1:~$ tar zxvf etcd-v3.0.12-linux-amd64.tar.gzvagrant@docker-node1:~$ cd etcd-v3.0.12-linux-amd64vagrant@docker-node1:~$ nohup ./etcd --name docker-node1 --initial-advertise-peer-urls http://192.168.205.10:2380 \--listen-peer-urls http://192.168.205.10:2380 \--listen-client-
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1335,7 +1371,14 @@ Mutil-host networking with etcdsetup etcd cluster在docker-node1上
           网络分层
 内网用户需要访问外网资源-NAT 网络地址转换
 网络命名空间使用 network name space 实现网络空间隔离
-123sudo ip netns list  #查看本机的 network namespacesudo ip netns add test1 #添加network na
+123sudo ip netns list  #查看本机的 network namespacesudo ip netns add test1 #添加network namespacesudo ip netns delete name #删除本机的 network namespace
+1sudo ip netns exec test1 ip a #在 test1 network namespace 执行 ip a
+
+1ip link 类似 ip a
+1sudo ip netns exec test1 ip link set dev lo up #设置test1的 lo 接口状态为 up(链接此接口的两端未连接的话，单个端口没法 up，必须为一对，单个端口状态为 UNKNOWN)
+
+实战要两个 namespace 能互相 ping 通
+1231,sudo ip link add veth-test1 type veth peer name veth-test2
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1478,7 +1521,12 @@ Mutil-host networking with etcdsetup etcd cluster在docker-node1上
 1docker container ls -a ##列举所有的容器，包括退出的
 1docker ps -a ##同上
 1docker container rm 8dfc1a4e336e ##删除容器
-1docker rm 8d
+1docker rm 8dfc1a4e336e ##删除容器
+docker commit1docker container commit  ##把容器 container commit 成一个新的 image
+例子：
+docker exec : 进去正在运行的 docker shell 中
+ 12345docker exec -it d07a10a60a0b /bin/bash  ##进去d07a10a60a0b 的 shell 中 docker exec -it d07a10a60a0b python  ##进去d07a10a60a0b 的 python   docker exec -it d07a10a60a0b ip a  ##进去d07a10a60a0b 显示网络接口
+  12docker stop cont
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1621,7 +1669,13 @@ docker命令
 docker image 的相关操作
 1docker pull ##从register拉取image
 1docker push ##push Image到register
-1docker build -t yefan813/hello-world .  ##从
+1docker build -t yefan813/hello-world .  ##从DockerFile 构建一个 名为yefan813/hello-world的image ，‘.’是当前路径  （治理有个生成临时 container 的过程，然后 commit 成 一个 image，后删除临时的 container）
+1docker run yefan813/hello-world ##从 image 启动一个容器
+ 1docker run -it centos ##交互式标准输出运行一个容器
+1docker image ls ##列出现有的image
+1docker image rm 8dfc1a4e336e  ##删除image
+1docker history 19452756bcd1 ##查看image的分层
+1docker rmi 8dfc1a4e336e  ##
           ...
           <!--noindex-->
           <div class="post-button text-center">

@@ -341,7 +341,13 @@
 Filter
 Filter是servlet规范中定义的java web组件, 在所有支持java web的容器中都可以使用
 
-Filter和Filter Chain是密不可分的, Filter可以实现依次调用正是因为有了Filter Cha
+Filter和Filter Chain是密不可分的, Filter可以实现依次调用正是因为有了Filter Chain
+
+
+
+上图是Filter对请求进行拦截的原理图, 那么java web容器(以tomcat为例子)是如何实现这个功能的呢?
+下面看下Filter和Filter Chain的源码
+123456789101112131415161718192021// Filter     public interface Filter &#123;         // 容器创建的时候调用, 即启动tomcat的时候调用         public void init(FilterConfig filterConfig) throws ServletException;         // 由FilterChain调用, 并且传入Filter Chain本身         public void 
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -769,7 +775,10 @@ GCViewer
 ##标记清楚算法(Mark-Sweep)
 ##复制算法(Copying)为了解决Mark-Sweep算法内存碎片化的缺陷而被提出的算法。按内存容量将内存划分为等大小的两块。每次只使用其中一块，当这一块内存满后将尚存活的对象复制到另一块上去，把已使用的内存清掉，如图：
 
-这种算法虽然实现简单，内存效
+这种算法虽然实现简单，内存效率高，不易产生碎片，但是最大的问题是可用内存被压缩到了原本的一半。且存活对象增多的话，Copying算法的效率会大大降低。
+标记-整理算法(Mark-Compact)结合了以上两个算法，为了避免缺陷而提出。标记阶段和Mark-Sweep算法相同，标记后不是清理对象，而是将存活对象移向内存的一端。然后清除端边界外的对象。如图：
+缺点：没有内存碎片，但是整理内存比较耗时
+分代收集算法(Generational Collection)分代收集法是目前大部分JVM所采用的方法，其核心思想是根据对象存活的不同生命周期将内存划分为不同的域，一般情况下将GC堆划分为老生代(Tenured/Old Generation)和新生代(Young Generation)。老生代的特点是每次垃圾回收时只有少量对象需
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -918,8 +927,9 @@ GCViewer
 本地方法栈
 非堆区
 参考文章：JVM架构和GC垃圾回收机制
-jvm的运行时数据区Metaspac
-          ...
+jvm的运行时数据区Metaspace压缩类空间codecachecodecache2
+
+          
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/07/29/JVM1/#more" rel="contents">
@@ -1057,7 +1067,13 @@ jvm的运行时数据区Metaspac
           
           转载自：传送门
 前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位
-JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行
+JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。可以通过以下几种方式生成Heap Dump文件：
+使用 jmap 命令生成jmap 命令是JDK提供的用于生成堆内存信息的工具，可以执行下面的命令生成Heap Dump：
+1jmap -dump:live,format=b,file=heap-dump.bin &lt;pid&gt;
+其中的pid是JVM进程的id，heap-dump.bin是生成的文件名称，在执行命令的目录下面。推荐此种方法。
+使用 JConsole 生成JConsole是JDK提供的一个基于GUI查看JVM系统信息的工具，既可以管理本地的JVM，也可以管理远程的JVM，可以通过下图的 dumpHeap 按钮生成 Heap Dump文件。
+
+在JVM中增加参数生成在JVM的配置参数中可以添加 -XX:+HeapDu
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1196,7 +1212,11 @@ JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当�
           
           转载自：传送门
 症状及解决方案下面列出几种常见的症状即对应的解决方案：
-CPU占用率很高，响应很慢按照《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。在同一时间多次使用上述的方法，然后进行对比分
+CPU占用率很高，响应很慢按照《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。在同一时间多次使用上述的方法，然后进行对比分析，从代码中找到问题所在的原因。如果线程指向的是”VM Thread”或者无法从代码中直接找到原因，就需要进行内存分析，具体的见下一篇文章。
+CPU占用率不高，但响应很慢在整个请求的过程中多次执行Thread Dump然后进行对比，取得BLOCKED 状态的线程列表，通常是因为线程停在了I/O、数据库连接或网络连接的地方。
+关注点概况在Thread Dump文件中，线程的状态分成两种：Native Thread Status（系统线程状态）和JVM Thread Status（JVM 线程状态），具体的含义可以参考上一篇文章。在分析日志的时候需要重点关注如下几种线程状态：
+系统线程状态为 deadlock线程处于死锁状态，将占用系统大量资源。
+系统线程状态为 waiting for moni
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1335,7 +1355,8 @@ CPU占用率很高，响应很慢按照《Java内存泄漏分析系列之一：�
           
           转载自：传送门
 前面文章中只分析了Thread Dump日志文件的结构，今天针对日志文件中 Java EE middleware, third party &amp; custom application Threads 部分线程的状态进行详细的分析。
-Thread Dump日志的线程信息以下面的日
+Thread Dump日志的线程信息以下面的日志为例：
+12345678910111213141516&quot;resin-22129&quot; daemon prio=10 tid=0x00007fbe5c34e000 nid=0x4cb1 waiting on condition [0x00007fbe4ff7c000]   java.lang.Thread.State: WAITING (parking)    at sun.misc.Unsafe.park(Native Method)    at java.util.concurrent.locks.LockSupport.park(LockSupport.java:315)    at com.caucho.env.thread2.ResinThread2.park(Re
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1475,7 +1496,10 @@ Thread Dump日志的线程信息以下面的日
           转载自：传送门
 前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。
 使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread：
-1&quot;VM Thread&quot; prio=10 tid=0x0000
+1&quot;VM Thread&quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable
+这个时候需要使用 jstat -gc    命令查看gc的信息，显示结果如下：
+12S0C    S1C    S0U    S1U      EC       EU      OC         OU       PC        PU       YGC     YGCT    FGC   FGCT       GCT64.0   64.0   0.0    0.0   332992.0   0.0    666304.0   73192.5   83968.0   83967.9   6893   17.576  6882   2705.923  2723.499
+结果中每个项目的含义可以参考官方对jstat的文档，简
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1615,7 +1639,12 @@ Thread Dump日志的线程信息以下面的日
           转载自：传送门
 这篇文章首先对Thread Dump日志文件的结构进行分析
 一个典型的thread dump文件主要由一下几个部分组成：上图将JVM上的线程堆栈信息和线程信息做了详细的拆解
-第一部分：Full thread dump identifier这一部分是内容最开始的部分，展示了快照文件的生
+第一部分：Full thread dump identifier这一部分是内容最开始的部分，展示了快照文件的生成时间和JVM的版本信息。
+1Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.151-b12 mixed mode):
+第二部分：Java EE middleware, third party &amp; custom application Threads这是整个文件的核心部分，里面展示了JavaEE容器（如tomcat、resin等）、自己的程序中所使用的线程信息
+第三部分：HotSpot VM Thread这一部分展示了JVM内部线程的信息，用于执行内部的原生操作。下面常见的几种内置线程：
+“Attach Listener”该线程负责接收外部命令，执行该命令并把结果返回给调用者，此种类型的线程通常在桌面程序中出现
+“Dest
           ...
           <!--noindex-->
           <div class="post-button text-center">

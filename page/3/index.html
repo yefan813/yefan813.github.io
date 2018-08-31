@@ -339,7 +339,16 @@
 1from centos ##使用 base Image
 ==尽量使用官方的Image作为base Image （安全）==
 LABEL: metadata 帮助信息，类似注释
-1LABEL maintainer="yefan8
+1LABEL maintainer="yefan813@gmail.com"
+1LABEL version="1.0"
+1LABEL description="this is description"
+RUN: 运行命令，运行后会生成新的layer,尽量将命令写成一行
+12RUN yum update &amp;&amp; yum install -y vim \python-dev  ##反斜杠换行
+1RUN /bin/bash -c 'source $HOME/.bashrc;echo $HOME'
+WORKDIR: 类似 Linux 中 cd
+1WORKDIR /ROOT
+123WORKDIR /test #如果没有将会创建 test 目录WORKDIR demoRUN pwd  #输出结果是/test/demo
+==用 WORKDI
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -616,8 +625,17 @@ LABEL: metadata 帮助信息，类似注释
       
         
           
-          Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in 
-          ...
+          Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
+Quick StartCreate a new post1$ hexo new "My New Post"
+More info: Writing
+Run server1$ hexo server
+More info: Server
+Generate static files1$ hexo generate
+More info: Generating
+Deploy to remote sites1$ hexo deploy
+More info: Deployment
+
+          
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/07/10/hello-world/#more" rel="contents">
