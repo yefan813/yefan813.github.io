@@ -79,20 +79,20 @@
 
 
 
-<meta name="description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume   123sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql#创建一个 mysql container 别名mysql ，挂载到宿主机的/var/lib/mysql">
+<meta name="description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume">
 <meta name="keywords" content="docker">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker 数据持久化：Data Volume and Bind Mouting">
 <meta property="og:url" content="http://yoursite.com/2018/07/11/Docker-数据持久化/index.html">
 <meta property="og:site_name" content="Evan&#39;s  技术blog">
-<meta property="og:description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume   123sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql#创建一个 mysql container 别名mysql ，挂载到宿主机的/var/lib/mysql">
+<meta property="og:description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fsx5mzmlprj30f005xabi.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fsx53ne9s0j30hz088wf7.jpg">
-<meta property="og:updated_time" content="2018-07-11T07:34:19.712Z">
+<meta property="og:updated_time" content="2018-08-31T07:22:51.600Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Docker 数据持久化：Data Volume and Bind Mouting">
-<meta name="twitter:description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume   123sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql#创建一个 mysql container 别名mysql ，挂载到宿主机的/var/lib/mysql">
+<meta name="twitter:description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume">
 <meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fsx5mzmlprj30f005xabi.jpg">
 
 
@@ -338,6 +338,7 @@
 <p><strong>docker volume</strong></p>
 <p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fsx5mzmlprj30f005xabi.jpg" alt="image"></p>
 <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fsx53ne9s0j30hz088wf7.jpg" alt="image"></p>
+<a id="more"></a>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建一个 mysql container 别名mysql ，挂载到宿主机的/var/lib/mysql下</span></span><br></pre></td></tr></table></figure>
 <p><strong>docker bind mouting</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -v /home/aa:/root/aaa</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -v $(pwd):/usr/share/nginx/html -p <span class="number">80</span>:<span class="number">80</span> --name web yefan/my-nginx</span><br></pre></td></tr></table></figure>

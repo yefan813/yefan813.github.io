@@ -91,7 +91,7 @@
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/Thread_Dump_view_HotSpot_VM.png">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1ftml24zk3hj31ic0jsaek.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1ftml3adrl8j31ec05wmxy.jpg">
-<meta property="og:updated_time" content="2018-07-26T10:32:43.101Z">
+<meta property="og:updated_time" content="2018-08-31T07:24:48.741Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存泄漏分析系列之二：jstack生成的Thread Dump日志结构解析">
 <meta name="twitter:description" content="转载自：传送门 这篇文章首先对Thread Dump日志文件的结构进行分析 一个典型的thread dump文件主要由一下几个部分组成：上图将JVM上的线程堆栈信息和线程信息做了详细的拆解 第一部分：Full thread dump identifier这一部分是内容最开始的部分，展示了快照文件的生成时间和JVM的版本信息。 1Full thread dump Java HotSpot(TM) 6">
@@ -341,6 +341,7 @@
 <p>一个典型的thread dump文件主要由一下几个部分组成：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/Thread_Dump_view_HotSpot_VM.png" alt=""><br>上图将JVM上的线程堆栈信息和线程信息做了详细的拆解</p>
 <h2 id="第一部分：Full-thread-dump-identifier"><a href="#第一部分：Full-thread-dump-identifier" class="headerlink" title="第一部分：Full thread dump identifier"></a>第一部分：Full thread dump identifier</h2><p>这一部分是内容最开始的部分，展示了快照文件的生成时间和JVM的版本信息。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.151-b12 mixed mode):</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 <h2 id="第二部分：Java-EE-middleware-third-party-amp-custom-application-Threads"><a href="#第二部分：Java-EE-middleware-third-party-amp-custom-application-Threads" class="headerlink" title="第二部分：Java EE middleware, third party &amp; custom application Threads"></a>第二部分：Java EE middleware, third party &amp; custom application Threads</h2><p>这是整个文件的核心部分，里面展示了JavaEE容器（如tomcat、resin等）、自己的程序中所使用的线程信息<br><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1ftml24zk3hj31ic0jsaek.jpg" alt=""></p>
 <h2 id="第三部分：HotSpot-VM-Thread"><a href="#第三部分：HotSpot-VM-Thread" class="headerlink" title="第三部分：HotSpot VM Thread"></a>第三部分：HotSpot VM Thread</h2><p>这一部分展示了JVM内部线程的信息，用于执行内部的原生操作。下面常见的几种内置线程：</p>
 <h3 id="“Attach-Listener”"><a href="#“Attach-Listener”" class="headerlink" title="“Attach Listener”"></a>“Attach Listener”</h3><p>该线程负责接收外部命令，执行该命令并把结果返回给调用者，此种类型的线程通常在桌面程序中出现<br><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1ftml3adrl8j31ec05wmxy.jpg" alt=""></p>

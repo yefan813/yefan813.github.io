@@ -79,13 +79,13 @@
 
 
 
-<meta name="description" content="网络分层 内网用户需要访问外网资源-NAT 网络地址转换 网络命名空间使用 network name space 实现网络空间隔离 123sudo ip netns list  #查看本机的 network namespacesudo ip netns add test1 #添加network namespacesudo ip netns delete name #删除本机的 network na">
+<meta name="description" content="网络分层 内网用户需要访问外网资源-NAT 网络地址转换">
 <meta name="keywords" content="docker">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker Network">
 <meta property="og:url" content="http://yoursite.com/2018/07/11/Docker-Network/index.html">
 <meta property="og:site_name" content="Evan&#39;s  技术blog">
-<meta property="og:description" content="网络分层 内网用户需要访问外网资源-NAT 网络地址转换 网络命名空间使用 network name space 实现网络空间隔离 123sudo ip netns list  #查看本机的 network namespacesudo ip netns add test1 #添加network namespacesudo ip netns delete name #删除本机的 network na">
+<meta property="og:description" content="网络分层 内网用户需要访问外网资源-NAT 网络地址转换">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fswr5yy1ryj30dm09bjv0.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fswrb7lwmpj30fs0ajwhp.jpg">
@@ -103,10 +103,10 @@
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fswwtdiai7j30mg0cfju7.jpg">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fswy18rdjzj30ry08l3zp.jpg">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fswy2ye7joj30hr0cwgnt.jpg">
-<meta property="og:updated_time" content="2018-07-11T07:32:18.492Z">
+<meta property="og:updated_time" content="2018-08-31T07:23:22.078Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Docker Network">
-<meta name="twitter:description" content="网络分层 内网用户需要访问外网资源-NAT 网络地址转换 网络命名空间使用 network name space 实现网络空间隔离 123sudo ip netns list  #查看本机的 network namespacesudo ip netns add test1 #添加network namespacesudo ip netns delete name #删除本机的 network na">
+<meta name="twitter:description" content="网络分层 内网用户需要访问外网资源-NAT 网络地址转换">
 <meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fswr5yy1ryj30dm09bjv0.jpg">
 
 
@@ -350,6 +350,7 @@
       
         <p><strong>网络分层</strong><br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fswr5yy1ryj30dm09bjv0.jpg" alt="image"></p>
 <p><strong>内网用户需要访问外网资源-NAT 网络地址转换</strong><br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fswrb7lwmpj30fs0ajwhp.jpg" alt="image"></p>
+<a id="more"></a>
 <p><strong>网络命名空间</strong><br>使用 network name space 实现网络空间隔离</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo ip netns list  <span class="comment">#查看本机的 network namespace</span></span><br><span class="line">sudo ip netns add test1 <span class="comment">#添加network namespace</span></span><br><span class="line">sudo ip netns delete name <span class="comment">#删除本机的 network namespace</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ip netns <span class="keyword">exec</span> test1 ip a <span class="comment">#在 test1 network namespace 执行 ip a</span></span><br></pre></td></tr></table></figure>

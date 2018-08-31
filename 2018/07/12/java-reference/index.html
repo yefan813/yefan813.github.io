@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="java中提供了四个级别的引用：  强引用（Final Reference） 软引用(Soft Reference) 弱引用(Weak Reference) 虚引用(Phantom Reference)  这四个引用定义在java.lang.ref的包下 强引用（ Final Reference ） 就是指在程序代码中普遍存在的，类似Object obj = new Object()这类的引用，只">
+<meta name="description" content="java中提供了四个级别的引用：  强引用（Final Reference） 软引用(Soft Reference) 弱引用(Weak Reference) 虚引用(Phantom Reference)  这四个引用定义在java.lang.ref的包下">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java 引用类型">
 <meta property="og:url" content="http://yoursite.com/2018/07/12/java-reference/index.html">
 <meta property="og:site_name" content="Evan&#39;s  技术blog">
-<meta property="og:description" content="java中提供了四个级别的引用：  强引用（Final Reference） 软引用(Soft Reference) 弱引用(Weak Reference) 虚引用(Phantom Reference)  这四个引用定义在java.lang.ref的包下 强引用（ Final Reference ） 就是指在程序代码中普遍存在的，类似Object obj = new Object()这类的引用，只">
+<meta property="og:description" content="java中提供了四个级别的引用：  强引用（Final Reference） 软引用(Soft Reference) 弱引用(Weak Reference) 虚引用(Phantom Reference)  这四个引用定义在java.lang.ref的包下">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1ft80n8gk8uj306104o0sr.jpg">
-<meta property="og:updated_time" content="2018-07-13T04:02:51.129Z">
+<meta property="og:updated_time" content="2018-08-31T07:23:38.118Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="java 引用类型">
-<meta name="twitter:description" content="java中提供了四个级别的引用：  强引用（Final Reference） 软引用(Soft Reference) 弱引用(Weak Reference) 虚引用(Phantom Reference)  这四个引用定义在java.lang.ref的包下 强引用（ Final Reference ） 就是指在程序代码中普遍存在的，类似Object obj = new Object()这类的引用，只">
+<meta name="twitter:description" content="java中提供了四个级别的引用：  强引用（Final Reference） 软引用(Soft Reference) 弱引用(Weak Reference) 虚引用(Phantom Reference)  这四个引用定义在java.lang.ref的包下">
 <meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1ft80n8gk8uj306104o0sr.jpg">
 
 
@@ -340,6 +340,7 @@
 <li>虚引用(Phantom Reference)</li>
 </ol>
 <p><strong>这四个引用定义在java.lang.ref的包下</strong><br><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1ft80n8gk8uj306104o0sr.jpg" alt=""></p>
+<a id="more"></a>
 <p><strong>强引用（ Final Reference ）</strong><br> 就是指在程序代码中普遍存在的，类似Object obj = new Object()这类的引用，只要强引用还存在，垃圾收集器永远不会回收掉被引用的对象。<br>  强引用具备以下三个个特点：</p>
 <blockquote>
 <p>1.强引用可以直接访问目标对象；<br>2.强引用锁指向的对象在任何时候都不会被系统回收。JVM宁愿抛出OOM异常也不回收强引用所指向的对象；<br>3.强应用可能导致内存泄露；</p>

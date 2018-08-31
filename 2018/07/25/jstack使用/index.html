@@ -91,7 +91,7 @@
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/top-threads.png">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/ps-mp-threads.png">
 <meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/jstack-thread-id-result.png">
-<meta property="og:updated_time" content="2018-07-29T15:06:54.900Z">
+<meta property="og:updated_time" content="2018-08-31T07:23:53.733Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息">
 <meta name="twitter:description" content="转载自这里 上线的系统升级之后，出现了严重的高CPU的问题 基本概念在对Java内存泄漏进行分析的时候，需要对jvm运行期间的内存占用、线程执行等情况进行记录的dump文件，常用的主要有thread dump和heap dump。   thread dump 主要记录JVM在某一时刻各个线程执行的情况，以栈的形式显示，是一个文本文件。通过对thread dump文件可以分析出程序的问题出现在什么地">
@@ -346,6 +346,7 @@
 </ul>
 </blockquote>
 <p>上面两种dump文件都具有实时性，因此需要在服务器出现问题的时候生成，并且多生成几个文件，方便进行对比分析。下面我们先来说一下如何生成 thread dump。</p>
+<a id="more"></a>
 <h2 id="使用jstack生成thread-dump"><a href="#使用jstack生成thread-dump" class="headerlink" title="使用jstack生成thread dump"></a>使用<a href="http://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstack.html" target="_blank" rel="noopener">jstack</a>生成thread dump</h2><p>当服务器出现高CPU的时候，首先执行 top -c 命令动态显示进程及占用资源的排行，如下图：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/top-result.png" alt=""><br>top后面的参数-c可以显示进程详细的信息。top命令执行的时候还可以执行一些快捷键：</p>
 <blockquote>
 <ul>
