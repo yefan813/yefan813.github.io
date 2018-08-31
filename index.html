@@ -333,22 +333,19 @@
 
       
         
-          
-          
-过滤器（Filter）
-拦截器（Interceptor
-
-Filter
-Filter是servlet规范中定义的java web组件, 在所有支持java web的容器中都可以使用
-
-Filter和Filter Chain是密不可分的, Filter可以实现依次调用正是因为有了Filter Chain
-
-
-
-上图是Filter对请求进行拦截的原理图, 那么java web容器(以tomcat为例子)是如何实现这个功能的呢?
-下面看下Filter和Filter Chain的源码
-123456789101112131415161718192021// Filter     public interface Filter &#123;         // 容器创建的时候调用, 即启动tomcat的时候调用         public void init(FilterConfig filterConfig) throws ServletException;         // 由FilterChain调用, 并且传入Filter Chain本身         public void 
-          ...
+          <ol>
+<li>过滤器（Filter）</li>
+<li>拦截器（Interceptor</li>
+</ol>
+<h1 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h1><ul>
+<li><p>Filter是servlet规范中定义的java web组件, 在所有支持java web的容器中都可以使用</p>
+</li>
+<li><p>Filter和Filter Chain是密不可分的, Filter可以实现依次调用正是因为有了Filter Chain</p>
+</li>
+</ul>
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1ftsv1u5fihj30hh089abw.jpg" alt=""></p>
+<p>上图是Filter对请求进行拦截的原理图, 那么java web容器(以tomcat为例子)是如何实现这个功能的呢?</p>
+<p>下面看下Filter和Filter Chain的源码</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/07/31/filer-interceptor/#more" rel="contents">
@@ -484,21 +481,14 @@ Filter和Filter Chain是密不可分的, Filter可以实现依次调用正是因
       
         
           
-          
-初始化设置参数
-Parallel GC 调优的指导原则
-G1 调优
-参考文档：Oracle官网
-GC 调优指南如何选择垃圾收集器G1最佳实践G1 GC的一些关键技术
+            <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftr25l9g3zj30om0e841i.jpg" alt=""></p>
+<h2 id="初始化设置参数"><a href="#初始化设置参数" class="headerlink" title="初始化设置参数"></a>初始化设置参数</h2><p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftr26pfc0wj30y008g436.jpg" alt=""></p>
+<h2 id="Parallel-GC-调优的指导原则"><a href="#Parallel-GC-调优的指导原则" class="headerlink" title="Parallel GC 调优的指导原则"></a>Parallel GC 调优的指导原则</h2><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftr28i9o7cj30y10feq8j.jpg" alt=""></p>
+<h2 id="G1-调优"><a href="#G1-调优" class="headerlink" title="G1 调优"></a>G1 调优</h2><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftr2el1ajwj30zd0degrk.jpg" alt=""><br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftr2eug0huj31030ivgqx.jpg" alt=""></p>
+<p>参考文档：<br><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/g1_gc_tuning.html#recommendations" target="_blank" rel="noopener">Oracle官网</a></p>
+<p><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/toc.html" target="_blank" rel="noopener">GC 调优指南</a><br><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/collectors.html" target="_blank" rel="noopener">如何选择垃圾收集器</a><br><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/g1_gc_tuning.html#recommendations" target="_blank" rel="noopener">G1最佳实践</a><br><a href="https://zhuanlan.zhihu.com/p/22591838" target="_blank" rel="noopener">G1 GC的一些关键技术</a></p>
 
           
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/29/JVM4/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
         
       
     </div>
@@ -627,22 +617,15 @@ GC 调优指南如何选择垃圾收集器G1最佳实践G1 GC的一些关键技�
       
         
           
+            <ol>
+<li><p>在线工具：<a href="http://gceasy.io" target="_blank" rel="noopener">http://gceasy.io</a></p>
+</li>
+<li><p>GCViewer</p>
+</li>
+</ol>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftr1n1v45qj30ww0ddaey.jpg" alt=""></p>
+
           
-在线工具：http://gceasy.io
-
-GCViewer
-
-
-
-
-          
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/29/JVM3/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
         
       
     </div>
@@ -771,22 +754,63 @@ GCViewer
       
         
           
-          
-##标记清楚算法(Mark-Sweep)
-##复制算法(Copying)为了解决Mark-Sweep算法内存碎片化的缺陷而被提出的算法。按内存容量将内存划分为等大小的两块。每次只使用其中一块，当这一块内存满后将尚存活的对象复制到另一块上去，把已使用的内存清掉，如图：
+            <p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftqvzd2erdj30zs0datd1.jpg" alt=""></p>
+<p>##标记清楚算法(Mark-Sweep)<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqw93v8ldj30y30ba789.jpg" alt=""><br><img src="https://ws4.sinaimg.cn/large/006tNc79ly1ftqwdlfu4cj30p40dq0us.jpg" alt=""></p>
+<p>##复制算法(Copying)<br>为了解决Mark-Sweep算法内存碎片化的缺陷而被提出的算法。按内存容量将内存划分为等大小的两块。每次只使用其中一块，当这一块内存满后将尚存活的对象复制到另一块上去，把已使用的内存清掉，如图：</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqwirry1nj30l00blac4.jpg" alt=""></p>
+<p>这种算法虽然实现简单，内存效率高，不易产生碎片，但是最大的问题是可用内存被压缩到了原本的一半。且存活对象增多的话，Copying算法的效率会大大降低。</p>
+<h2 id="标记-整理算法-Mark-Compact"><a href="#标记-整理算法-Mark-Compact" class="headerlink" title="标记-整理算法(Mark-Compact)"></a>标记-整理算法(Mark-Compact)</h2><p>结合了以上两个算法，为了避免缺陷而提出。标记阶段和Mark-Sweep算法相同，标记后不是清理对象，而是将存活对象移向内存的一端。然后清除端边界外的对象。如图：<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqwkj0puvj30ld0cb75n.jpg" alt=""></p>
+<p>缺点：没有内存碎片，但是整理内存比较耗时</p>
+<h2 id="分代收集算法-Generational-Collection"><a href="#分代收集算法-Generational-Collection" class="headerlink" title="分代收集算法(Generational Collection)"></a>分代收集算法(Generational Collection)</h2><p>分代收集法是目前大部分JVM所采用的方法，其核心思想是根据对象存活的不同生命周期将内存划分为不同的域，一般情况下将GC堆划分为老生代(Tenured/Old Generation)和新生代(Young Generation)。老生代的特点是每次垃圾回收时只有少量对象需要被回收，新生代的特点是每次垃圾回收时都有大量垃圾需要被回收，因此可以根据不同区域选择不同的算法。</p>
+<p>目前大部分JVM的GC对于新生代都采取Copying算法，因为新生代中每次垃圾回收都要回收大部分对象，即要复制的操作比较少，但通常并不是按照1：1来划分新生代。一般将新生代划分为一块较大的Eden空间和两个较小的Survivor空间(From Space, To Space)，每次使用Eden空间和其中的一块Survivor空间，当进行回收时，将该两块空间中还存活的对象复制到另一块Survivor空间中。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftqwmjpuyvj30kg046wfh.jpg" alt=""></p>
+<p>而老生代因为每次只回收少量对象，因而采用Mark-Compact算法。</p>
+<p>另外，不要忘记在<a href="http://www.cnblogs.com/cielosun/p/6622983.html" target="_blank" rel="noopener">Java基础：Java虚拟机(JVM)</a>中提到过的处于方法区的永生代(Permanet Generation)。它用来存储class类，常量，方法描述等。对永生代的回收主要包括废弃常量和无用的类。</p>
+<p>对象的内存分配主要在新生代的Eden Space和Survivor Space的From Space(Survivor目前存放对象的那一块)，少数情况会直接分配到老生代。当新生代的Eden Space和From Space空间不足时就会发生一次GC，进行GC后，Eden Space和From Space区的存活对象会被挪到To Space，然后将Eden Space和From Space进行清理。如果To Space无法足够存储某个对象，则将这个对象存储到老生代。在进行GC后，使用的便是Eden Space和To Space了，如此反复循环。当对象在Survivor区躲过一次GC后，其年龄就会+1。默认情况下年龄到达15的对象会被移到老生代中。</p>
+<h1 id="对象分配"><a href="#对象分配" class="headerlink" title="对象分配"></a>对象分配</h1><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqwuiheq8j30wl0agq70.jpg" alt=""></p>
+<h1 id="典型的垃圾收集器"><a href="#典型的垃圾收集器" class="headerlink" title="典型的垃圾收集器"></a>典型的垃圾收集器</h1><p>垃圾收集算法是垃圾收集器的理论基础，而垃圾收集器就是其具体实现。下面介绍HotSpot虚拟机提供的几种垃圾收集器。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftqzmigfi8j30zu08o41k.jpg" alt=""></p>
+<ol>
+<li><p><strong>Serial/Serial Old</strong><br>最古老的收集器，是一个单线程收集器，用它进行垃圾回收时，必须暂停所有用户线程。Serial是针对新生代的收集器，采用Copying算法；而Serial Old是针对老生代的收集器，采用Mark-Compact算法。优点是简单高效，缺点是需要暂停用户线程。</p>
+</li>
+<li><p><strong>ParNew</strong><br>Seral/Serial Old的多线程版本，使用多个线程进行垃圾收集。</p>
+</li>
+<li><p><strong>Parallel Scavenge</strong><br>新生代的<strong>并行</strong>收集器，回收期间不需要暂停其他线程，采用Copying算法。该收集器与前两个收集器不同，主要为了达到一个可控的吞吐量。</p>
+</li>
+<li><p><strong>Parallel Old</strong><br>Parallel Scavenge的老生代版本，采用Mark-Compact算法和多线程。</p>
+</li>
+<li><p><strong>CMS</strong><br>Current Mark Sweep收集器是一种以最小回收时间停顿为目标的<strong>并发</strong>回收器，因而采用Mark-Sweep算法。</p>
+</li>
+<li><p><strong>G1</strong><br>G1(Garbage First)收集器技术的前沿成果，是面向服务端的收集器，能充分利用CPU和多核环境。是一款并行与并发收集器，它能够建立可预测的停顿时间模型。</p>
+</li>
+</ol>
+<h2 id="这里要强调一下并行与并发的概念："><a href="#这里要强调一下并行与并发的概念：" class="headerlink" title="这里要强调一下并行与并发的概念："></a>这里要强调一下并行与并发的概念：</h2><p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftqzpiq83bj30z80clwlo.jpg" alt=""></p>
+<h2 id="停顿时间-VS-吞吐量"><a href="#停顿时间-VS-吞吐量" class="headerlink" title="停顿时间 VS 吞吐量"></a>停顿时间 VS 吞吐量</h2><p> <img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftqzrdxmovj30w908rdjq.jpg" alt=""></p>
+<h1 id="垃圾收集器搭配"><a href="#垃圾收集器搭配" class="headerlink" title="垃圾收集器搭配"></a>垃圾收集器搭配</h1><p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftqzwboe8qj30rc0jkdpn.jpg" alt=""></p>
+<h1 id="垃圾收集器详解："><a href="#垃圾收集器详解：" class="headerlink" title="垃圾收集器详解："></a>垃圾收集器详解：</h1><h2 id="并行垃圾收集器（Parallel-Collector）"><a href="#并行垃圾收集器（Parallel-Collector）" class="headerlink" title="并行垃圾收集器（Parallel Collector）"></a>并行垃圾收集器（Parallel Collector）</h2><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqzz6v7u4j30ri08jtb3.jpg" alt=""></p>
+<h2 id="CMS-垃圾收集器"><a href="#CMS-垃圾收集器" class="headerlink" title="CMS 垃圾收集器"></a>CMS 垃圾收集器</h2><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftr01s112jj30hl09m3zp.jpg" alt=""></p>
+<h3 id="CMS-垃圾收集过程"><a href="#CMS-垃圾收集过程" class="headerlink" title="CMS 垃圾收集过程"></a>CMS 垃圾收集过程</h3><ol>
+<li>CMS initialmark： 初始化标记Root， stop the world</li>
+<li>CMS concurrent mark：并发标记</li>
+<li>CMS concurrent preclean：并发预清理</li>
+<li>CMS remark ：重新标记。 stop the world</li>
+<li>CMS concurrent sweep：并发清除</li>
+<li>CMS concurrent reset： 并发重置</li>
+</ol>
+<h3 id="CMS-缺点"><a href="#CMS-缺点" class="headerlink" title="CMS 缺点"></a>CMS 缺点</h3><p>CPU 敏感<br>浮动垃圾<br>空间碎片</p>
+<h3 id="CMS-相关参数"><a href="#CMS-相关参数" class="headerlink" title="CMS 相关参数"></a>CMS 相关参数</h3><p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftr07yp4fbj30zm0awq6l.jpg" alt=""><br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftr093dpxoj30yl0dgaep.jpg" alt=""></p>
+<h2 id="G1-垃圾收集器"><a href="#G1-垃圾收集器" class="headerlink" title="G1 垃圾收集器"></a>G1 垃圾收集器</h2><p>新生代和老年代垃圾收集器</p>
+<h3 id="概念："><a href="#概念：" class="headerlink" title="概念："></a>概念：</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftr0dqxjbkj30yf0bd793.jpg" alt=""> </p>
+<h3 id="Mixed-GC："><a href="#Mixed-GC：" class="headerlink" title="Mixed GC："></a>Mixed GC：</h3><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftr0fw6h38j30pu05tmyk.jpg" alt=""><br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftr0gtvi2xj30w80a4dj2.jpg" alt=""></p>
+<h3 id="Mixed-GC-时机："><a href="#Mixed-GC-时机：" class="headerlink" title="Mixed GC 时机："></a>Mixed GC 时机：</h3><p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftr0hcs8tuj30zc0gjn4x.jpg" alt=""></p>
+<h3 id="Mixed-GC-相关参数："><a href="#Mixed-GC-相关参数：" class="headerlink" title="Mixed GC 相关参数："></a>Mixed GC 相关参数：</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftr0j7fupxj30xt0g479o.jpg" alt=""><br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftr0k5ocwdj30uu04ljt9.jpg" alt=""></p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftr0lktqmpj30ya0dvwka.jpg" alt=""></p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftr0mm2vpej30uk0dcn1c.jpg" alt=""></p>
+<p> 参考文章：</p>
+<p> <a href="https://www.cnblogs.com/cielosun/p/6674431.html" target="_blank" rel="noopener">JVM垃圾回收算法</a></p>
+<p> <a href="https://blog.csdn.net/aijiudu/article/details/72991993" target="_blank" rel="noopener">JVM架构和GC垃圾回收机制</a></p>
 
-这种算法虽然实现简单，内存效率高，不易产生碎片，但是最大的问题是可用内存被压缩到了原本的一半。且存活对象增多的话，Copying算法的效率会大大降低。
-标记-整理算法(Mark-Compact)结合了以上两个算法，为了避免缺陷而提出。标记阶段和Mark-Sweep算法相同，标记后不是清理对象，而是将存活对象移向内存的一端。然后清除端边界外的对象。如图：
-缺点：没有内存碎片，但是整理内存比较耗时
-分代收集算法(Generational Collection)分代收集法是目前大部分JVM所采用的方法，其核心思想是根据对象存活的不同生命周期将内存划分为不同的域，一般情况下将GC堆划分为老生代(Tenured/Old Generation)和新生代(Young Generation)。老生代的特点是每次垃圾回收时只有少量对象需
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/29/JVM2/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+          
         
       
     </div>
@@ -915,28 +939,21 @@ GCViewer
       
         
           
-          
-运行时数据区
-程序计数器注：线程私有
-虚拟机栈注：线程私有
-堆
-注：线程共享
-方法区
-注：线程共享，JDK8中是 Meta Space ，在 JDK8之前是 Perm Space 永久区
-运行时常量池
-本地方法栈
-非堆区
-参考文章：JVM架构和GC垃圾回收机制
-jvm的运行时数据区Metaspace压缩类空间codecachecodecache2
+            <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqvmlyu0uj30tu0l3tfs.jpg" alt=""></p>
+<h2 id="运行时数据区"><a href="#运行时数据区" class="headerlink" title="运行时数据区"></a>运行时数据区</h2><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqv5mutquj30qy0e9q6b.jpg" alt=""></p>
+<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqv92b52xj30z30ajdlk.jpg" alt=""><br><strong>注：线程私有</strong></p>
+<h3 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h3><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvbjk29mj30z10b60zf.jpg" alt=""><br><strong>注：线程私有</strong></p>
+<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvd5nd5dj30yw0agwk4.jpg" alt=""></p>
+<p><strong>注：线程共享</strong></p>
+<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqvghydnpj30xj08243t.jpg" alt=""></p>
+<p><strong>注：线程共享，JDK8中是 Meta Space ，在 JDK8之前是 Perm Space 永久区</strong></p>
+<h4 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h4><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvin3ygbj30xv07ejwv.jpg" alt=""></p>
+<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvkjcrq6j30x806mgpu.jpg" alt=""></p>
+<h3 id="非堆区"><a href="#非堆区" class="headerlink" title="非堆区"></a>非堆区</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvpdj5i8j30xe0eagpu.jpg" alt=""></p>
+<p>参考文章：<br><a href="https://blog.csdn.net/aijiudu/article/details/72991993" target="_blank" rel="noopener">JVM架构和GC垃圾回收机制</a></p>
+<p><a href="https://docs.oracle.com/javase/specs/jvms/se8/html/index.html" target="_blank" rel="noopener">jvm的运行时数据区</a><br><a href="http://ifeve.com/jvm-troubleshooting-guide-4/" target="_blank" rel="noopener">Metaspace</a><br><a href="https://blog.csdn.net/jijijijwwi111/article/details/51564271" target="_blank" rel="noopener">压缩类空间</a><br><a href="https://blog.csdn.net/yandaonan/article/details/50844806" target="_blank" rel="noopener">codecache</a><br><a href="http://engineering.indeedblog.com/blog/2016/09/job-search-web-app-java-8-migration/" target="_blank" rel="noopener">codecache2</a></p>
 
           
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/29/JVM1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
         
       
     </div>
@@ -1065,23 +1082,56 @@ jvm的运行时数据区Metaspace压缩类空间codecachecodecache2
       
         
           
-          转载自：传送门
-前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位
-JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。可以通过以下几种方式生成Heap Dump文件：
-使用 jmap 命令生成jmap 命令是JDK提供的用于生成堆内存信息的工具，可以执行下面的命令生成Heap Dump：
-1jmap -dump:live,format=b,file=heap-dump.bin &lt;pid&gt;
-其中的pid是JVM进程的id，heap-dump.bin是生成的文件名称，在执行命令的目录下面。推荐此种方法。
-使用 JConsole 生成JConsole是JDK提供的一个基于GUI查看JVM系统信息的工具，既可以管理本地的JVM，也可以管理远程的JVM，可以通过下图的 dumpHeap 按钮生成 Heap Dump文件。
+            <p>转载自：<a href="https://www.javatang.com/archives/2017/10/30/53562102.html" target="_blank" rel="noopener">传送门</a></p>
+<p>前面的文章详细讲述了分析Thread Dump文件，实际在处理Java内存泄漏问题的时候，还需要分析JVM堆转储文件来进行定位</p>
+<h2 id="JVM-Heap-Dump（堆转储文件）的生成"><a href="#JVM-Heap-Dump（堆转储文件）的生成" class="headerlink" title="JVM Heap Dump（堆转储文件）的生成"></a>JVM Heap Dump（堆转储文件）的生成</h2><p>正如Thread Dump文件记录了当时JVM中线程运行的情况一样，Heap Dump记录了JVM中堆内存运行的情况。<br>可以通过以下几种方式生成Heap Dump文件：</p>
+<h3 id="使用-jmap-命令生成"><a href="#使用-jmap-命令生成" class="headerlink" title="使用 jmap 命令生成"></a>使用 jmap 命令生成</h3><p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jmap.html" target="_blank" rel="noopener">jmap</a> 命令是JDK提供的用于生成堆内存信息的工具，可以执行下面的命令生成Heap Dump：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:live,format=b,file=heap-dump.bin &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+<p>其中的pid是JVM进程的id，<strong>heap-dump.bin</strong>是生成的文件名称，在执行命令的目录下面。推荐此种方法。</p>
+<h3 id="使用-JConsole-生成"><a href="#使用-JConsole-生成" class="headerlink" title="使用 JConsole 生成"></a>使用 JConsole 生成</h3><p>JConsole是JDK提供的一个基于GUI查看JVM系统信息的工具，既可以管理本地的JVM，也可以管理远程的JVM，可以通过下图的 <strong>dumpHeap</strong> 按钮生成 Heap Dump文件。</p>
+<p><img src="https://www.javatang.com/wp-content/uploads/2017/10/c78c2ca6e71557f5fd118a0a4f80903f.png" alt=""></p>
+<h2 id="在JVM中增加参数生成"><a href="#在JVM中增加参数生成" class="headerlink" title="在JVM中增加参数生成"></a>在JVM中增加参数生成</h2><p>在JVM的配置参数中可以添加 <strong>-XX:+HeapDumpOnOutOfMemoryError</strong> 参数，当应用抛出 OutOfMemoryError 时自动生成dump文件；<br>在JVM的配置参数中添加 <strong>-Xrunhprof:head=site</strong> 参数，会生成java.hprof.txt 文件，不过这样会影响JVM的运行效率，不建议在生产环境中使用（未亲测）。</p>
+<h2 id="常见的Heap-Dump文件分析工具"><a href="#常见的Heap-Dump文件分析工具" class="headerlink" title="常见的Heap Dump文件分析工具"></a>常见的Heap Dump文件分析工具</h2><p>JVM Heap Dump文件可以使用常用的分析工具如下：</p>
+<h3 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h3><p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jhat.html" target="_blank" rel="noopener">jhat</a> 是JDK自带的用于分析JVM Heap Dump文件的工具，使用下面的命令可以将堆文件的分析结果以HTML网页的形式进行展示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jhat &lt;heap-dump-file&gt;</span><br></pre></td></tr></table></figure>
+<p>其中 heap-dump-file 是文件的路径和文件名，可以使用 <strong>-J-Xmx512m</strong> 参数设置命令的内存大小。执行成功之后显示如下结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Snapshot resolved.</span><br><span class="line">Started HTTP server on port 7000</span><br><span class="line">Server is ready.</span><br></pre></td></tr></table></figure>
+<p>这个时候访问 <a href="http://localhost:7000/" target="_blank" rel="noopener">http://localhost:7000/</a> 就可以看到结果了。</p>
+<h3 id="Eclipse-Memory-Analyzer-MAT"><a href="#Eclipse-Memory-Analyzer-MAT" class="headerlink" title="Eclipse Memory Analyzer(MAT)"></a>Eclipse Memory Analyzer(MAT)</h3><p><a href="http://www.eclipse.org/mat/" target="_blank" rel="noopener">Eclipse Memory Analyzer(MAT)</a>是Eclipse提供的一款用于Heap Dump文件的工具，操作简单明了，下面将详细进行介绍。</p>
+<h3 id="IBM-Heap-Analyzer"><a href="#IBM-Heap-Analyzer" class="headerlink" title="IBM Heap Analyzer"></a>IBM Heap Analyzer</h3><p><a href="https://www.ibm.com/developerworks/community/alphaworks/tech/heapanalyzer" target="_blank" rel="noopener">IBM Heap Analyzer</a> 是IBM公司推出的一款用于分析Heap Dump信息的工具，下载之后是一个jar文件，执行结果如下：</p>
+<p><img src="https://www.javatang.com/wp-content/uploads/2017/10/9ab49abb09fb99a66bf2612989e630c2.png" alt=""></p>
+<h2 id="Memory-Analyzer的安装和使用"><a href="#Memory-Analyzer的安装和使用" class="headerlink" title="Memory Analyzer的安装和使用"></a>Memory Analyzer的安装和使用</h2><p>如前文所述，Eclipse Memory Analyzer（简称MAT）是一个功能丰富且操作简单的JVM Heap Dump分析工具，可以用来辅助发现内存泄漏减少内存占用。<br>使用 Memory Analyzer 来分析生产环境的 Java 堆转储文件，可以从数以百万计的对象中快速计算出对象的 Retained Size，查看是谁在阻止垃圾回收，并自动生成一个 Leak Suspect（内存泄露可疑点）报表。</p>
+<h3 id="下载与安装"><a href="#下载与安装" class="headerlink" title="下载与安装"></a>下载与安装</h3><p>Eclipse Memory Analyzer（MAT）支持两种安装方式，一是Eclipse插件的方式，另外一个就是独立运行的方式，建议使用独立运行的方式。<br>在 <a href="http://www.eclipse.org/mat/downloads.php" target="_blank" rel="noopener">http://www.eclipse.org/mat/downloads.php</a> 下载安装MAT，启动之后打开 File - Open Heap Dump… 菜单，然后选择生成的Heap DUmp文件，选择 “Leak Suspects Report”，然后点击 “Finish” 按钮。<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/7ac5ffafea8488aa36df72fd0a8a2df6.png" alt=""></p>
+<h3 id="主界面"><a href="#主界面" class="headerlink" title="主界面"></a>主界面</h3><p>第一次打开因为需要分析dump文件，所以需要等待一段时间进行分析，分析完成之后dump文件目录下面的文件信息如下：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/56ae33d76a59bff56b92de705f3e0fc1.png" alt=""></p>
+<p>上图中 heap-27311.bin 文件是原始的Heap Dump文件，zip文件是生成的html形式的报告文件。</p>
+<p>打开之后，主界面如下所示：</p>
+<p><img src="https://www.javatang.com/wp-content/uploads/2017/10/47fb011d433ddf4c295f4718adc8b4b5.png" alt=""></p>
+<p>接下来介绍界面中常用到的功能：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/843eb07db5728ab786cfbcb016d6809f.png" alt=""></p>
+<h3 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h3><p>Overview视图，即概要界面，显示了概要的信息，并展示了MAT常用的一些功能。</p>
+<ul>
+<li>Details 显示了一些统计信息，包括整个堆内存的大小、类（Class）的数量、对象（Object）的数量、类加载器（Class Loader)的数量。</li>
+<li>Biggest Objects by Retained Size 使用饼图的方式直观地显示了在JVM堆内存中最大的几个对象，当光标移到饼图上的时候会在左边Inspector和Attributes窗口中显示详细的信息。</li>
+<li>Actions 这里显示了几种常用到的操作，算是功能的快捷方式，包括 Histogram、Dominator Tree、Top Consumers、Duplicate Classes，具体的含义和用法见下面；</li>
+<li>Reports 列出了常用的报告信息，包括 Leak Suspects和Top Components，具体的含义和内容见下；</li>
+<li>Step By Step 以向导的方式引导使用功能。</li>
+</ul>
+<h3 id="Histogram"><a href="#Histogram" class="headerlink" title="Histogram"></a>Histogram</h3><p>直方图，可以查看每个类的实例（即对象）的数量和大小。</p>
+<h3 id="Dominator-Tree"><a href="#Dominator-Tree" class="headerlink" title="Dominator Tree"></a>Dominator Tree</h3><p>支配树，列出Heap Dump中处于活跃状态中的最大的几个对象，默认按 retained size进行排序，因此很容易找到占用内存最多的对象。</p>
+<h3 id="OQL"><a href="#OQL" class="headerlink" title="OQL"></a>OQL</h3><p>MAT提供了一个对象查询语言（OQL），跟SQL语言类似，将类当作表、对象当作记录行、成员变量当作表中的字段。通过OQL可以方便快捷的查询一些需要的信息，是一个非常有用的工具。</p>
+<h3 id="Thread-Overview"><a href="#Thread-Overview" class="headerlink" title="Thread Overview"></a>Thread Overview</h3><p>此工具可以查看生成Heap Dump文件的时候线程的运行情况，用于线程的分析。</p>
+<h3 id="Run-Expert-System-Test"><a href="#Run-Expert-System-Test" class="headerlink" title="Run Expert System Test"></a>Run Expert System Test</h3><p>可以查看分析完成的HTML形式的报告，也可以打开已经产生的分析报告文件，子菜单项如下图所示<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/22d20d2d807b24c859b795846f587922.png" alt=""></p>
+<p>常用的主要有Leak Suspects和Top Components两种报告：</p>
+<ul>
+<li>Leak Suspects 可以说是非常常用的报告了，该报告分析了 Heap Dump并尝试找出内存泄漏点，最后在生成的报告中对检测到的可疑点做了详细的说明；</li>
+<li>Top Components 列出占用总堆内存超过1%的对象。</li>
+</ul>
+<h3 id="Open-Query-Browser"><a href="#Open-Query-Browser" class="headerlink" title="Open Query Browser"></a>Open Query Browser</h3><p>提供了在分析过程中用到的工具，通常都集成在了右键菜单中，在后面具体举例分析的时候会做详细的说明。如下图：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/c9f7a5b311c473627ddd281f52907e0a.png" alt=""><br>这里仅针对在 Overview 界面中的 Acations中列出的两项进行说明：</p>
+<p>Top Consumers 按类、类加载器和包分别进行查询，并以饼图的方式列出最大的几个对象。菜单打开方式如下：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/5e7a1762e03b51c263cb713f64461135.png" alt=""></p>
+<p>Duplicate Classes 列出被加载多次的类，结果按类加载器进行分组，目标是加载同一个类多次被类加载器加载。使用该工具很容易找到部署应用的时候使用了同一个库的多个版本。菜单打开方式如下图：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/cc8cbe62f8e41bb9da95edeba1a25a1b.png" alt=""></p>
+<h3 id="Find-Object-by-address"><a href="#Find-Object-by-address" class="headerlink" title="Find Object by address"></a>Find Object by address</h3><p>通过十六进制的地址查找对应的对象，见下图：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/27e4a4532a75590d7e3a66f7101c9240.png" alt=""></p>
+<p>参考资料：<br><a href="http://blog.csdn.net/zapldy/article/details/7727572" target="_blank" rel="noopener">利用MemoryAnalyzer进行OutOfMemoryError的诊断分析</a><br><a href="https://eclipsesource.com/blogs/2013/01/21/10-tips-for-using-the-eclipse-memory-analyzer/" target="_blank" rel="noopener">10 Tips for using the Eclipse Memory Analyzer</a><br><a href="https://www.ibm.com/developerworks/cn/opensource/os-cn-ecl-ma/" target="_blank" rel="noopener">使用 Eclipse Memory Analyzer 进行堆转储文件分析</a><br><a href="http://www.cnblogs.com/xianzhedeyu/p/5800666.html" target="_blank" rel="noopener">Java内存分析</a><br><a href="http://tivan.iteye.com/blog/1487855" target="_blank" rel="noopener">一次使用Eclipse Memory Analyzer分析Tomcat内存溢出</a><br><a href="http://wensong.iteye.com/blog/1986449" target="_blank" rel="noopener">Memory Analyzer Tool 使用手记</a><br><a href="http://www.zhyea.com/2016/07/17/memory-analyzer-all.html" target="_blank" rel="noopener">MemoryAnalyzer介绍及使用</a></p>
 
-在JVM中增加参数生成在JVM的配置参数中可以添加 -XX:+HeapDu
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/26/jvm内存分析6/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+          
         
       
     </div>
@@ -1210,21 +1260,36 @@ JVM Heap Dump（堆转储文件）的生成正如Thread Dump文件记录了当�
       
         
           
-          转载自：传送门
-症状及解决方案下面列出几种常见的症状即对应的解决方案：
-CPU占用率很高，响应很慢按照《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。在同一时间多次使用上述的方法，然后进行对比分析，从代码中找到问题所在的原因。如果线程指向的是”VM Thread”或者无法从代码中直接找到原因，就需要进行内存分析，具体的见下一篇文章。
-CPU占用率不高，但响应很慢在整个请求的过程中多次执行Thread Dump然后进行对比，取得BLOCKED 状态的线程列表，通常是因为线程停在了I/O、数据库连接或网络连接的地方。
-关注点概况在Thread Dump文件中，线程的状态分成两种：Native Thread Status（系统线程状态）和JVM Thread Status（JVM 线程状态），具体的含义可以参考上一篇文章。在分析日志的时候需要重点关注如下几种线程状态：
-系统线程状态为 deadlock线程处于死锁状态，将占用系统大量资源。
-系统线程状态为 waiting for moni
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/26/jvm内存分析5/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+            <p>转载自：<a href="https://www.javatang.com/archives/2017/10/26/08572060.html" target="_blank" rel="noopener">传送门</a></p>
+<h2 id="症状及解决方案"><a href="#症状及解决方案" class="headerlink" title="症状及解决方案"></a>症状及解决方案</h2><p>下面列出几种常见的症状即对应的解决方案：</p>
+<h3 id="CPU占用率很高，响应很慢"><a href="#CPU占用率很高，响应很慢" class="headerlink" title="CPU占用率很高，响应很慢"></a>CPU占用率很高，响应很慢</h3><p>按照<a href="https://yefan813.github.io/2018/07/25/jstack%E4%BD%BF%E7%94%A8/" target="_blank" rel="noopener">《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》</a>中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。<br>在同一时间多次使用上述的方法，然后进行对比分析，从代码中找到问题所在的原因。如果线程指向的是”VM Thread”或者无法从代码中直接找到原因，就需要进行内存分析，具体的见下一篇文章。</p>
+<h3 id="CPU占用率不高，但响应很慢"><a href="#CPU占用率不高，但响应很慢" class="headerlink" title="CPU占用率不高，但响应很慢"></a>CPU占用率不高，但响应很慢</h3><p>在整个请求的过程中多次执行Thread Dump然后进行对比，取得<strong>BLOCKED</strong> 状态的线程列表，通常是因为线程停在了I/O、数据库连接或网络连接的地方。</p>
+<h3 id="关注点概况"><a href="#关注点概况" class="headerlink" title="关注点概况"></a>关注点概况</h3><p>在Thread Dump文件中，线程的状态分成两种：<strong>Native Thread Status（系统线程状态）</strong>和<strong>JVM Thread Status（JVM 线程状态）</strong>，具体的含义可以参考<a href="https://yefan813.github.io/2018/07/26/jstack3/" target="_blank" rel="noopener">上一篇文章</a>。在分析日志的时候需要重点关注如下几种线程状态：</p>
+<h3 id="系统线程状态为-deadlock"><a href="#系统线程状态为-deadlock" class="headerlink" title="系统线程状态为 deadlock"></a>系统线程状态为 deadlock</h3><p>线程处于死锁状态，将占用系统大量资源。</p>
+<h3 id="系统线程状态为-waiting-for-monitor-entry-或-in-Object-wait"><a href="#系统线程状态为-waiting-for-monitor-entry-或-in-Object-wait" class="headerlink" title="系统线程状态为 waiting for monitor entry 或 in Object.wait()"></a>系统线程状态为 waiting for monitor entry 或 in Object.wait()</h3><p>如上一篇文章中所说，系统线程处于这种状态说明它在等待进入一个临界区，此时JVM线程的状态通常都是 <strong>java.lang.Thread.State: BLOCKED。</strong></p>
+<p>如果大量线程处于这种状态的话，可能是一个全局锁阻塞了大量线程。如果短期内多次打印Thread Dump信息，发现<strong>waiting for monitor entry</strong>状态的线程越来越多，没有减少的趋势，可能意味着某些线程在临界区里呆得时间太长了，以至于越来越多新线程迟迟无法进入。</p>
+<h3 id="系统线程状态为-waiting-on-condition"><a href="#系统线程状态为-waiting-on-condition" class="headerlink" title="系统线程状态为 waiting on condition"></a>系统线程状态为 waiting on condition</h3><p>系统线程处于此种状态说明它在等待另一个条件的发生来唤醒自己，或者自己调用了sleep()方法。此时JVM线程的状态通常是java.lang.Thread.State: WAITING (parking)（等待唤醒条件）或java.lang.Thread.State: TIMED_WAITING (parking或sleeping)（等待定时唤醒条件）。</p>
+<p>如果大量线程处于此种状态，说明这些线程又去获取第三方资源了，比如第三方的网络资源或读取数据库的操作，长时间无法获得响应，导致大量线程进入等待状态。因此，这说明系统处于一个网络瓶颈或读取数据库操作时间太长。</p>
+<h3 id="系统线程状态为-blocked"><a href="#系统线程状态为-blocked" class="headerlink" title="系统线程状态为 blocked"></a>系统线程状态为 blocked</h3><p>线程处于阻塞状态，需要根据实际情况进行判断。</p>
+<h2 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h2><p>下面通过几个案例进行分解来获得解决问题的方法。</p>
+<h3 id="waiting-for-monitor-entry-和-java-lang-Thread-State-BLOCKED"><a href="#waiting-for-monitor-entry-和-java-lang-Thread-State-BLOCKED" class="headerlink" title="waiting for monitor entry 和 java.lang.Thread.State: BLOCKED"></a>waiting for monitor entry 和 java.lang.Thread.State: BLOCKED</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&quot;DB-Processor-13&quot; daemon prio=5 tid=0x003edf98 nid=0xca waiting for monitor entry [0x000000000825f000]</span><br><span class="line">java.lang.Thread.State: BLOCKED (on object monitor)</span><br><span class="line">                at beans.ConnectionPool.getConnection(ConnectionPool.java:102)</span><br><span class="line">                - waiting to lock &lt;0xe0375410&gt; (a beans.ConnectionPool)</span><br><span class="line">                at beans.cus.ServiceCnt.getTodayCount(ServiceCnt.java:111)</span><br><span class="line">                at beans.cus.ServiceCnt.insertCount(ServiceCnt.java:43)</span><br><span class="line"></span><br><span class="line">&quot;DB-Processor-14&quot; daemon prio=5 tid=0x003edf98 nid=0xca waiting for monitor entry [0x000000000825f020]</span><br><span class="line">java.lang.Thread.State: BLOCKED (on object monitor)</span><br><span class="line">                at beans.ConnectionPool.getConnection(ConnectionPool.java:102)</span><br><span class="line">                - waiting to lock &lt;0xe0375410&gt; (a beans.ConnectionPool)</span><br><span class="line">                at beans.cus.ServiceCnt.getTodayCount(ServiceCnt.java:111)</span><br><span class="line">                at beans.cus.ServiceCnt.insertCount(ServiceCnt.java:43)</span><br><span class="line"></span><br><span class="line">&quot;DB-Processor-3&quot; daemon prio=5 tid=0x00928248 nid=0x8b waiting for monitor entry [0x000000000825d080]</span><br><span class="line">java.lang.Thread.State: RUNNABLE</span><br><span class="line">                at oracle.jdbc.driver.OracleConnection.isClosed(OracleConnection.java:570)</span><br><span class="line">                - waiting to lock &lt;0xe03ba2e0&gt; (a oracle.jdbc.driver.OracleConnection)</span><br><span class="line">                at beans.ConnectionPool.getConnection(ConnectionPool.java:112)</span><br><span class="line">                - locked &lt;0xe0386580&gt; (a java.util.Vector)</span><br><span class="line">                - locked &lt;0xe0375410&gt; (a beans.ConnectionPool)</span><br><span class="line">                at beans.cus.Cue_1700c.GetNationList(Cue_1700c.java:66)</span><br><span class="line">                at org.apache.jsp.cue_1700c_jsp._jspService(cue_1700c_jsp.java:120)</span><br></pre></td></tr></table></figure>
+<p>上面系统线程的状态是 <strong>waiting for monitor entry</strong>，说明此线程通过 synchronized(obj) { } 申请进入临界区，但obj对应的 Monitor 被其他线程所拥有，所以 JVM线程的状态是 <strong>java.lang.Thread.State: BLOCKED (on object monitor)</strong>，说明线程等待资源超时。</p>
+<p>下面的 <strong>waiting to lock <0xe0375410></0xe0375410></strong> 说明线程在等待给 <strong>0xe0375410</strong> 这个地址上锁（<strong>trying to obtain 0xe0375410 lock</strong>），如果在日志中发现有大量的线程都在等待给 现有大量的线程都在等 上锁的话，这个时候需要在日志中查找那个线程获取了这个锁 <strong>locked <0xe0375410></0xe0375410></strong>，如上面的例子中是 <strong>“DB-Processor-14”</strong> 这个线程，这样就可以顺藤摸瓜了。上面的例子是因为获取数据库操作等待的时间太长所致的，这个时候就需要修改数据库连接的配置信息。</p>
+<p>如果两个线程相互都被对方的线程锁锁住，这样就造成了 <strong>死锁</strong> 现象，如下面的例子所示：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/thread-deadlock-1.png" alt=""></p>
+<h3 id="waiting-on-condition-和-java-lang-Thread-State-TIMED-WAITING"><a href="#waiting-on-condition-和-java-lang-Thread-State-TIMED-WAITING" class="headerlink" title="waiting on condition 和 java.lang.Thread.State: TIMED_WAITING"></a>waiting on condition 和 java.lang.Thread.State: TIMED_WAITING</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&quot;RMI TCP Connection(idle)&quot; daemon prio=10 tid=0x00007fd50834e800 nid=0x56b2 waiting on condition [0x00007fd4f1a59000]</span><br><span class="line">java.lang.Thread.State: TIMED_WAITING (parking)</span><br><span class="line">                at sun.misc.Unsafe.park(Native Method)</span><br><span class="line">                - parking to wait for  &lt;0x00000000acd84de8&gt; (a java.util.concurrent.SynchronousQueue$TransferStack)</span><br><span class="line">                at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:198)</span><br><span class="line">                at java.util.concurrent.SynchronousQueue$TransferStack.awaitFulfill(SynchronousQueue.java:424)</span><br><span class="line">                at java.util.concurrent.SynchronousQueue$TransferStack.transfer(SynchronousQueue.java:323)</span><br><span class="line">                at java.util.concurrent.SynchronousQueue.poll(SynchronousQueue.java:874)</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:945)</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:907)</span><br><span class="line">                at java.lang.Thread.run(Thread.java:662)</span><br></pre></td></tr></table></figure>
+<p>JVM线程的状态是 java.lang.Thread.State: TIMED_WAITING (parking)，说明线程处于定时等待的状态，parking指线程处于挂起中。</p>
+<p><strong>waiting on condition</strong>需要结合堆栈中的 parking to wait for <0x00000000acd84de8> (a java.util.concurrent.SynchronousQueue$TransferStack) 一起来分析。首先，本线程肯定是在等待某个条件的发生来把自己唤醒。其次，SynchronousQueue并不是一个队列，只是线程之间移交信息的机制，当我们把一个元素放入到 SynchronousQueue 中的时候必须有另一个线程正在等待接受移交的任务，因此这就是本线程在等待的条件。</0x00000000acd84de8></p>
+<p>in Object.wait() 和 java.lang.Thread.State: TIMED_WAITING</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&quot;RMI RenewClean-[172.16.5.19:28475]&quot; daemon prio=10 tid=0x0000000041428800 nid=0xb09 in Object.wait() [0x00007f34f4bd0000]</span><br><span class="line">java.lang.Thread.State: TIMED_WAITING (on object monitor)</span><br><span class="line">                at java.lang.Object.wait(Native Method)</span><br><span class="line">                - waiting on &lt;0x00000000aa672478&gt; (a java.lang.ref.ReferenceQueue$Lock)</span><br><span class="line">                at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:118)</span><br><span class="line">                - locked &lt;0x00000000aa672478&gt; (a java.lang.ref.ReferenceQueue$Lock)</span><br><span class="line">                at sun.rmi.transport.DGCClient$EndpointEntry$RenewCleanThread.run(DGCClient.java:516)</span><br><span class="line">                at java.lang.Thread.run(Thread.java:662)</span><br></pre></td></tr></table></figure>
+<p>本例中JVM线程的状态是 <strong>java.lang.Thread.State: TIMED_WAITING (on object monitor)</strong>，说明线程调用了 <strong>java.lang.Object.wait(long timeout)</strong> 方法而进入了等待状态。</p>
+<p>“Wait Set”中等待的线程状态就是 <strong>in Object.wait()</strong>，当线程获得了 Monitor进入临界区之后，如果发现线程继续运行的条件没有满足，它就调用对象（通常是被 synchronized 的对象）的wait()方法，放弃了Monitor，进入 “Wait Set” 队列中。只有当别的线程在该对象上调用了 notify()或notifyAll()方法， “Wait Set” 队列中线程才得到机会去竞争，但是只有一个线程获得对象的 Monitor，恢复到的运行态。</p>
+<p>另外需要注意的是，是先 locked <0x00000000aa672478> 然后再 waiting on <0x00000000aa672478>，之所以如此，可以通过下面的代码进行演示：</0x00000000aa672478></0x00000000aa672478></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">static private class  Lock &#123; &#125;;</span><br><span class="line">private Lock lock = new Lock();</span><br><span class="line">public Reference&lt;? extends T&gt; remove(long timeout) &#123;</span><br><span class="line">    synchronized (lock) &#123;</span><br><span class="line">        Reference&lt;? extends T&gt; r = reallyPoll();</span><br><span class="line">        if (r != null) return r;</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            lock.wait(timeout);</span><br><span class="line">            r = reallyPoll();</span><br><span class="line">            // ……</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>线程在执行的过程中，先用 synchronized 获得了这个对象的 Monitor（对应 locked <0x00000000aa672478>），当执行到 <strong>lock.wait(timeout);</strong> 的时候，线程就放弃了Monitor的所有权，进入 “Wait Set” 队列（对应 waiting on <0x00000000aa672478>）。</0x00000000aa672478></0x00000000aa672478></p>
+<p>前面几篇文章详细说明了如何分析Thread Dump文件，除此之外还可以通过分析JVM堆内存信息来进一步找到问题的原因。</p>
+<p>参考资料：<br><a href="http://just2do.iteye.com/blog/2275894" target="_blank" rel="noopener">性能分析之– JAVA Thread Dump 分析综述</a><br><a href="http://www.cnblogs.com/zhengyun_ustc/archive/2013/01/06/dumpanalysis.html" target="_blank" rel="noopener">三个实例演示 Java Thread Dump 日志分析</a><br><a href="http://sesame.iteye.com/blog/428012" target="_blank" rel="noopener">如何分析Java虚拟机死锁</a><br><a href="http://www.cnblogs.com/zhengyun_ustc/archive/2013/03/18/tda.html" target="_blank" rel="noopener">各种 Java Thread State 第一分析法则</a><br><a href="https://dzone.com/articles/how-analyze-java-thread-dumps" target="_blank" rel="noopener">How to Analyze Java Thread Dumps | 中文版</a><br><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/tooldescr034.html" target="_blank" rel="noopener">官网</a><br><a href="https://mp.weixin.qq.com/s/GsxeFM7QWuR--Kbpb7At2w" target="_blank" rel="noopener">java线程状态转化</a><br><a href="https://blogs.oracle.com/poonam/understanding-cms-gc-logs" target="_blank" rel="noopener">CMS日志格式</a><br><a href="https://blogs.oracle.com/poonam/understanding-g1-gc-logs" target="_blank" rel="noopener">G1日志格式</a><br><a href="http://gceasy.io/" target="_blank" rel="noopener">GC日志分析工具</a><br><a href="https://github.com/chewiebug/GCViewer" target="_blank" rel="noopener">GCViewer</a></p>
+
+          
         
       
     </div>
@@ -1353,18 +1418,81 @@ CPU占用率不高，但响应很慢在整个请求的过程中多次执行Threa
       
         
           
-          转载自：传送门
-前面文章中只分析了Thread Dump日志文件的结构，今天针对日志文件中 Java EE middleware, third party &amp; custom application Threads 部分线程的状态进行详细的分析。
-Thread Dump日志的线程信息以下面的日志为例：
-12345678910111213141516&quot;resin-22129&quot; daemon prio=10 tid=0x00007fbe5c34e000 nid=0x4cb1 waiting on condition [0x00007fbe4ff7c000]   java.lang.Thread.State: WAITING (parking)    at sun.misc.Unsafe.park(Native Method)    at java.util.concurrent.locks.LockSupport.park(LockSupport.java:315)    at com.caucho.env.thread2.ResinThread2.park(Re
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/26/jstack3/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+            <p>转载自：<a href="https://www.javatang.com/archives/2017/10/20/12131956.html" target="_blank" rel="noopener">传送门</a></p>
+<p>前面<a href="https://yefan813.github.io/2018/07/25/jstack2/" target="_blank" rel="noopener">文章</a>中只分析了Thread Dump日志文件的结构，今天针对日志文件中 Java EE middleware, third party &amp; custom application Threads 部分线程的状态进行详细的分析。</p>
+<h2 id="Thread-Dump日志的线程信息"><a href="#Thread-Dump日志的线程信息" class="headerlink" title="Thread Dump日志的线程信息"></a>Thread Dump日志的线程信息</h2><p>以下面的日志为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&quot;resin-22129&quot; daemon prio=10 tid=0x00007fbe5c34e000 nid=0x4cb1 waiting on condition [0x00007fbe4ff7c000]</span><br><span class="line">   java.lang.Thread.State: WAITING (parking)</span><br><span class="line">    at sun.misc.Unsafe.park(Native Method)</span><br><span class="line">    at java.util.concurrent.locks.LockSupport.park(LockSupport.java:315)</span><br><span class="line">    at com.caucho.env.thread2.ResinThread2.park(ResinThread2.java:196)</span><br><span class="line">    at com.caucho.env.thread2.ResinThread2.runTasks(ResinThread2.java:147)</span><br><span class="line">    at com.caucho.env.thread2.ResinThread2.run(ResinThread2.java:118)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&quot;Timer-20&quot; daemon prio=10 tid=0x00007fe3a4bfb800 nid=0x1a31 in Object.wait() [0x00007fe3a077a000]</span><br><span class="line">   java.lang.Thread.State: TIMED_WAITING (on object monitor)</span><br><span class="line">    at java.lang.Object.wait(Native Method)</span><br><span class="line">    - waiting on &lt;0x00000006f0620ff0&gt; (a java.util.TaskQueue)</span><br><span class="line">    at java.util.TimerThread.mainLoop(Timer.java:552)</span><br><span class="line">    - locked &lt;0x00000006f0620ff0&gt; (a java.util.TaskQueue)</span><br><span class="line">    at java.util.TimerThread.run(Timer.java:505)</span><br></pre></td></tr></table></figure>
+<p>以上依次是：</p>
+<ul>
+<li><strong>“resin-22129” 线程名称：</strong>如果使用 java.lang.Thread 类生成一个线程的时候，线程名称为 Thread-(数字) 的形式，这里是resin生成的线程；</li>
+<li><strong>daemon 线程类型：</strong>线程分为守护线程 (daemon) 和非守护线程 (non-daemon) 两种，通常都是守护线程；</li>
+<li><strong>prio=10 线程优先级：</strong>默认为5，数字越大优先级越高；</li>
+<li><strong>tid=0x00007fbe5c34e000 JVM线程的id：</strong>JVM内部线程的唯一标识，通过 java.lang.Thread.getId()获取，通常用自增的方式实现；</li>
+<li><strong>nid=0x4cb1 系统线程id：</strong>对应的系统线程id（Native Thread ID)，可以通过 top 命令进行查看，线程id是十六进制的形式；</li>
+<li><strong>waiting on condition 系统线程状态：</strong>这里是系统的线程状态，具体的含义见下面 系统线程状态 部分；</li>
+<li><strong>[0x00007fbe4ff7c000] 起始栈地址：</strong>线程堆栈调用的其实内存地址；</li>
+<li><strong>java.lang.Thread.State: WAITING (parking) JVM线程状态：</strong>这里标明了线程在代码级别的状态，详细的内容见下面的 JVM线程运行状态 部分。</li>
+<li><strong>线程调用栈信息：</strong>下面就是当前线程调用的详细栈信息，用于代码的分析。堆栈信息应该从下向上解读，因为程序调用的顺序是从下向上的。</li>
+</ul>
+<h2 id="系统线程状态-Native-Thread-Status"><a href="#系统线程状态-Native-Thread-Status" class="headerlink" title="系统线程状态 (Native Thread Status)"></a>系统线程状态 (Native Thread Status)</h2><p>系统线程有如下状态：</p>
+<h3 id="deadlock"><a href="#deadlock" class="headerlink" title="deadlock"></a>deadlock</h3><p>死锁线程，一般指多个线程调用期间进入了相互资源占用，导致一直等待无法释放的情况。</p>
+<h3 id="runnable"><a href="#runnable" class="headerlink" title="runnable"></a>runnable</h3><p>一般指该线程正在执行状态中，该线程占用了资源，正在处理某个操作，如通过SQL语句查询数据库、对某个文件进行写入等。</p>
+<h3 id="blocked"><a href="#blocked" class="headerlink" title="blocked"></a>blocked</h3><p>线程正处于阻塞状态，指当前线程执行过程中，所需要的资源长时间等待却一直未能获取到，被容器的线程管理器标识为阻塞状态，可以理解为等待资源超时的线程。</p>
+<h3 id="waiting-on-condition"><a href="#waiting-on-condition" class="headerlink" title="waiting on condition"></a>waiting on condition</h3><p>线程正处于等待资源或等待某个条件的发生，具体的原因需要结合下面堆栈信息进行分析。</p>
+<p>（1）如果堆栈信息明确是应用代码，则证明该线程正在等待资源，一般是大量读取某种资源且该资源采用了资源锁的情况下，线程进入等待状态，等待资源的读取，或者正在等待其他线程的执行等。</p>
+<p>（2）如果发现有大量的线程都正处于这种状态，并且堆栈信息中得知正等待网络读写，这是因为网络阻塞导致线程无法执行，很有可能是一个网络瓶颈的征兆：</p>
+<p>网络非常繁忙，几乎消耗了所有的带宽，仍然有大量数据等待网络读写；<br>网络可能是空闲的，但由于路由或防火墙等原因，导致包无法正常到达；<br>所以一定要结合系统的一些性能观察工具进行综合分析，比如netstat统计单位时间的发送包的数量，看是否很明显超过了所在网络带宽的限制；观察CPU的利用率，看系统态的CPU时间是否明显大于用户态的CPU时间。这些都指向由于网络带宽所限导致的网络瓶颈。</p>
+<p>（3）还有一种常见的情况是该线程在 sleep，等待 sleep 的时间到了，将被唤醒。</p>
+<h3 id="waiting-for-monitor-entry-或-in-Object-wait"><a href="#waiting-for-monitor-entry-或-in-Object-wait" class="headerlink" title="waiting for monitor entry 或 in Object.wait()"></a>waiting for monitor entry 或 in Object.wait()</h3><p>Moniter 是Java中用以实现线程之间的互斥与协作的主要手段，它可以看成是对象或者class的锁，每个对象都有，也仅有一个 Monitor。</p>
+<p><img src="https://www.javatang.com/wp-content/uploads/2017/10/java-monitor.png" alt=""></p>
+<p>从上图可以看出，每个Monitor在某个时刻只能被一个线程拥有，该线程就是 “Active Thread”，而其他线程都是 “Waiting Thread”，分别在两个队列 “Entry Set”和”Waint Set”里面等待。其中在 “Entry Set” 中等待的线程状态是 <strong>waiting for monitor entry</strong>，在 “Wait Set” 中等待的线程状态是 <strong>in Object.wait()</strong> 。</p>
+<h4 id="（1）”Entry-Set”里面的线程。"><a href="#（1）”Entry-Set”里面的线程。" class="headerlink" title="（1）”Entry Set”里面的线程。"></a>（1）”Entry Set”里面的线程。</h4><p>我们称被 synchronized 保护起来的代码段为临界区，对应的代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">synchronized(obj) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当一个线程申请进入临界区时，它就进入了 “Entry Set” 队列中，这时候有两种可能性：</p>
+<ol>
+<li>该Monitor不被其他线程拥有，”Entry Set”里面也没有其他等待的线程。本线程即成为相应类或者对象的Monitor的Owner，执行临界区里面的代码；此时在Thread Dump中显示线程处于 “Runnable” 状态。</li>
+<li>该Monitor被其他线程拥有，本线程在 “Entry Set” 队列中等待。此时在Thread Dump中显示线程处于 “waiting for monity entry” 状态。</li>
+</ol>
+<p>临界区的设置是为了保证其内部的代码执行的原子性和完整性，但因为临界区在任何时间只允许线程串行通过，这和我们使用多线程的初衷是相反的。如果在多线程程序中大量使用synchronized，或者不适当的使用它，会造成大量线程在临界区的入口等待，造成系统的性能大幅下降。如果在Thread Dump中发现这个情况，应该审视源码并对其进行改进。</p>
+<h4 id="（2）”Wait-Set”里面的线程"><a href="#（2）”Wait-Set”里面的线程" class="headerlink" title="（2）”Wait Set”里面的线程"></a>（2）”Wait Set”里面的线程</h4><p>当线程获得了Monitor，进入了临界区之后，如果发现线程继续运行的条件没有满足，它则调用对象（通常是被synchronized的对象）的wait()方法，放弃Monitor，进入 “Wait Set”队列。只有当别的线程在该对象上调用了 notify()或者notifyAll()方法，”Wait Set”队列中的线程才得到机会去竞争，但是只有一个线程获得对象的Monitor，恢复到运行态。”Wait Set”中的线程在Thread Dump中显示的状态为 in Object.wait()。通常来说，</p>
+<p>通常来说，当CPU很忙的时候关注 Runnable 状态的线程，反之则关注 waiting for monitor entry 状态的线程。</p>
+<h2 id="JVM线程运行状态-JVM-Thread-Status"><a href="#JVM线程运行状态-JVM-Thread-Status" class="headerlink" title="JVM线程运行状态 (JVM Thread Status)"></a>JVM线程运行状态 (JVM Thread Status)</h2><p><img src="https://www.javatang.com/wp-content/uploads/2017/10/thread-state-diagram.png" alt=""></p>
+<p>在 <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/Thread.State.html" target="_blank" rel="noopener">java.lang.Thread.State</a> 中定义了线程的状态：</p>
+<p>详细如下：<br><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1ftnm3dmli7j30w20mf7bd.jpg" alt=""></p>
+<h3 id="NEW"><a href="#NEW" class="headerlink" title="NEW"></a>NEW</h3><p>至今尚未启动的线程的状态。线程刚被创建，但尚未启动。</p>
+<h3 id="RUNNABLE"><a href="#RUNNABLE" class="headerlink" title="RUNNABLE"></a>RUNNABLE</h3><p>可运行线程的线程状态。线程正在JVM中执行，有可能在等待操作系统中的其他资源，比如处理器。</p>
+<h3 id="BLOCKED"><a href="#BLOCKED" class="headerlink" title="BLOCKED"></a>BLOCKED</h3><p>受阻塞并且正在等待监视器的某一线程的线程状态。处于受阻塞状态的某一线程正在等待监视器锁，以便进入一个同步的块/方法，或者在调用 Object.wait 之后再次进入同步的块/方法。<br>在Thread Dump日志中通常显示为 java.lang.Thread.State: BLOCKED (on object monitor) 。</p>
+<h3 id="WAITING"><a href="#WAITING" class="headerlink" title="WAITING"></a>WAITING</h3><p>某一等待线程的线程状态。线程正在无期限地等待另一个线程来执行某一个特定的操作，线程因为调用下面的方法之一而处于等待状态：</p>
+<ul>
+<li>不带超时的 Object.wait 方法，日志中显示为 java.lang.Thread.State: WAITING (on object monitor)</li>
+<li>不带超时的 Thread.join 方法</li>
+<li>LockSupport.park 方法，日志中显示为 java.lang.Thread.State: WAITING (parking)</li>
+</ul>
+<h3 id="TIMED-WAITING"><a href="#TIMED-WAITING" class="headerlink" title="TIMED_WAITING"></a>TIMED_WAITING</h3><p>指定了等待时间的某一等待线程的线程状态。线程正在等待另一个线程来执行某一个特定的操作，并设定了指定等待的时间，线程因为调用下面的方法之一而处于定时等待状态：</p>
+<ul>
+<li>Thread.sleep 方法</li>
+<li>指定超时值的 Object.wait 方法</li>
+<li>指定超时值的 Thread.join 方法</li>
+<li>LockSupport.parkNanos</li>
+<li>LockSupport.parkUntil</li>
+</ul>
+<h3 id="TERMINATED"><a href="#TERMINATED" class="headerlink" title="TERMINATED"></a>TERMINATED</h3><p>线程处于终止状态。</p>
+<p>根据Java Doc中的说明，在给定的时间上，一个只能处于上述的一种状态之中，并且这些状态都是JVM的状态，跟操作系统中的线程状态无关。</p>
+<h2 id="线程状态样例"><a href="#线程状态样例" class="headerlink" title="线程状态样例"></a>线程状态样例</h2><h3 id="等待状态样例"><a href="#等待状态样例" class="headerlink" title="等待状态样例"></a>等待状态样例</h3><p><img src="https://www.javatang.com/wp-content/uploads/2017/10/thread-dump-waiting-status.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&quot;IoWaitThread&quot; prio=6 tid=0x0000000007334800 nid=0x2b3c waiting on condition [0x000000000893f000]</span><br><span class="line">  java.lang.Thread.State: WAITING (parking)</span><br><span class="line">               at sun.misc.Unsafe.park(Native Method)</span><br><span class="line">               - parking to wait for  &lt;0x00000007d5c45850&gt; (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)</span><br><span class="line">               at java.util.concurrent.locks.LockSupport.park(LockSupport.java:156)</span><br><span class="line">               at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1987)</span><br><span class="line">               at java.util.concurrent.LinkedBlockingDeque.takeFirst(LinkedBlockingDeque.java:440)</span><br><span class="line">               at java.util.concurrent.LinkedBlockingDeque.take(LinkedBlockingDeque.java:629)</span><br><span class="line">               at com.nbp.theplatform.threaddump.ThreadIoWaitState$IoWaitHandler2.run(ThreadIoWaitState.java:89)</span><br><span class="line">               at java.lang.Thread.run(Thread.java:662)</span><br></pre></td></tr></table></figure>
+<p>上面例子中，IoWaitThread 线程保持等待状态并从 LinkedBlockingQueue 接收消息，如果 LinkedBlockingQueue 一直没有消息，该线程的状态将不会改变。</p>
+<h3 id="阻塞状态样例"><a href="#阻塞状态样例" class="headerlink" title="阻塞状态样例"></a>阻塞状态样例</h3><p><img src="https://www.javatang.com/wp-content/uploads/2017/10/thread-dump-blocked-status.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">&quot;BLOCKED_TEST pool-1-thread-1&quot; prio=6 tid=0x0000000006904800 nid=0x28f4 runnable [0x000000000785f000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br><span class="line">                at java.io.FileOutputStream.writeBytes(Native Method)</span><br><span class="line">                at java.io.FileOutputStream.write(FileOutputStream.java:282)</span><br><span class="line">                at java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:65)</span><br><span class="line">                at java.io.BufferedOutputStream.flush(BufferedOutputStream.java:123)</span><br><span class="line">                - locked &lt;0x0000000780a31778&gt; (a java.io.BufferedOutputStream)</span><br><span class="line">                at java.io.PrintStream.write(PrintStream.java:432)</span><br><span class="line">                - locked &lt;0x0000000780a04118&gt; (a java.io.PrintStream)</span><br><span class="line">                at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:202)</span><br><span class="line">                at sun.nio.cs.StreamEncoder.implFlushBuffer(StreamEncoder.java:272)</span><br><span class="line">                at sun.nio.cs.StreamEncoder.flushBuffer(StreamEncoder.java:85)</span><br><span class="line">                - locked &lt;0x0000000780a040c0&gt; (a java.io.OutputStreamWriter)</span><br><span class="line">                at java.io.OutputStreamWriter.flushBuffer(OutputStreamWriter.java:168)</span><br><span class="line">                at java.io.PrintStream.newLine(PrintStream.java:496)</span><br><span class="line">                - locked &lt;0x0000000780a04118&gt; (a java.io.PrintStream)</span><br><span class="line">                at java.io.PrintStream.println(PrintStream.java:687)</span><br><span class="line">                - locked &lt;0x0000000780a04118&gt; (a java.io.PrintStream)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadBlockedState.monitorLock(ThreadBlockedState.java:44)</span><br><span class="line">                - locked &lt;0x0000000780a000b0&gt; (a com.nbp.theplatform.threaddump.ThreadBlockedState)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadBlockedState$1.run(ThreadBlockedState.java:7)</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)</span><br><span class="line">                at java.lang.Thread.run(Thread.java:662)</span><br><span class="line">   Locked ownable synchronizers:</span><br><span class="line">                - &lt;0x0000000780a31758&gt; (a java.util.concurrent.locks.ReentrantLock$NonfairSync)</span><br><span class="line">&quot;BLOCKED_TEST pool-1-thread-2&quot; prio=6 tid=0x0000000007673800 nid=0x260c waiting for monitor entry [0x0000000008abf000]</span><br><span class="line">   java.lang.Thread.State: BLOCKED (on object monitor)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadBlockedState.monitorLock(ThreadBlockedState.java:43)</span><br><span class="line">                - waiting to lock &lt;0x0000000780a000b0&gt; (a com.nbp.theplatform.threaddump.ThreadBlockedState)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadBlockedState$2.run(ThreadBlockedState.java:26)</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)</span><br><span class="line">                at java.lang.Thread.run(Thread.java:662)</span><br><span class="line">   Locked ownable synchronizers:</span><br><span class="line">                - &lt;0x0000000780b0c6a0&gt; (a java.util.concurrent.locks.ReentrantLock$NonfairSync)</span><br><span class="line">&quot;BLOCKED_TEST pool-1-thread-3&quot; prio=6 tid=0x00000000074f5800 nid=0x1994 waiting for monitor entry [0x0000000008bbf000]</span><br><span class="line">   java.lang.Thread.State: BLOCKED (on object monitor)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadBlockedState.monitorLock(ThreadBlockedState.java:42)</span><br><span class="line">                - waiting to lock &lt;0x0000000780a000b0&gt; (a com.nbp.theplatform.threaddump.ThreadBlockedState)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadBlockedState$3.run(ThreadBlockedState.java:34)</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)</span><br><span class="line">                at java.lang.Thread.run(Thread.java:662)</span><br><span class="line">   Locked ownable synchronizers:</span><br><span class="line">                - &lt;0x0000000780b0e1b8&gt; (a java.util.concurrent.locks.ReentrantLock$NonfairSync)</span><br></pre></td></tr></table></figure>
+<p>在上面的例子中，BLOCKED_TEST pool-1-thread-1 线程占用了 <0x0000000780a000b0> 锁，然而 BLOCKED_TEST pool-1-thread-2 和 BLOCKED_TEST pool-1-thread-3 threads 正在等待获取锁。</0x0000000780a000b0></p>
+<h3 id="死锁状态样例"><a href="#死锁状态样例" class="headerlink" title="死锁状态样例"></a>死锁状态样例</h3><p><img src="https://www.javatang.com/wp-content/uploads/2017/10/thread-dump-deadlock-status.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&quot;DEADLOCK_TEST-1&quot; daemon prio=6 tid=0x000000000690f800 nid=0x1820 waiting for monitor entry [0x000000000805f000]</span><br><span class="line">   java.lang.Thread.State: BLOCKED (on object monitor)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadDeadLockState$DeadlockThread.goMonitorDeadlock(ThreadDeadLockState.java:197)</span><br><span class="line">                - waiting to lock &lt;0x00000007d58f5e60&gt; (a com.nbp.theplatform.threaddump.ThreadDeadLockState$Monitor)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadDeadLockState$DeadlockThread.monitorOurLock(ThreadDeadLockState.java:182)</span><br><span class="line">                - locked &lt;0x00000007d58f5e48&gt; (a com.nbp.theplatform.threaddump.ThreadDeadLockState$Monitor)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadDeadLockState$DeadlockThread.run(ThreadDeadLockState.java:135)</span><br><span class="line"></span><br><span class="line">   Locked ownable synchronizers:</span><br><span class="line">                - None</span><br><span class="line"></span><br><span class="line">&quot;DEADLOCK_TEST-2&quot; daemon prio=6 tid=0x0000000006858800 nid=0x17b8 waiting for monitor entry [0x000000000815f000]</span><br><span class="line">   java.lang.Thread.State: BLOCKED (on object monitor)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadDeadLockState$DeadlockThread.goMonitorDeadlock(ThreadDeadLockState.java:197)</span><br><span class="line">                - waiting to lock &lt;0x00000007d58f5e78&gt; (a com.nbp.theplatform.threaddump.ThreadDeadLockState$Monitor)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadDeadLockState$DeadlockThread.monitorOurLock(ThreadDeadLockState.java:182)</span><br><span class="line">                - locked &lt;0x00000007d58f5e60&gt; (a com.nbp.theplatform.threaddump.ThreadDeadLockState$Monitor)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadDeadLockState$DeadlockThread.run(ThreadDeadLockState.java:135)</span><br><span class="line"></span><br><span class="line">   Locked ownable synchronizers:</span><br><span class="line">                - None</span><br><span class="line"></span><br><span class="line">&quot;DEADLOCK_TEST-3&quot; daemon prio=6 tid=0x0000000006859000 nid=0x25dc waiting for monitor entry [0x000000000825f000]</span><br><span class="line">   java.lang.Thread.State: BLOCKED (on object monitor)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadDeadLockState$DeadlockThread.goMonitorDeadlock(ThreadDeadLockState.java:197)</span><br><span class="line">                - waiting to lock &lt;0x00000007d58f5e48&gt; (a com.nbp.theplatform.threaddump.ThreadDeadLockState$Monitor)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadDeadLockState$DeadlockThread.monitorOurLock(ThreadDeadLockState.java:182)</span><br><span class="line">                - locked &lt;0x00000007d58f5e78&gt; (a com.nbp.theplatform.threaddump.ThreadDeadLockState$Monitor)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadDeadLockState$DeadlockThread.run(ThreadDeadLockState.java:135)</span><br><span class="line"></span><br><span class="line">   Locked ownable synchronizers:</span><br><span class="line">                - None</span><br></pre></td></tr></table></figure>
+<p>上面的例子中，当线程 A 需要获取线程 B 的锁来继续它的任务，然而线程 B 也需要获取线程 A 的锁来继续它的任务的时候发生的。在 thread dump 中，你能看到 DEADLOCK_TEST-1 线程持有 0x00000007d58f5e48 锁，并且尝试获取 0x00000007d58f5e60 锁。你也能看到 DEADLOCK_TEST-2 线程持有 0x00000007d58f5e60，并且尝试获取 0x00000007d58f5e78，同时 DEADLOCK_TEST-3 线程持有 0x00000007d58f5e78，并且在尝试获取 0x00000007d58f5e48 锁，如你所见，每个线程都在等待获取另外一个线程的锁，这状态将不会被改变直到一个线程丢弃了它的锁。</p>
+<h3 id="无限等待的Runnable状态样例"><a href="#无限等待的Runnable状态样例" class="headerlink" title="无限等待的Runnable状态样例"></a>无限等待的Runnable状态样例</h3><p><img src="https://www.javatang.com/wp-content/uploads/2017/10/thread-dump-runnable-waiting-status.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&quot;socketReadThread&quot; prio=6 tid=0x0000000006a0d800 nid=0x1b40 runnable [0x00000000089ef000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br><span class="line">                at java.net.SocketInputStream.socketRead0(Native Method)</span><br><span class="line">                at java.net.SocketInputStream.read(SocketInputStream.java:129)</span><br><span class="line">                at sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:264)</span><br><span class="line">                at sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:306)</span><br><span class="line">                at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:158)</span><br><span class="line">                - locked &lt;0x00000007d78a2230&gt; (a java.io.InputStreamReader)</span><br><span class="line">                at sun.nio.cs.StreamDecoder.read0(StreamDecoder.java:107)</span><br><span class="line">                - locked &lt;0x00000007d78a2230&gt; (a java.io.InputStreamReader)</span><br><span class="line">                at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:93)</span><br><span class="line">                at java.io.InputStreamReader.read(InputStreamReader.java:151)</span><br><span class="line">                at com.nbp.theplatform.threaddump.ThreadSocketReadState$1.run(ThreadSocketReadState.java:27)</span><br><span class="line">                at java.lang.Thread.run(Thread.java:662)</span><br></pre></td></tr></table></figure>
+<p>上例中线程的状态是RUNNABLE，但在下面的堆栈日志中发现socketReadThread 线程正在无限等待读取 socket，因此不能单纯通过线程的状态来确定线程是否处于阻塞状态，应该根据详细的堆栈信息进行分析。</p>
+<h4 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h4><p><a href="http://www.theserverside.com/discussions/thread/61915.html" target="_blank" rel="noopener">100% CPU diagnosis</a><br><a href="http://blog.csdn.net/yanghongchang_/article/details/42004883" target="_blank" rel="noopener">JVM调优总结 + jstat 分析</a><br><a href="http://blog.csdn.net/wuzhilon88/article/details/49201891" target="_blank" rel="noopener">JVM调优总结(这个总结得比较全面)</a><br><a href="http://pengjiaheng.iteye.com/blog/search?query=JVM%E8%B0%83%E4%BC%98%E6%80%BB%E7%BB%93" target="_blank" rel="noopener">JVM调优总结系列文章</a><br><a href="http://www.cnblogs.com/redcreen/archive/2011/05/04/2036387.html" target="_blank" rel="noopener">JVM系列一：JVM内存组成及分配</a></p>
+
+          
         
       
     </div>
@@ -1493,21 +1621,49 @@ Thread Dump日志的线程信息以下面的日志为例：
       
         
           
-          转载自：传送门
-前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。
-使用jstat命令当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread：
-1&quot;VM Thread&quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable
-这个时候需要使用 jstat -gc    命令查看gc的信息，显示结果如下：
-12S0C    S1C    S0U    S1U      EC       EU      OC         OU       PC        PU       YGC     YGCT    FGC   FGCT       GCT64.0   64.0   0.0    0.0   332992.0   0.0    666304.0   73192.5   83968.0   83967.9   6893   17.576  6882   2705.923  2723.499
-结果中每个项目的含义可以参考官方对jstat的文档，简
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/26/jstat-command/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+            <p>转载自：<a href="https://www.javatang.com/archives/2017/10/25/36441958.html" target="_blank" rel="noopener">传送门</a></p>
+<p>前面提到了一个使用jstack的shell脚本，通过命令可以很快地定位到指定线程对应的堆栈信息。</p>
+<h2 id="使用jstat命令"><a href="#使用jstat命令" class="headerlink" title="使用jstat命令"></a>使用jstat命令</h2><p>当服务器CPU100%的时候，通过定位占用资源最大的线程定位到 VM Thread：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;VM Thread&quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable</span><br></pre></td></tr></table></figure>
+<p>这个时候需要使用 jstat -gc <pid> <period> <times> 命令查看gc的信息，显示结果如下：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/jstat-gc-result-1.jpg" alt=""></times></period></pid></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">S0C    S1C    S0U    S1U      EC       EU      OC         OU       PC        PU       YGC     YGCT    FGC   FGCT       GCT</span><br><span class="line">64.0   64.0   0.0    0.0   332992.0   0.0    666304.0   73192.5   83968.0   83967.9   6893   17.576  6882   2705.923  2723.499</span><br></pre></td></tr></table></figure>
+<p>结果中每个项目的含义可以参考官方对<a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html" target="_blank" rel="noopener">jstat</a>的文档，简单翻译如下：</p>
+<ul>
+<li>S0C: Young Generation第一个survivor space的内存大小 (kB).</li>
+<li>S1C: Young Generation第二个survivor space的内存大小 (kB).</li>
+<li>S0U: Young Generation第一个Survivor space当前已使用的内存大小 (kB).</li>
+<li>S1U: Young Generation第二个Survivor space当前已经使用的内存大小 (kB).</li>
+<li>EC: Young Generation中eden space的内存大小 (kB).</li>
+<li>EU: Young Generation中Eden space当前已使用的内存大小 (kB).</li>
+<li>OC: Old Generation的内存大小 (kB).</li>
+<li>OU: Old Generation当前已使用的内存大小 (kB).</li>
+<li>PC: Permanent Generation的内存大小 (kB)</li>
+<li>PU: Permanent Generation当前已使用的内存大小 (kB).</li>
+<li>YGC: 从启动到采样时Young Generation GC的次数</li>
+<li>YGCT: 从启动到采样时Young Generation GC所用的时间 (s).</li>
+<li>FGC: 从启动到采样时Old Generation GC的次数.</li>
+<li>FGCT: 从启动到采样时Old Generation GC所用的时间 (s).</li>
+<li>GCT: 从启动到采样时GC所用的总时间 (s).</li>
+</ul>
+<p>JDK8的结果稍微有所不同，结果含义可以参考：<a href="http://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html。" target="_blank" rel="noopener">http://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html。</a></p>
+<h2 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h2><p>上面中的Young Generation、Permanent Generation和Old Generation等概念有一些混乱，这里简要的进行说明。简单来说，JVM内存由堆（Heap）和非堆（Non-heap）内存组成，前者共运行在JVM之上的程序使用，后者供JVM自己使用。</p>
+<p><img src="https://www.javatang.com/wp-content/uploads/2017/10/r_sun-jdk-memory-area1.png" alt=""></p>
+<p>堆内存的组成如下：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/r_heap1.png" alt=""></p>
+<p>非堆内存由 Permanent Generation 和 Code Cache 两部分组成：</p>
+<ul>
+<li>Permanent Generation（持久代）: 保存虚拟机自己的静态(refective)数据，主要存放加载的Class类级别静态对象如class本身，method，field等等。permanent generation空间不足会引发full GC；</li>
+<li>Code Cache: 用于编译和保存本地代码（native code）的内存，JVM内部处理或优化。</li>
+</ul>
+<h2 id="JVM内存参数设置"><a href="#JVM内存参数设置" class="headerlink" title="JVM内存参数设置"></a>JVM内存参数设置</h2><h3 id="堆内存设置"><a href="#堆内存设置" class="headerlink" title="堆内存设置"></a>堆内存设置</h3><ul>
+<li>堆内存（总的）由 -Xms 和 -Xmx 分别设置最小和最大堆内存</li>
+<li>New Generation 由 -Xmn 设置，-XX:SurvivorRatio=m 设置 Eden和 两个Survivor区的大小比值；-XX:NewRatio=n 设置 New Generation 和 Old Generation 的大小比值。</li>
+<li>每个线程的堆栈大小由 ·-Xss· 设置，JDK5.0以后每个线程堆栈大小为1M，以前每个线程堆栈大小为256K。在相同物理内存下，减小这个值能生成更多的线程。但是操作系统对一个进程内的线程数还是有限制的，不能无限生成，经验值在3000~5000左右。</li>
+</ul>
+<h3 id="非堆内存设置"><a href="#非堆内存设置" class="headerlink" title="非堆内存设置"></a>非堆内存设置</h3><p>非堆内存由 -XX:PermSize=n 和 -XX:MaxPermSize=n 分别设置最小和最大非堆内存大小</p>
+<h3 id="日志分析"><a href="#日志分析" class="headerlink" title="日志分析"></a>日志分析</h3><p>介绍完上面的概念之后，我们再来看最上面的日志信息，有两个地方有问题：<br>一是FGC（完全GC）的数量太大了，正常来说FGC应该占整个GC（YGC+FGC）的1%到5%才正常，上面日志上完全GC的次数太多了；二是日志中PU的值太大了，基本上已经达到设置的PC了，因此需要增大MaxPermSize的值。<br>不过这只是权宜之计，出现这么大的非堆内存，肯定什么地方出现了问题，还需要进一步找到占用内存的原因，这也是后面文章所要说的。</p>
+<h4 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h4><p><a href="http://just2do.iteye.com/blog/2275894" target="_blank" rel="noopener">性能分析之– JAVA Thread Dump 分析综述</a><br><a href="http://www.cnblogs.com/zhengyun_ustc/archive/2013/01/06/dumpanalysis.html" target="_blank" rel="noopener">三个实例演示 Java Thread Dump 日志分析</a><br><a href="http://www.cnblogs.com/zhengyun_ustc/archive/2013/03/18/tda.html" target="_blank" rel="noopener">各种 Java Thread State 第一分析法则</a><br><a href="https://dzone.com/articles/how-analyze-java-thread-dumps" target="_blank" rel="noopener">How to Analyze Java Thread Dumps | 中文版</a><br><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/index.html" target="_blank" rel="noopener">官网</a></p>
+
+          
         
       
     </div>
@@ -1636,23 +1792,63 @@ Thread Dump日志的线程信息以下面的日志为例：
       
         
           
-          转载自：传送门
-这篇文章首先对Thread Dump日志文件的结构进行分析
-一个典型的thread dump文件主要由一下几个部分组成：上图将JVM上的线程堆栈信息和线程信息做了详细的拆解
-第一部分：Full thread dump identifier这一部分是内容最开始的部分，展示了快照文件的生成时间和JVM的版本信息。
-1Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.151-b12 mixed mode):
-第二部分：Java EE middleware, third party &amp; custom application Threads这是整个文件的核心部分，里面展示了JavaEE容器（如tomcat、resin等）、自己的程序中所使用的线程信息
-第三部分：HotSpot VM Thread这一部分展示了JVM内部线程的信息，用于执行内部的原生操作。下面常见的几种内置线程：
-“Attach Listener”该线程负责接收外部命令，执行该命令并把结果返回给调用者，此种类型的线程通常在桌面程序中出现
-“Dest
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/25/jstack2/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+            <p>转载自：<a href="https://www.javatang.com/archives/2017/10/19/51301886.html" target="_blank" rel="noopener">传送门</a></p>
+<p>这篇文章首先对Thread Dump日志文件的结构进行分析<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftmj21ohk3j31ie15iwp4.jpg" alt=""></p>
+<p>一个典型的thread dump文件主要由一下几个部分组成：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/Thread_Dump_view_HotSpot_VM.png" alt=""><br>上图将JVM上的线程堆栈信息和线程信息做了详细的拆解</p>
+<h2 id="第一部分：Full-thread-dump-identifier"><a href="#第一部分：Full-thread-dump-identifier" class="headerlink" title="第一部分：Full thread dump identifier"></a>第一部分：Full thread dump identifier</h2><p>这一部分是内容最开始的部分，展示了快照文件的生成时间和JVM的版本信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.151-b12 mixed mode):</span><br></pre></td></tr></table></figure>
+<h2 id="第二部分：Java-EE-middleware-third-party-amp-custom-application-Threads"><a href="#第二部分：Java-EE-middleware-third-party-amp-custom-application-Threads" class="headerlink" title="第二部分：Java EE middleware, third party &amp; custom application Threads"></a>第二部分：Java EE middleware, third party &amp; custom application Threads</h2><p>这是整个文件的核心部分，里面展示了JavaEE容器（如tomcat、resin等）、自己的程序中所使用的线程信息<br><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1ftml24zk3hj31ic0jsaek.jpg" alt=""></p>
+<h2 id="第三部分：HotSpot-VM-Thread"><a href="#第三部分：HotSpot-VM-Thread" class="headerlink" title="第三部分：HotSpot VM Thread"></a>第三部分：HotSpot VM Thread</h2><p>这一部分展示了JVM内部线程的信息，用于执行内部的原生操作。下面常见的几种内置线程：</p>
+<h3 id="“Attach-Listener”"><a href="#“Attach-Listener”" class="headerlink" title="“Attach Listener”"></a>“Attach Listener”</h3><p>该线程负责接收外部命令，执行该命令并把结果返回给调用者，此种类型的线程通常在桌面程序中出现<br><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1ftml3adrl8j31ec05wmxy.jpg" alt=""></p>
+<h3 id="“DestroyJavaVM”"><a href="#“DestroyJavaVM”" class="headerlink" title="“DestroyJavaVM”"></a>“DestroyJavaVM”</h3><p>执行main()的线程在执行完之后调用JNI中的 jni_DestroyJavaVM() 方法会唤起DestroyJavaVM 线程。在JBoss启动之后，也会唤起DestroyJavaVM线程，处于等待状态，等待其它线程（java线程和native线程）退出时通知它卸载JVM。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;DestroyJavaVM&quot; #43 prio=5 os_prio=31 tid=0x00007fd9c8286000 nid=0x1b03 waiting on condition [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br></pre></td></tr></table></figure>
+<h3 id="“Service-Thread”"><a href="#“Service-Thread”" class="headerlink" title="“Service Thread”"></a>“Service Thread”</h3><p>用于启动服务的线程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;Service Thread&quot; #9 daemon prio=9 os_prio=31 tid=0x00007fd9c684c000 nid=0x5203 runnable [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br></pre></td></tr></table></figure>
+<h3 id="“CompilerThread”"><a href="#“CompilerThread”" class="headerlink" title="“CompilerThread”"></a>“CompilerThread”</h3><p>用来调用JITing，实时编译装卸CLASS。通常JVM会启动多个线程来处理这部分工作，线程名称后面的数字也会累加，比如CompilerThread1。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&quot;C2 CompilerThread1&quot; daemon prio=10 tid=0x00007fbea814b000 nid=0x5f1 waiting on condition [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br><span class="line"></span><br><span class="line">&quot;C2 CompilerThread0&quot; daemon prio=10 tid=0x00007fbea8142000 nid=0x5f0 waiting on condition [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br></pre></td></tr></table></figure>
+<h3 id="“Signal-Dispatcher”"><a href="#“Signal-Dispatcher”" class="headerlink" title="“Signal Dispatcher”"></a>“Signal Dispatcher”</h3><p>Attach Listener线程的职责是接收外部jvm命令，当命令接收成功后，会交给signal dispather 线程去进行分发到各个不同的模块处理命令，并且返回处理结果。<br>signal dispather线程也是在第一次接收外部jvm命令时，进行初始化工作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;Signal Dispatcher&quot; daemon prio=10 tid=0x00007fbea81bf800 nid=0x5ef runnable [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br></pre></td></tr></table></figure>
+<h3 id="“Finalizer”"><a href="#“Finalizer”" class="headerlink" title="“Finalizer”"></a>“Finalizer”</h3><p>这个线程也是在main线程之后创建的，其优先级为10，主要用于在垃圾收集前，调用对象的finalize()方法；关于Finalizer线程的几点：</p>
+<ol>
+<li><p>只有当开始一轮垃圾收集时，才会开始调用finalize()方法；因此并不是所有对象的finalize()方法都会被执行；<br>该线程也是daemon线程，因此如果虚拟机中没有其他非daemon线程，不管该线程有没有执行完finalize()方法，JVM也会退出；</p>
+</li>
+<li><p>JVM在垃圾收集时会将失去引用的对象包装成Finalizer对象（Reference的实现），并放入ReferenceQueue，由Finalizer线程来处理；最后将该Finalizer对象的引用置为null，由垃圾收集器来回收；</p>
+</li>
+<li>JVM为什么要单独用一个线程来执行finalize()方法呢？<br>如果JVM的垃圾收集线程自己来做，很有可能由于在finalize()方法中误操作导致GC线程停止或不可控，这对GC线程来说是一种灾难。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&quot;Finalizer&quot; daemon prio=10 tid=0x00007fbea80da000 nid=0x5eb in Object.wait() [0x00007fbeac044000]</span><br><span class="line">   java.lang.Thread.State: WAITING (on object monitor)</span><br><span class="line">    at java.lang.Object.wait(Native Method)</span><br><span class="line">    at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:135)</span><br><span class="line">    - locked &lt;0x00000006d173c1a8&gt; (a java.lang.ref.ReferenceQueue$Lock)</span><br><span class="line">    at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:151)</span><br><span class="line">    at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:209)</span><br></pre></td></tr></table></figure>
+<h3 id="“Reference-Handler”"><a href="#“Reference-Handler”" class="headerlink" title="“Reference Handler”"></a>“Reference Handler”</h3><p>JVM在创建main线程后就创建Reference Handler线程，其优先级最高，为10，它主要用于处理引用对象本身（软引用、弱引用、虚引用）的垃圾回收问题 。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&quot;Reference Handler&quot; daemon prio=10 tid=0x00007fbea80d8000 nid=0x5ea in Object.wait() [0x00007fbeac085000]</span><br><span class="line">   java.lang.Thread.State: WAITING (on object monitor)</span><br><span class="line">    at java.lang.Object.wait(Native Method)</span><br><span class="line">    at java.lang.Object.wait(Object.java:503)</span><br><span class="line">    at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:133)</span><br><span class="line">    - locked &lt;0x00000006d173c1f0&gt; (a java.lang.ref.Reference$Lock)</span><br></pre></td></tr></table></figure>
+<h3 id="“VM-Thread”"><a href="#“VM-Thread”" class="headerlink" title="“VM Thread”"></a>“VM Thread”</h3><p>JVM中线程的母体，根据HotSpot源码中关于vmThread.hpp里面的注释，它是一个单例的对象（最原始的线程）会产生或触发所有其他的线程，这个单例的VM线程是会被其他线程所使用来做一些VM操作（如清扫垃圾等）。<br>在 VM Thread 的结构体里有一个VMOperationQueue列队，所有的VM线程操作(vm_operation)都会被保存到这个列队当中，VMThread 本身就是一个线程，它的线程负责执行一个自轮询的loop函数(具体可以参考：VMThread.cpp里面的void VMThread::loop()) ，该loop函数从VMOperationQueue列队中按照优先级取出当前需要执行的操作对象(VM_Operation)，并且调用VM_Operation-&gt;evaluate函数去执行该操作类型本身的业务逻辑。<br>VM操作类型被定义在vm_operations.hpp文件内，列举几个：ThreadStop、ThreadDump、PrintThreads、GenCollectFull、GenCollectFullConcurrent、CMS_Initial_Mark、CMS_Final_Remark….. 有兴趣的同学，可以自己去查看源文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;VM Thread&quot; prio=10 tid=0x00007fbea80d3800 nid=0x5e9 runnable</span><br></pre></td></tr></table></figure>
+<h2 id="第四部分：HotSpot-GC-Thread"><a href="#第四部分：HotSpot-GC-Thread" class="headerlink" title="第四部分：HotSpot GC Thread"></a>第四部分：HotSpot GC Thread</h2><p>JVM中用于进行资源回收的线程，包括以下几种类型的线程：</p>
+<h3 id="“VM-Periodic-Task-Thread”"><a href="#“VM-Periodic-Task-Thread”" class="headerlink" title="“VM Periodic Task Thread”"></a>“VM Periodic Task Thread”</h3><p>该线程是JVM周期性任务调度的线程，它由WatcherThread创建，是一个单例对象。该线程在JVM内使用得比较频繁，比如：定期的内存监控、JVM运行状况监控。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;VM Periodic Task Thread&quot; prio=10 tid=0x00007fbea82ae800 nid=0x5fa waiting on condition</span><br></pre></td></tr></table></figure>
+<p>可以使用jstat 命令查看GC的情况，比如查看某个进程没有存活必要的引用可以使用命令 jstat -gcutil <pid> 250 7 参数中pid是进程id，后面的250和7表示每250毫秒打印一次，总共打印7次。<br>这对于防止因为应用代码中直接使用native库或者第三方的一些监控工具的内存泄漏有非常大的帮助。</pid></p>
+<h3 id="“GC-task-thread-0-ParallelGC-”"><a href="#“GC-task-thread-0-ParallelGC-”" class="headerlink" title="“GC task thread#0 (ParallelGC)”"></a>“GC task thread#0 (ParallelGC)”</h3><p>垃圾回收线程，该线程会负责进行垃圾回收。通常JVM会启动多个线程来处理这个工作，线程名称中#后面的数字也会累加。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&quot;GC task thread#0 (ParallelGC)&quot; prio=5 tid=0x00007fc6b480d000 nid=0x2503 runnable</span><br><span class="line"></span><br><span class="line">&quot;GC task thread#1 (ParallelGC)&quot; prio=5 tid=0x00007fc6b2812000 nid=0x2703 runnable</span><br><span class="line"></span><br><span class="line">&quot;GC task thread#2 (ParallelGC)&quot; prio=5 tid=0x00007fc6b2812800 nid=0x2903 runnable</span><br><span class="line"></span><br><span class="line">&quot;GC task thread#3 (ParallelGC)&quot; prio=5 tid=0x00007fc6b2813000 nid=0x2b03 runnable</span><br></pre></td></tr></table></figure>
+<p>如果在JVM中增加了 -XX:+UseConcMarkSweepGC 参数将会启用CMS （Concurrent Mark-Sweep）GC Thread方式，以下是该模式下的线程类型：</p>
+<h3 id="“Gang-worker-0-Parallel-GC-Threads-”"><a href="#“Gang-worker-0-Parallel-GC-Threads-”" class="headerlink" title="“Gang worker#0 (Parallel GC Threads)”"></a>“Gang worker#0 (Parallel GC Threads)”</h3><p>原来垃圾回收线程GC task thread#0 (ParallelGC) 被替换为 Gang worker#0 (Parallel GC Threads)。Gang worker 是JVM用于年轻代垃圾回收(minor gc)的线程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&quot;Gang worker#0 (Parallel GC Threads)&quot; prio=10 tid=0x00007fbea801b800 nid=0x5e4 runnable </span><br><span class="line"></span><br><span class="line">&quot;Gang worker#1 (Parallel GC Threads)&quot; prio=10 tid=0x00007fbea801d800 nid=0x5e7 runnable </span><br><span class="line">&quot;Concurrent Mark-Sweep GC Thread&quot;</span><br></pre></td></tr></table></figure>
+<p>并发标记清除垃圾回收器（就是通常所说的CMS GC）线程， 该线程主要针对于年老代垃圾回收。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;Concurrent Mark-Sweep GC Thread&quot; prio=10 tid=0x00007fbea8073800 nid=0x5e8 runnable </span><br><span class="line">&quot;Surrogate Locker Thread (Concurrent GC)&quot;</span><br></pre></td></tr></table></figure>
+<p>此线程主要配合CMS垃圾回收器来使用，是一个守护线程，主要负责处理GC过程中Java层的Reference（指软引用、弱引用等等）与jvm 内部层面的对象状态同步。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;Surrogate Locker Thread (Concurrent GC)&quot; daemon prio=10 tid=0x00007fbea8158800 nid=0x5ee waiting on condition [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br></pre></td></tr></table></figure>
+<p>这里以 WeakHashMap 为例进行说明，首先是一个关键点：</p>
+<ul>
+<li>WeakHashMap和HashMap一样，内部有一个Entry[]数组;</li>
+<li>WeakHashMap的Entry比较特殊，它的继承体系结构为Entry-&gt;WeakReference-&gt;Reference;</li>
+<li>Reference 里面有一个全局锁对象：Lock，它也被称为pending_lock，注意：它是静态对象；</li>
+<li>Reference 里面有一个静态变量：pending；</li>
+<li>Reference 里面有一个静态内部类：ReferenceHandler的线程，它在static块里面被初始化并且启动，启动完成后处于wait状态，它在一个Lock同步锁模块中等待；</li>
+<li>WeakHashMap里面还实例化了一个ReferenceQueue列队</li>
+</ul>
+<p>假设，WeakHashMap对象里面已经保存了很多对象的引用，JVM 在进行CMS GC的时候会创建一个ConcurrentMarkSweepThread（简称CMST）线程去进行GC。ConcurrentMarkSweepThread线程被创建的同时会创建一个SurrogateLockerThread（简称SLT）线程并且启动它，SLT启动之后，处于等待阶段。<br>CMST开始GC时，会发一个消息给SLT让它去获取Java层Reference对象的全局锁：Lock。直到CMS GC完毕之后，JVM 会将WeakHashMap中所有被回收的对象所属的WeakReference容器对象放入到Reference 的pending属性当中（每次GC完毕之后，pending属性基本上都不会为null了），然后通知SLT释放并且notify全局锁:Lock。此时激活了ReferenceHandler线程的run方法，使其脱离wait状态，开始工作了。<br>ReferenceHandler这个线程会将pending中的所有WeakReference对象都移动到它们各自的列队当中，比如当前这个WeakReference属于某个WeakHashMap对象，那么它就会被放入相应的ReferenceQueue列队里面（该列队是链表结构）。 当我们下次从WeakHashMap对象里面get、put数据或者调用size方法的时候，WeakHashMap就会将ReferenceQueue列队中的WeakReference依依poll出来去和Entry[]数据做比较，如果发现相同的，则说明这个Entry所保存的对象已经被GC掉了，那么将Entry[]内的Entry对象剔除掉</p>
+<h2 id="第五部分：JNI-global-references-count"><a href="#第五部分：JNI-global-references-count" class="headerlink" title="第五部分：JNI global references count"></a>第五部分：JNI global references count</h2><p>这一部分主要回收那些在native代码上被引用，但在java代码中却没有存活必要的引用，对于防止因为应用代码中直接使用native库或第三方的一些监控工具的内存泄漏有非常大的帮助。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JNI global references: 830</span><br></pre></td></tr></table></figure>
+<h4 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h4><p><a href="https://www.javacodegeeks.com/2012/03/jvm-how-to-analyze-thread-dump.html" target="_blank" rel="noopener">JVM: How to analyze Thread Dump | 中文版</a><br><a href="http://maping930883.blogspot.com/2014/04/java010jvm.html" target="_blank" rel="noopener">Java_010：JVM内部线程功能说明（摘录+整理）</a><br><a href="http://javaeesupportpatterns.blogspot.com/2012/07/how-to-analyze-thread-dump-part-5.html" target="_blank" rel="noopener">How to analyze Thread Dump – Part 5: Thread Stack Trace</a><br><a href="http://go-on.iteye.com/blog/1673894" target="_blank" rel="noopener">虚拟机stack全分析</a><br><a href="http://blog.csdn.net/zlzlei/article/details/46471627" target="_blank" rel="noopener">Linux使用jstat命令查看jvm的GC情况</a></p>
+
+          
         
       
     </div>

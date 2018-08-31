@@ -334,29 +334,38 @@
       
         
           
-          FROM
-1from scratch   ##制作base Image
-1from centos ##使用 base Image
-==尽量使用官方的Image作为base Image （安全）==
-LABEL: metadata 帮助信息，类似注释
-1LABEL maintainer="yefan813@gmail.com"
-1LABEL version="1.0"
-1LABEL description="this is description"
-RUN: 运行命令，运行后会生成新的layer,尽量将命令写成一行
-12RUN yum update &amp;&amp; yum install -y vim \python-dev  ##反斜杠换行
-1RUN /bin/bash -c 'source $HOME/.bashrc;echo $HOME'
-WORKDIR: 类似 Linux 中 cd
-1WORKDIR /ROOT
-123WORKDIR /test #如果没有将会创建 test 目录WORKDIR demoRUN pwd  #输出结果是/test/demo
-==用 WORKDI
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/11/DockerFile/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+            <p><strong>FROM</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scratch   <span class="comment">##制作base Image</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> centos <span class="comment">##使用 base Image</span></span><br></pre></td></tr></table></figure>
+<p>==<em>尽量使用官方的Image作为base Image （安全）</em>==</p>
+<p><strong>LABEL:</strong> metadata 帮助信息，类似注释</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LABEL maintainer=<span class="string">"yefan813@gmail.com"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LABEL version=<span class="string">"1.0"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LABEL description=<span class="string">"this is description"</span></span><br></pre></td></tr></table></figure>
+<p><strong>RUN:</strong> 运行命令，运行后会生成新的layer,尽量将命令写成一行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RUN yum update &amp;&amp; yum install -y vim \</span><br><span class="line">python-dev  <span class="comment">##反斜杠换行</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUN /bin/bash -c <span class="string">'source $HOME/.bashrc;echo $HOME'</span></span><br></pre></td></tr></table></figure>
+<p><strong>WORKDIR:</strong> 类似 Linux 中 cd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /ROOT</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /test <span class="comment">#如果没有将会创建 test 目录</span></span><br><span class="line">WORKDIR demo</span><br><span class="line">RUN pwd  <span class="comment">#输出结果是/test/demo</span></span><br></pre></td></tr></table></figure>
+<p>==<em>用 WORKDIR 不要用 RUN cd，尽量使用绝对目录</em>==</p>
+<p><strong>ADD and COPY</strong>：将文件添加到制定目录下，add 有解压的作用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD hello /</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD test.tar.gz / ##添加到根目录并解压</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /root</span><br><span class="line">ADD hello test/ ##/root/test/hello</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /root</span><br><span class="line">COPY hello test/</span><br></pre></td></tr></table></figure>
+<p>==<em>大部分情况，copy 优于 ADD，添加远程文件、目录使用 curl 或者 wget</em>==</p>
+<p><strong>ENV：</strong> 设定环境变量、常量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ENV MYSQL_VERSION <span class="number">5.6</span> <span class="comment">##设置常量</span></span><br><span class="line">RUN apt-get install-y mysql-server=<span class="string">"$&#123;MYSQL_VERSION&#125;"</span> \</span><br><span class="line">&amp;&amp; rm -rf /var/lib.apt/lists/* <span class="comment">##引用常量</span></span><br></pre></td></tr></table></figure>
+<p>==<em>尽量使用 ENV 增加可维护性</em>==</p>
+<p><strong>VOLUME and EXPOSE：</strong> 存储（将 docker 数据存储到宿主机）和网络<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p><strong>CMD and ENTRYPOINT:</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RUN:执行命令并创建新的 Image Layer</span><br><span class="line">CMD:设置容器 ‘启动后’ 的默认执行命令和参数</span><br><span class="line">ENTRYPOINT:设置容器‘启动时’运行的命令</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fswie7akpmj30cf07swgd.jpg" alt="image"></p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fswim8mgmjj30hl09jtaq.jpg" alt="image"></p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fswiowks0uj30fx09imz1.jpg" alt="image"></p>
+<p>==语法可以参考<a href="https://docs.docker.com/reference/" target="_blank" rel="noopener">官方</a>，<br><a href="https://github.com/docker-library" target="_blank" rel="noopener">github地址</a>==</p>
+
+          
         
       
     </div>
@@ -485,18 +494,11 @@ WORKDIR: 类似 Linux 中 cd
       
         
           
-          docker-machine使用
-12docker-machine env demo使用 docker client 远程管理 docker-machine
-1docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦
+            <h2 id="docker-machine使用"><a href="#docker-machine使用" class="headerlink" title="docker-machine使用"></a>docker-machine使用</h2><p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fsvdhvhgwfj31kw188ajg.jpg" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker-machine env demo</span><br><span class="line">使用 docker client 远程管理 docker-machine</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-machine 安装的机器是精简版的，缺少一下软件，后期安装其他程序很麻烦</span><br></pre></td></tr></table></figure>
 
           
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/11/docker-machine/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
         
       
     </div>
@@ -625,24 +627,17 @@ WORKDIR: 类似 Linux 中 cd
       
         
           
-          Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick StartCreate a new post1$ hexo new "My New Post"
-More info: Writing
-Run server1$ hexo server
-More info: Server
-Generate static files1$ hexo generate
-More info: Generating
-Deploy to remote sites1$ hexo deploy
-More info: Deployment
+            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
 
           
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/10/hello-world/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
         
       
     </div>

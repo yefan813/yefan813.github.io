@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1ftsv1u5fihj30hh089abw.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1ftsuzrys62j30mc0ct105.jpg">
 <meta property="og:image" content="http://s2.51cto.com/wyfs02/M02/8B/3D/wKiom1hHhbmxseDtAACidU9Y84s787.png">
-<meta property="og:updated_time" content="2018-07-31T03:36:50.701Z">
+<meta property="og:updated_time" content="2018-08-31T07:21:10.108Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Filter 和 Interceptor 比较">
 <meta name="twitter:description" content="过滤器（Filter） 拦截器（Interceptor  Filter Filter是servlet规范中定义的java web组件, 在所有支持java web的容器中都可以使用  Filter和Filter Chain是密不可分的, Filter可以实现依次调用正是因为有了Filter Chain    上图是Filter对请求进行拦截的原理图, 那么java web容器(以tomcat为例">
@@ -348,6 +348,7 @@
 <p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1ftsv1u5fihj30hh089abw.jpg" alt=""></p>
 <p>上图是Filter对请求进行拦截的原理图, 那么java web容器(以tomcat为例子)是如何实现这个功能的呢?</p>
 <p>下面看下Filter和Filter Chain的源码</p>
+<a id="more"></a>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// Filter</span><br><span class="line">     public interface Filter &#123;</span><br><span class="line"></span><br><span class="line">         // 容器创建的时候调用, 即启动tomcat的时候调用</span><br><span class="line">         public void init(FilterConfig filterConfig) throws ServletException;</span><br><span class="line"></span><br><span class="line">         // 由FilterChain调用, 并且传入Filter Chain本身</span><br><span class="line">         public void doFilter(ServletRequest request, ServletResponse response,</span><br><span class="line">                 FilterChain chain) throws IOException, ServletException;</span><br><span class="line"></span><br><span class="line">         // 容器销毁的时候调用, 即关闭tomcat的时候调用</span><br><span class="line">         public void destroy();</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     // FilterChain</span><br><span class="line">     public interface FilterChain &#123;</span><br><span class="line"></span><br><span class="line">         // 由Filter.doFilter()中的chain.doFilter调用</span><br><span class="line">         public void doFilter(ServletRequest request, ServletResponse response)</span><br><span class="line">             throws IOException, ServletException;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li><p>正是因为Filter Chain在调用每一个Filter.doFilter()时将自身引用传递进去, 才实现了Filter的依次调用, 在Filter全部调用完之后再调用真正处理请求的servlet, 并且再次逆序回调Filter. 可能这么看还是不太明白是怎么实现Filter的顺序调用, 调用真正的servlet, 逆序调用Filter的, 一起看下Tomcat的源码就一目了然了.</p>
