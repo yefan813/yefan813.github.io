@@ -324,7 +324,52 @@
       
         
           
-            <h2 id="java-远程调试"><a href="#java-远程调试" class="headerlink" title="java 远程调试"></a>java 远程调试</h2>
+            <h2 id="java-远程调试"><a href="#java-远程调试" class="headerlink" title="java 远程调试"></a>java 远程调试</h2><p>调试对于排查 java 各种异常问题非常重要，相信本地调试大家都很熟悉，今天分享一下如何开启远程调试。</p>
+<ol>
+<li><p>如果需要编译.java文件执行命令javac,生成.class文件件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javac SynchronizedStudy.java</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行编译过后的.class文件</p>
+<ul>
+<li><p>如果当前类有包路径到包的根路径下执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java com.xxx.xx.SynchronizedStudy</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果当前类没有包直接执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java SynchronizedStudy</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>如果要启动远程 debug 端口</p>
+<ul>
+<li><p>如果执行 java 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=5005 com.yefan.study.SynchronizedStudy</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果执行 jar 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=5005 -jar SynchronizedStudy.jar</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+<p>启动成功会显示如下</p>
+<blockquote>
+<p>Listening for transport dt_socket at address: 5005</p>
+</blockquote>
+<pre><code>### 远程调试命令参数说明
+
+**-Xdebug:** 启用调试特性。
+
+**-Xrunjdwp:** 在目标 VM 中加载 JDWP 实现。它通过传输和 JDWP 协议与独立的调试器应用程序通信。
+
+**transport:** 这里通常使用套接字传输。
+
+**server:** 如果值为 y，目标应用程序监听将要连接的调试器应用程序。否则，它将连接到特定地址上的调试器应用程序。
+
+**address:** 这是连接的传输地址。如果服务器为 n，将尝试连接到该地址上的调试器应用程序。否则，将在这个端口监听连接。
+
+**suspend:**如果值为 y，目标 VM 将暂停，直到调试器应用程序进行连接。如果值为 n，没有调试器连接则继续执行
+</code></pre><h2 id="IDEA远程调试配置"><a href="#IDEA远程调试配置" class="headerlink" title="IDEA远程调试配置"></a>IDEA远程调试配置</h2><p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g7unzpdz6hj30gu11o452.jpg" alt=""></p>
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g7unxw0y3oj31bj0u0n35.jpg" alt=""></p>
+
           
         
       
@@ -1706,20 +1751,6 @@
           
 
           
-          
-            <div class="links-of-blogroll motion-element links-of-blogroll-block">
-              <div class="links-of-blogroll-title">
-                <i class="fa  fa-fw fa-link"></i>
-                联系方式
-              </div>
-              <ul class="links-of-blogroll-list">
-                
-                  <li class="links-of-blogroll-item">
-                    <a href="" title="QQ:2133424265" target="_blank">QQ:2133424265</a>
-                  </li>
-                
-              </ul>
-            </div>
           
 
           
