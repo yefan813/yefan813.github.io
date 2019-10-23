@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="JVM 内存结构," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -79,28 +79,17 @@
 
 
 
-<meta name="description" content="运行时数据区 程序计数器注：线程私有 虚拟机栈注：线程私有">
-<meta name="keywords" content="JVM 内存结构">
+<meta name="description" content="tcc-trancation 分布式事务框架源码阅读 1234567891011121314151617181920212223242526272829303132333435363738394041424344451&amp;gt;com.roncoo.pay.service.trade.biz.impl.RpTradePaymentManagerBizImpl#completeSuccessOrder">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM之内存结构">
-<meta property="og:url" content="https://yefan813.github.io/2018/07/29/JVM1/index.html">
+<meta property="og:title" content="tcc-traction源码阅读笔记">
+<meta property="og:url" content="https://yefan813.github.io/2019/10/24/tcc-traction源码阅读笔记/index.html">
 <meta property="og:site_name" content="奋斗不息">
-<meta property="og:description" content="运行时数据区 程序计数器注：线程私有 虚拟机栈注：线程私有">
+<meta property="og:description" content="tcc-trancation 分布式事务框架源码阅读 1234567891011121314151617181920212223242526272829303132333435363738394041424344451&amp;gt;com.roncoo.pay.service.trade.biz.impl.RpTradePaymentManagerBizImpl#completeSuccessOrder">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1ftqvmlyu0uj30tu0l3tfs.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1ftqv5mutquj30qy0e9q6b.jpg">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1ftqv92b52xj30z30ajdlk.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvbjk29mj30z10b60zf.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvd5nd5dj30yw0agwk4.jpg">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1ftqvghydnpj30xj08243t.jpg">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvin3ygbj30xv07ejwv.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvkjcrq6j30x806mgpu.jpg">
-<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvpdj5i8j30xe0eagpu.jpg">
-<meta property="og:updated_time" content="2018-08-31T07:24:26.380Z">
+<meta property="og:updated_time" content="2019-10-23T16:12:37.960Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM之内存结构">
-<meta name="twitter:description" content="运行时数据区 程序计数器注：线程私有 虚拟机栈注：线程私有">
-<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1ftqvmlyu0uj30tu0l3tfs.jpg">
+<meta name="twitter:title" content="tcc-traction源码阅读笔记">
+<meta name="twitter:description" content="tcc-trancation 分布式事务框架源码阅读 1234567891011121314151617181920212223242526272829303132333435363738394041424344451&amp;gt;com.roncoo.pay.service.trade.biz.impl.RpTradePaymentManagerBizImpl#completeSuccessOrder">
 
 
 
@@ -130,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="https://yefan813.github.io/2018/07/29/JVM1/"/>
+  <link rel="canonical" href="https://yefan813.github.io/2019/10/24/tcc-traction源码阅读笔记/"/>
 
 
 
 
 
-  <title>JVM之内存结构 | 奋斗不息</title>
+  <title>tcc-traction源码阅读笔记 | 奋斗不息</title>
   
 
 
@@ -253,7 +242,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2018/07/29/JVM1/">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2019/10/24/tcc-traction源码阅读笔记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Evan">
@@ -270,7 +259,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">JVM之内存结构</h1>
+          <h1 class="post-title" itemprop="name headline">tcc-traction源码阅读笔记</h1>
         
 
         <div class="post-meta">
@@ -282,8 +271,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-29T17:30:38+08:00">
-                2018-07-29
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-24T00:06:56+08:00">
+                2019-10-24
               </time>
             
 
@@ -300,7 +289,7 @@
 
           
           
-             <span id="/2018/07/29/JVM1/" class="leancloud_visitors" data-flag-title="JVM之内存结构">
+             <span id="/2019/10/24/tcc-traction源码阅读笔记/" class="leancloud_visitors" data-flag-title="tcc-traction源码阅读笔记">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -331,21 +320,8 @@
       
 
       
-        <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqvmlyu0uj30tu0l3tfs.jpg" alt=""></p>
-<h2 id="运行时数据区"><a href="#运行时数据区" class="headerlink" title="运行时数据区"></a>运行时数据区</h2><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqv5mutquj30qy0e9q6b.jpg" alt=""></p>
-<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqv92b52xj30z30ajdlk.jpg" alt=""><br><strong>注：线程私有</strong></p>
-<h3 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h3><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvbjk29mj30z10b60zf.jpg" alt=""><br><strong>注：线程私有</strong></p>
-<a id="more"></a>
-<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvd5nd5dj30yw0agwk4.jpg" alt=""></p>
-<p><strong>注：线程共享</strong></p>
-<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqvghydnpj30xj08243t.jpg" alt=""></p>
-<p><strong>注：线程共享，JDK8中是 Meta Space ，在 JDK8之前是 Perm Space 永久区</strong></p>
-<h4 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h4><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvin3ygbj30xv07ejwv.jpg" alt=""></p>
-<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvkjcrq6j30x806mgpu.jpg" alt=""></p>
-<h3 id="非堆区"><a href="#非堆区" class="headerlink" title="非堆区"></a>非堆区</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvpdj5i8j30xe0eagpu.jpg" alt=""></p>
-<p>参考文章：<br><a href="https://blog.csdn.net/aijiudu/article/details/72991993" target="_blank" rel="noopener">JVM架构和GC垃圾回收机制</a></p>
-<p><a href="https://docs.oracle.com/javase/specs/jvms/se8/html/index.html" target="_blank" rel="noopener">jvm的运行时数据区</a><br><a href="http://ifeve.com/jvm-troubleshooting-guide-4/" target="_blank" rel="noopener">Metaspace</a><br><a href="https://blog.csdn.net/jijijijwwi111/article/details/51564271" target="_blank" rel="noopener">压缩类空间</a><br><a href="https://blog.csdn.net/yandaonan/article/details/50844806" target="_blank" rel="noopener">codecache</a><br><a href="http://engineering.indeedblog.com/blog/2016/09/job-search-web-app-java-8-migration/" target="_blank" rel="noopener">codecache2</a></p>
-
+        <p><a href="https://github.com/xie-summer/tcc-transaction-v1.1.5.git" target="_blank" rel="noopener">tcc-trancation 分布式事务框架源码阅读</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">1&gt;com.roncoo.pay.service.trade.biz.impl.RpTradePaymentManagerBizImpl#completeSuccessOrder 银行返回订单支付成功，后调支付成功,还未执行方法，被拦截器拦截</span><br><span class="line"> 2&gt;org.mengyun.tcctransaction.interceptor.CompensableTransactionInterceptor#interceptCompensableMethod 进入可事务补偿拦截器</span><br><span class="line">	3&gt;org.mengyun.tcctransaction.utils.CompensableMethodUtils#calculateMethodType 判断当前执行者类型 MethodType.ROOT</span><br><span class="line">	 4&gt;org.mengyun.tcctransaction.interceptor.CompensableTransactionInterceptor#rootMethodProceed  主事务方法的处理</span><br><span class="line">	  5&gt;org.mengyun.tcctransaction.TransactionManager#begin 事务开始（创建事务日志记录，并将该事务日志记录存入当前线程的事务局部变量中） TransactionType.ROOT</span><br><span class="line">	   6&gt;org.aspectj.lang.ProceedingJoinPoint#proceed()   Try (开始执行被拦截的方法，或进入下一个拦截器处理逻辑) ，执行完毕等待返回....</span><br><span class="line">		 7&gt;org.mengyun.tcctransaction.interceptor.ResourceCoordinatorInterceptor#interceptTransactionContextMethod  资源拦截器，拦截事务上下文方法</span><br><span class="line">		  8&gt;org.mengyun.tcctransaction.TransactionManager#getCurrentTransaction 获取当前事务，没有则新建事务（trying状态）</span><br><span class="line">		   9&gt;org.mengyun.tcctransaction.utils.CompensableMethodUtils#calculateMethodType 判断当前执行者类型（ROOT）</span><br><span class="line">		    10&gt;org.mengyun.tcctransaction.interceptor.ResourceCoordinatorInterceptor#generateAndEnlistRootParticipant </span><br><span class="line">						生成和登记根参与者Participant（Participant保存确认方法和确认方法的实例) 加入到参与者列表，更新事务信息（加入了事务参与者，包含了触发confirm或cancel方法的参数信息）</span><br><span class="line">		      11&gt;org.aspectj.lang.ProceedingJoinPoint#proceed(java.lang.Object[]) 开始执行被拦截的方法，或进入下一个拦截器处理逻辑</span><br><span class="line">12&gt;com.roncoo.pay.service.trade.biz.impl.RpTradePaymentManagerBizImpl#completeSuccessOrder 真正进入到方法内部执行 修改支付记录状态， 修改支付订单状态</span><br><span class="line"> 13&gt;com.roncoo.pay.service.account.api.RpAccountTransactionService#creditToAccountTcc 调用给商户资金帐户加款（平台收款） try 方法，调用参与者账户资金系统加款，调用之前被拦截器拦截</span><br><span class="line"> 14&gt;org.mengyun.tcctransaction.interceptor.ResourceCoordinatorInterceptor#interceptTransactionContextMethod  获取当前事务，从当前线程 threadLocal 中可以获取到事务</span><br><span class="line">  15&gt;org.mengyun.tcctransaction.utils.CompensableMethodUtils#calculateMethodType 判断当前执行者类型，MethodType.CONSUMER</span><br><span class="line">   16&gt;org.mengyun.tcctransaction.interceptor.ResourceCoordinatorInterceptor#generateAndEnlistConsumerParticipant 生成并登记消费者的参与者Participant</span><br><span class="line">   服务接口的 TransactionContext 参数设值（新的事务分支ID），状态为当前transaction状态TRYING ,构建事务confirm上下文和构建事务cancle上下文</span><br><span class="line">    17&gt;org.aspectj.lang.ProceedingJoinPoint#proceed(java.lang.Object[]) 继续执行 方法</span><br><span class="line">     18&gt; com.roncoo.pay.service.account.api.RpAccountTransactionService#creditToAccountTcc 回到方法执行 try 方法，发起远程调用</span><br><span class="line">      19&gt;com.roncoo.pay.service.account.aip.impl.RpAccountTransactionServiceImpl#creditToAccountTcc 到了资金账户系统 provider 方真正执行方法</span><br><span class="line">       20&gt;org.mengyun.tcctransaction.interceptor.CompensableTransactionInterceptor#interceptCompensableMethod 被可补偿事务拦截器拦截</span><br><span class="line">        21&gt;org.mengyun.tcctransaction.utils.CompensableMethodUtils#calculateMethodType 判断当前执行方的类型，MethodType.PROVIDER</span><br><span class="line">         22&gt;org.mengyun.tcctransaction.interceptor.CompensableTransactionInterceptor#providerMethodProceed 服务提供者事务方法处理. 当前分支事务状态为TRYING</span><br><span class="line">          基于全局事务ID扩展创建新的分支事务，并存于当前线程的事务局部变量中.</span><br><span class="line">          23&gt;org.aspectj.lang.ProceedingJoinPoint#proceed()开始执行被拦截的方法，或进入下一个拦截器处理逻辑</span><br><span class="line">           24&gt; org.mengyun.tcctransaction.interceptor.ResourceCoordinatorInterceptor#interceptTransactionContextMethod 进入到资源协调拦截器</span><br><span class="line">           	25&gt;org.mengyun.tcctransaction.utils.CompensableMethodUtils#calculateMethodType 判断当前类型为PROVIDER</span><br><span class="line">           	 26&gt;org.mengyun.tcctransaction.interceptor.ResourceCoordinatorInterceptor#generateAndEnlistProviderParticipant 生成并登记服务提供者的参与者 </span><br><span class="line">           	 构建确认方法的提交上下文，构建取消方法的提交上下文 加入参与者列表更新本地缓存</span><br><span class="line">           	  27&gt;org.aspectj.lang.ProceedingJoinPoint#proceed(java.lang.Object[]) 开始执行被拦截的方法，或进入下一个拦截器处理逻辑</span><br><span class="line">           	   28&gt;com.roncoo.pay.service.account.aip.impl.RpAccountTransactionServiceImpl#creditToAccountTcc 开始真正执行账户资金系统的 try 方法</span><br><span class="line">29&gt;com.roncoo.pay.service.trade.biz.impl.RpTradePaymentManagerBizImpl#completeSuccessOrder 账户资金加款成功，回到completeSuccessOrder方法继续执行</span><br><span class="line"> 30&gt;com.roncoo.pay.service.point.api.RpPointAccountService#creditToPointAccountTcc client调用被拦截  过程和 13 ~ 29 过程一样</span><br><span class="line">  .</span><br><span class="line">  .</span><br><span class="line">  .</span><br><span class="line">   &gt;com.roncoo.pay.service.point.api.RpPointAccountService#creditToPointAccountTcc rpc 执行完毕返回</span><br><span class="line">    &gt; org.aspectj.lang.ProceedingJoinPoint#proceed()  执行完毕回到 步骤 6</span><br><span class="line">     &gt;org.mengyun.tcctransaction.TransactionManager#commit Try检验正常后提交（try 方法过程中如果出现异常或调用org.mengyun.tcctransaction.TransactionManager#rollback 火锅就是遍历事务参与者这列表中的 cancle 方法）(事务管理器在控制提交)：Confirm</span><br><span class="line">     &gt;org.mengyun.tcctransaction.Transaction#commit 遍历调用事务参与者列表的 commit 方法</span><br><span class="line">      &gt;org.mengyun.tcctransaction.Participant#commit</span><br><span class="line">      &gt;org.mengyun.tcctransaction.Terminator#invoke confirmInvocationContext 调用之前写入的 confirm 上线文直接执行各个参与者的 confirm 方法</span><br><span class="line">       &gt;org.mengyun.tcctransaction.TransactionRepository#delete confirm 完成后会调用事务删除方法删除日志，这里注意如果 confirm 失败了导致日志没有删除，会有个事务调度系统TransactionRecovery 定时的检索出为被删除的事务数据然后一直调用 confirm 方法去确认并记录重试次数（重试一定次数不在重试）。</span><br><span class="line">       所以接口一定要保持幂等才行 这里特别注意</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -360,12 +336,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/JVM-内存结构/" rel="tag"># JVM 内存结构</a>
-          
-        </div>
-      
 
       
       
@@ -375,8 +345,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/26/jvm内存分析6/" rel="next" title="Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用">
-                <i class="fa fa-chevron-left"></i> Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用
+              <a href="/2019/10/11/java远程调试/" rel="next" title="java远程调试">
+                <i class="fa fa-chevron-left"></i> java远程调试
               </a>
             
           </div>
@@ -384,10 +354,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/07/29/JVM2/" rel="prev" title="JVM之垃圾回收算法">
-                JVM之垃圾回收算法 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -439,17 +405,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -520,22 +477,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#运行时数据区"><span class="nav-number">1.</span> <span class="nav-text">运行时数据区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#程序计数器"><span class="nav-number">1.1.</span> <span class="nav-text">程序计数器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机栈"><span class="nav-number">1.2.</span> <span class="nav-text">虚拟机栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆"><span class="nav-number">1.3.</span> <span class="nav-text">堆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法区"><span class="nav-number">1.4.</span> <span class="nav-text">方法区</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#运行时常量池"><span class="nav-number">1.4.1.</span> <span class="nav-text">运行时常量池</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本地方法栈"><span class="nav-number">1.5.</span> <span class="nav-text">本地方法栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非堆区"><span class="nav-number">1.6.</span> <span class="nav-text">非堆区</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
