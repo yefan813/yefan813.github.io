@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.7.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://yefan813.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="转载自：传送门 症状及解决方案下面列出几种常见的症状即对应的解决方案： CPU占用率很高，响应很慢按照《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。在同一时间多次使用上述的方法，然后进行对比分析，从代码中找到问题所在的原因。如果线程指向的是”VM Thread”或者无法从代码中直接找到原因，">
+<meta name="keywords" content="JVM 内存泄露">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存泄漏分析系列之五：常见的Thread Dump日志案例分析">
+<meta property="og:url" content="https://yefan813.github.io/2018/07/26/jvm内存分析5/index.html">
+<meta property="og:site_name" content="奋斗不息">
+<meta property="og:description" content="转载自：传送门 症状及解决方案下面列出几种常见的症状即对应的解决方案： CPU占用率很高，响应很慢按照《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。在同一时间多次使用上述的方法，然后进行对比分析，从代码中找到问题所在的原因。如果线程指向的是”VM Thread”或者无法从代码中直接找到原因，">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://www.javatang.com/wp-content/uploads/2017/10/thread-deadlock-1.png">
+<meta property="og:updated_time" content="2018-08-31T07:24:12.229Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java内存泄漏分析系列之五：常见的Thread Dump日志案例分析">
+<meta name="twitter:description" content="转载自：传送门 症状及解决方案下面列出几种常见的症状即对应的解决方案： CPU占用率很高，响应很慢按照《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。在同一时间多次使用上述的方法，然后进行对比分析，从代码中找到问题所在的原因。如果线程指向的是”VM Thread”或者无法从代码中直接找到原因，">
+<meta name="twitter:image" content="https://www.javatang.com/wp-content/uploads/2017/10/thread-deadlock-1.png">
+
+<link rel="canonical" href="https://yefan813.github.io/2018/07/26/jvm内存分析5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Java内存泄漏分析系列之五：常见的Thread Dump日志案例分析 | 奋斗不息</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">奋斗不息</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">态度决定一切</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2018/07/26/jvm内存分析5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奋斗不息">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java内存泄漏分析系列之五：常见的Thread Dump日志案例分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-07-26 17:10:11" itemprop="dateCreated datePublished" datetime="2018-07-26T17:10:11+08:00">2018-07-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2018-08-31 15:24:12" itemprop="dateModified" datetime="2018-08-31T15:24:12+08:00">2018-08-31</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>转载自：<a href="https://www.javatang.com/archives/2017/10/26/08572060.html" target="_blank" rel="noopener">传送门</a></p>
+<h2 id="症状及解决方案"><a href="#症状及解决方案" class="headerlink" title="症状及解决方案"></a>症状及解决方案</h2><p>下面列出几种常见的症状即对应的解决方案：</p>
+<h3 id="CPU占用率很高，响应很慢"><a href="#CPU占用率很高，响应很慢" class="headerlink" title="CPU占用率很高，响应很慢"></a>CPU占用率很高，响应很慢</h3><p>按照<a href="https://yefan813.github.io/2018/07/25/jstack%E4%BD%BF%E7%94%A8/">《Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息》</a>中所说的方法，先找到占用CPU的进程，然后再定位到对应的线程，最后分析出对应的堆栈信息。<br>在同一时间多次使用上述的方法，然后进行对比分析，从代码中找到问题所在的原因。如果线程指向的是”VM Thread”或者无法从代码中直接找到原因，就需要进行内存分析，具体的见下一篇文章。</p>
+<a id="more"></a>
+<h3 id="CPU占用率不高，但响应很慢"><a href="#CPU占用率不高，但响应很慢" class="headerlink" title="CPU占用率不高，但响应很慢"></a>CPU占用率不高，但响应很慢</h3><p>在整个请求的过程中多次执行Thread Dump然后进行对比，取得<strong>BLOCKED</strong> 状态的线程列表，通常是因为线程停在了I/O、数据库连接或网络连接的地方。</p>
+<h3 id="关注点概况"><a href="#关注点概况" class="headerlink" title="关注点概况"></a>关注点概况</h3><p>在Thread Dump文件中，线程的状态分成两种：<strong>Native Thread Status（系统线程状态）</strong>和<strong>JVM Thread Status（JVM 线程状态）</strong>，具体的含义可以参考<a href="https://yefan813.github.io/2018/07/26/jstack3/">上一篇文章</a>。在分析日志的时候需要重点关注如下几种线程状态：</p>
+<h3 id="系统线程状态为-deadlock"><a href="#系统线程状态为-deadlock" class="headerlink" title="系统线程状态为 deadlock"></a>系统线程状态为 deadlock</h3><p>线程处于死锁状态，将占用系统大量资源。</p>
+<h3 id="系统线程状态为-waiting-for-monitor-entry-或-in-Object-wait"><a href="#系统线程状态为-waiting-for-monitor-entry-或-in-Object-wait" class="headerlink" title="系统线程状态为 waiting for monitor entry 或 in Object.wait()"></a>系统线程状态为 waiting for monitor entry 或 in Object.wait()</h3><p>如上一篇文章中所说，系统线程处于这种状态说明它在等待进入一个临界区，此时JVM线程的状态通常都是 <strong>java.lang.Thread.State: BLOCKED。</strong></p>
+<p>如果大量线程处于这种状态的话，可能是一个全局锁阻塞了大量线程。如果短期内多次打印Thread Dump信息，发现<strong>waiting for monitor entry</strong>状态的线程越来越多，没有减少的趋势，可能意味着某些线程在临界区里呆得时间太长了，以至于越来越多新线程迟迟无法进入。</p>
+<h3 id="系统线程状态为-waiting-on-condition"><a href="#系统线程状态为-waiting-on-condition" class="headerlink" title="系统线程状态为 waiting on condition"></a>系统线程状态为 waiting on condition</h3><p>系统线程处于此种状态说明它在等待另一个条件的发生来唤醒自己，或者自己调用了sleep()方法。此时JVM线程的状态通常是java.lang.Thread.State: WAITING (parking)（等待唤醒条件）或java.lang.Thread.State: TIMED_WAITING (parking或sleeping)（等待定时唤醒条件）。</p>
+<p>如果大量线程处于此种状态，说明这些线程又去获取第三方资源了，比如第三方的网络资源或读取数据库的操作，长时间无法获得响应，导致大量线程进入等待状态。因此，这说明系统处于一个网络瓶颈或读取数据库操作时间太长。</p>
+<h3 id="系统线程状态为-blocked"><a href="#系统线程状态为-blocked" class="headerlink" title="系统线程状态为 blocked"></a>系统线程状态为 blocked</h3><p>线程处于阻塞状态，需要根据实际情况进行判断。</p>
+<h2 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h2><p>下面通过几个案例进行分解来获得解决问题的方法。</p>
+<h3 id="waiting-for-monitor-entry-和-java-lang-Thread-State-BLOCKED"><a href="#waiting-for-monitor-entry-和-java-lang-Thread-State-BLOCKED" class="headerlink" title="waiting for monitor entry 和 java.lang.Thread.State: BLOCKED"></a>waiting for monitor entry 和 java.lang.Thread.State: BLOCKED</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&quot;DB-Processor-13&quot; daemon prio=5 tid=0x003edf98 nid=0xca waiting for monitor entry [0x000000000825f000]</span><br><span class="line">java.lang.Thread.State: BLOCKED (on object monitor)</span><br><span class="line">                at beans.ConnectionPool.getConnection(ConnectionPool.java:102)</span><br><span class="line">                - waiting to lock &lt;0xe0375410&gt; (a beans.ConnectionPool)</span><br><span class="line">                at beans.cus.ServiceCnt.getTodayCount(ServiceCnt.java:111)</span><br><span class="line">                at beans.cus.ServiceCnt.insertCount(ServiceCnt.java:43)</span><br><span class="line"></span><br><span class="line">&quot;DB-Processor-14&quot; daemon prio=5 tid=0x003edf98 nid=0xca waiting for monitor entry [0x000000000825f020]</span><br><span class="line">java.lang.Thread.State: BLOCKED (on object monitor)</span><br><span class="line">                at beans.ConnectionPool.getConnection(ConnectionPool.java:102)</span><br><span class="line">                - waiting to lock &lt;0xe0375410&gt; (a beans.ConnectionPool)</span><br><span class="line">                at beans.cus.ServiceCnt.getTodayCount(ServiceCnt.java:111)</span><br><span class="line">                at beans.cus.ServiceCnt.insertCount(ServiceCnt.java:43)</span><br><span class="line"></span><br><span class="line">&quot;DB-Processor-3&quot; daemon prio=5 tid=0x00928248 nid=0x8b waiting for monitor entry [0x000000000825d080]</span><br><span class="line">java.lang.Thread.State: RUNNABLE</span><br><span class="line">                at oracle.jdbc.driver.OracleConnection.isClosed(OracleConnection.java:570)</span><br><span class="line">                - waiting to lock &lt;0xe03ba2e0&gt; (a oracle.jdbc.driver.OracleConnection)</span><br><span class="line">                at beans.ConnectionPool.getConnection(ConnectionPool.java:112)</span><br><span class="line">                - locked &lt;0xe0386580&gt; (a java.util.Vector)</span><br><span class="line">                - locked &lt;0xe0375410&gt; (a beans.ConnectionPool)</span><br><span class="line">                at beans.cus.Cue_1700c.GetNationList(Cue_1700c.java:66)</span><br><span class="line">                at org.apache.jsp.cue_1700c_jsp._jspService(cue_1700c_jsp.java:120)</span><br></pre></td></tr></table></figure>
+<p>上面系统线程的状态是 <strong>waiting for monitor entry</strong>，说明此线程通过 synchronized(obj) { } 申请进入临界区，但obj对应的 Monitor 被其他线程所拥有，所以 JVM线程的状态是 <strong>java.lang.Thread.State: BLOCKED (on object monitor)</strong>，说明线程等待资源超时。</p>
+<p>下面的 <strong>waiting to lock <0xe0375410></0xe0375410></strong> 说明线程在等待给 <strong>0xe0375410</strong> 这个地址上锁（<strong>trying to obtain 0xe0375410 lock</strong>），如果在日志中发现有大量的线程都在等待给 现有大量的线程都在等 上锁的话，这个时候需要在日志中查找那个线程获取了这个锁 <strong>locked <0xe0375410></0xe0375410></strong>，如上面的例子中是 <strong>“DB-Processor-14”</strong> 这个线程，这样就可以顺藤摸瓜了。上面的例子是因为获取数据库操作等待的时间太长所致的，这个时候就需要修改数据库连接的配置信息。</p>
+<p>如果两个线程相互都被对方的线程锁锁住，这样就造成了 <strong>死锁</strong> 现象，如下面的例子所示：<br><img src="https://www.javatang.com/wp-content/uploads/2017/10/thread-deadlock-1.png" alt=""></p>
+<h3 id="waiting-on-condition-和-java-lang-Thread-State-TIMED-WAITING"><a href="#waiting-on-condition-和-java-lang-Thread-State-TIMED-WAITING" class="headerlink" title="waiting on condition 和 java.lang.Thread.State: TIMED_WAITING"></a>waiting on condition 和 java.lang.Thread.State: TIMED_WAITING</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&quot;RMI TCP Connection(idle)&quot; daemon prio=10 tid=0x00007fd50834e800 nid=0x56b2 waiting on condition [0x00007fd4f1a59000]</span><br><span class="line">java.lang.Thread.State: TIMED_WAITING (parking)</span><br><span class="line">                at sun.misc.Unsafe.park(Native Method)</span><br><span class="line">                - parking to wait for  &lt;0x00000000acd84de8&gt; (a java.util.concurrent.SynchronousQueue$TransferStack)</span><br><span class="line">                at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:198)</span><br><span class="line">                at java.util.concurrent.SynchronousQueue$TransferStack.awaitFulfill(SynchronousQueue.java:424)</span><br><span class="line">                at java.util.concurrent.SynchronousQueue$TransferStack.transfer(SynchronousQueue.java:323)</span><br><span class="line">                at java.util.concurrent.SynchronousQueue.poll(SynchronousQueue.java:874)</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:945)</span><br><span class="line">                at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:907)</span><br><span class="line">                at java.lang.Thread.run(Thread.java:662)</span><br></pre></td></tr></table></figure>
+<p>JVM线程的状态是 java.lang.Thread.State: TIMED_WAITING (parking)，说明线程处于定时等待的状态，parking指线程处于挂起中。</p>
+<p><strong>waiting on condition</strong>需要结合堆栈中的 parking to wait for <0x00000000acd84de8> (a java.util.concurrent.SynchronousQueue$TransferStack) 一起来分析。首先，本线程肯定是在等待某个条件的发生来把自己唤醒。其次，SynchronousQueue并不是一个队列，只是线程之间移交信息的机制，当我们把一个元素放入到 SynchronousQueue 中的时候必须有另一个线程正在等待接受移交的任务，因此这就是本线程在等待的条件。</0x00000000acd84de8></p>
+<p>in Object.wait() 和 java.lang.Thread.State: TIMED_WAITING</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&quot;RMI RenewClean-[172.16.5.19:28475]&quot; daemon prio=10 tid=0x0000000041428800 nid=0xb09 in Object.wait() [0x00007f34f4bd0000]</span><br><span class="line">java.lang.Thread.State: TIMED_WAITING (on object monitor)</span><br><span class="line">                at java.lang.Object.wait(Native Method)</span><br><span class="line">                - waiting on &lt;0x00000000aa672478&gt; (a java.lang.ref.ReferenceQueue$Lock)</span><br><span class="line">                at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:118)</span><br><span class="line">                - locked &lt;0x00000000aa672478&gt; (a java.lang.ref.ReferenceQueue$Lock)</span><br><span class="line">                at sun.rmi.transport.DGCClient$EndpointEntry$RenewCleanThread.run(DGCClient.java:516)</span><br><span class="line">                at java.lang.Thread.run(Thread.java:662)</span><br></pre></td></tr></table></figure>
+<p>本例中JVM线程的状态是 <strong>java.lang.Thread.State: TIMED_WAITING (on object monitor)</strong>，说明线程调用了 <strong>java.lang.Object.wait(long timeout)</strong> 方法而进入了等待状态。</p>
+<p>“Wait Set”中等待的线程状态就是 <strong>in Object.wait()</strong>，当线程获得了 Monitor进入临界区之后，如果发现线程继续运行的条件没有满足，它就调用对象（通常是被 synchronized 的对象）的wait()方法，放弃了Monitor，进入 “Wait Set” 队列中。只有当别的线程在该对象上调用了 notify()或notifyAll()方法， “Wait Set” 队列中线程才得到机会去竞争，但是只有一个线程获得对象的 Monitor，恢复到的运行态。</p>
+<p>另外需要注意的是，是先 locked <0x00000000aa672478> 然后再 waiting on <0x00000000aa672478>，之所以如此，可以通过下面的代码进行演示：</0x00000000aa672478></0x00000000aa672478></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">static private class  Lock &#123; &#125;;</span><br><span class="line">private Lock lock = new Lock();</span><br><span class="line">public Reference&lt;? extends T&gt; remove(long timeout) &#123;</span><br><span class="line">    synchronized (lock) &#123;</span><br><span class="line">        Reference&lt;? extends T&gt; r = reallyPoll();</span><br><span class="line">        if (r != null) return r;</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            lock.wait(timeout);</span><br><span class="line">            r = reallyPoll();</span><br><span class="line">            // ……</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>线程在执行的过程中，先用 synchronized 获得了这个对象的 Monitor（对应 locked <0x00000000aa672478>），当执行到 <strong>lock.wait(timeout);</strong> 的时候，线程就放弃了Monitor的所有权，进入 “Wait Set” 队列（对应 waiting on <0x00000000aa672478>）。</0x00000000aa672478></0x00000000aa672478></p>
+<p>前面几篇文章详细说明了如何分析Thread Dump文件，除此之外还可以通过分析JVM堆内存信息来进一步找到问题的原因。</p>
+<p>参考资料：<br><a href="http://just2do.iteye.com/blog/2275894" target="_blank" rel="noopener">性能分析之– JAVA Thread Dump 分析综述</a><br><a href="http://www.cnblogs.com/zhengyun_ustc/archive/2013/01/06/dumpanalysis.html" target="_blank" rel="noopener">三个实例演示 Java Thread Dump 日志分析</a><br><a href="http://sesame.iteye.com/blog/428012" target="_blank" rel="noopener">如何分析Java虚拟机死锁</a><br><a href="http://www.cnblogs.com/zhengyun_ustc/archive/2013/03/18/tda.html" target="_blank" rel="noopener">各种 Java Thread State 第一分析法则</a><br><a href="https://dzone.com/articles/how-analyze-java-thread-dumps" target="_blank" rel="noopener">How to Analyze Java Thread Dumps | 中文版</a><br><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/tooldescr034.html" target="_blank" rel="noopener">官网</a><br><a href="https://mp.weixin.qq.com/s/GsxeFM7QWuR--Kbpb7At2w" target="_blank" rel="noopener">java线程状态转化</a><br><a href="https://blogs.oracle.com/poonam/understanding-cms-gc-logs" target="_blank" rel="noopener">CMS日志格式</a><br><a href="https://blogs.oracle.com/poonam/understanding-g1-gc-logs" target="_blank" rel="noopener">G1日志格式</a><br><a href="http://gceasy.io/" target="_blank" rel="noopener">GC日志分析工具</a><br><a href="https://github.com/chewiebug/GCViewer" target="_blank" rel="noopener">GCViewer</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JVM-内存泄露/" rel="tag"># JVM 内存泄露</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/07/26/jstack3/" rel="prev" title="Java内存泄漏分析系列之三：jstack生成的Thread Dump日志线程状态">
+      <i class="fa fa-chevron-left"></i> Java内存泄漏分析系列之三：jstack生成的Thread Dump日志线程状态
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/07/26/jvm内存分析6/" rel="next" title="Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用">
+      Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#症状及解决方案"><span class="nav-number">1.</span> <span class="nav-text">症状及解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU占用率很高，响应很慢"><span class="nav-number">1.1.</span> <span class="nav-text">CPU占用率很高，响应很慢</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU占用率不高，但响应很慢"><span class="nav-number">1.2.</span> <span class="nav-text">CPU占用率不高，但响应很慢</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关注点概况"><span class="nav-number">1.3.</span> <span class="nav-text">关注点概况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统线程状态为-deadlock"><span class="nav-number">1.4.</span> <span class="nav-text">系统线程状态为 deadlock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统线程状态为-waiting-for-monitor-entry-或-in-Object-wait"><span class="nav-number">1.5.</span> <span class="nav-text">系统线程状态为 waiting for monitor entry 或 in Object.wait()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统线程状态为-waiting-on-condition"><span class="nav-number">1.6.</span> <span class="nav-text">系统线程状态为 waiting on condition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统线程状态为-blocked"><span class="nav-number">1.7.</span> <span class="nav-text">系统线程状态为 blocked</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#案例分析"><span class="nav-number">2.</span> <span class="nav-text">案例分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#waiting-for-monitor-entry-和-java-lang-Thread-State-BLOCKED"><span class="nav-number">2.1.</span> <span class="nav-text">waiting for monitor entry 和 java.lang.Thread.State: BLOCKED</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#waiting-on-condition-和-java-lang-Thread-State-TIMED-WAITING"><span class="nav-number">2.2.</span> <span class="nav-text">waiting on condition 和 java.lang.Thread.State: TIMED_WAITING</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Evan</p>
+  <div class="site-description" itemprop="description">记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Evan</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.7.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.6.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.7.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://yefan813.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="JVM参数类型 标准参数 X 参数 XX 参数  标准参数 -help -server :选择 “server” VM,默认 VM 是 server,因为您是在服务器类计算机上运行 -client -version :输出产品版本并退出 -showversion :输出产品版本并继续 -cp :&amp;lt;目录和 zip/jar 文件的类搜索路径&amp;gt; -classpath:&amp;lt;目录和 zip/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jvm概览">
+<meta property="og:url" content="https://yefan813.github.io/2018/07/23/jvm概览/index.html">
+<meta property="og:site_name" content="奋斗不息">
+<meta property="og:description" content="JVM参数类型 标准参数 X 参数 XX 参数  标准参数 -help -server :选择 “server” VM,默认 VM 是 server,因为您是在服务器类计算机上运行 -client -version :输出产品版本并退出 -showversion :输出产品版本并继续 -cp :&amp;lt;目录和 zip/jar 文件的类搜索路径&amp;gt; -classpath:&amp;lt;目录和 zip/">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1ftk8xya9lnj314415gk3n.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1ftk921u5dsj31120fgae8.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1ftk93moo66j30p806dtad.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1ftk97wn9i8j30qo065abs.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1ftk9ay3x0kj30xj0e2mzu.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcly1ftk9x9pvm5j30x80cnabp.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1ftkaz5fm0ej311c0j7tib.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1ftkb1vazonj30w40pk7eo.jpg">
+<meta property="og:updated_time" content="2018-08-31T07:24:42.404Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jvm概览">
+<meta name="twitter:description" content="JVM参数类型 标准参数 X 参数 XX 参数  标准参数 -help -server :选择 “server” VM,默认 VM 是 server,因为您是在服务器类计算机上运行 -client -version :输出产品版本并退出 -showversion :输出产品版本并继续 -cp :&amp;lt;目录和 zip/jar 文件的类搜索路径&amp;gt; -classpath:&amp;lt;目录和 zip/">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1ftk8xya9lnj314415gk3n.jpg">
+
+<link rel="canonical" href="https://yefan813.github.io/2018/07/23/jvm概览/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>jvm概览 | 奋斗不息</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">奋斗不息</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">态度决定一切</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2018/07/23/jvm概览/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奋斗不息">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          jvm概览
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-07-23 23:54:55" itemprop="dateCreated datePublished" datetime="2018-07-23T23:54:55+08:00">2018-07-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2018-08-31 15:24:42" itemprop="dateModified" datetime="2018-08-31T15:24:42+08:00">2018-08-31</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="JVM参数类型"><a href="#JVM参数类型" class="headerlink" title="JVM参数类型"></a>JVM参数类型</h2><ul>
+<li>标准参数</li>
+<li>X 参数</li>
+<li>XX 参数</li>
+</ul>
+<h3 id="标准参数"><a href="#标准参数" class="headerlink" title="标准参数"></a>标准参数</h3><ul>
+<li>-help</li>
+<li>-server :选择 “server” VM,默认 VM 是 server,因为您是在服务器类计算机上运行</li>
+<li>-client</li>
+<li>-version :输出产品版本并退出</li>
+<li>-showversion :输出产品版本并继续</li>
+<li>-cp :&lt;目录和 zip/jar 文件的类搜索路径&gt;</li>
+<li>-classpath:&lt;目录和 zip/jar 文件的类搜索路径&gt;用 : 分隔的目录, JAR 档案和 ZIP 档案列表, 用于搜索类文件。</li>
+</ul>
+<a id="more"></a>
+<h3 id="非标准参数-X"><a href="#非标准参数-X" class="headerlink" title="非标准参数: -X"></a>非标准参数: -X</h3><p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ftk8xya9lnj314415gk3n.jpg" alt=""><br>例如：<br><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1ftk921u5dsj31120fgae8.jpg" alt=""></p>
+<h3 id="XX参数分类"><a href="#XX参数分类" class="headerlink" title="XX参数分类"></a>XX参数分类</h3><ul>
+<li>Boolean类型</li>
+</ul>
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1ftk93moo66j30p806dtad.jpg" alt=""></p>
+<ul>
+<li><p>非 Boolean 类型<br><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ftk97wn9i8j30qo065abs.jpg" alt=""></p>
+</li>
+<li><p>-Xmx -Xms<br><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1ftk9ay3x0kj30xj0e2mzu.jpg" alt=""></p>
+</li>
+</ul>
+<h2 id="查看-JVM-运行时参数"><a href="#查看-JVM-运行时参数" class="headerlink" title="查看 JVM 运行时参数"></a>查看 JVM 运行时参数</h2><ul>
+<li>-XX:+PrintFlagsInitial 打印初始值</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#java  -XX:+PrintFlagsInitial -version ##显示当前命令进程的参数信息</span><br></pre></td></tr></table></figure>
+<ul>
+<li>-XX:+PrintFlagsFinal 打印最终值</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#java  -XX:+PrintFlagsFinal -version ##显示当前命令进程的参数信息</span><br></pre></td></tr></table></figure>
+<ul>
+<li>-XX:+UnlockExperimentalVMOptions解锁实验参数 </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#java  -XX:+UnlockExperimentalVMOptions -version ##显示当前命令进程的参数信息</span><br></pre></td></tr></table></figure>
+<ul>
+<li>-XX:+UnlockDiagnosticOptions解锁诊断参数</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#java  -XX:+UnlockDiagnosticOptions -version ##显示当前命令进程的参数信息</span><br></pre></td></tr></table></figure>
+<h3 id="JPS"><a href="#JPS" class="headerlink" title="JPS"></a>JPS</h3><p><code>jps [ options ] [ hostid ]</code><br><img src="https://ws3.sinaimg.cn/large/006tKfTcly1ftk9x9pvm5j30x80cnabp.jpg" alt=""></p>
+<h3 id="jinfo-查看运行时参数"><a href="#jinfo-查看运行时参数" class="headerlink" title="jinfo 查看运行时参数"></a>jinfo 查看运行时参数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">jinfo [ option ] pid</span><br><span class="line"></span><br><span class="line">jinfo [ option ] executable core</span><br><span class="line"></span><br><span class="line">jinfo [ option ] [ servier-id ] remote-hostname-or-IP</span><br><span class="line"></span><br><span class="line">option</span><br><span class="line">The command-line options. See Options.</span><br><span class="line"></span><br><span class="line">pid</span><br><span class="line">The process ID for which the configuration information is to be printed. The process must be a Java process. To get a list of Java processes running on a machine, use the jps(1) command.</span><br><span class="line"></span><br><span class="line">executable</span><br><span class="line">The Java executable from which the core dump was produced.</span><br><span class="line"></span><br><span class="line">core</span><br><span class="line">The core file for which the configuration information is to be printed.</span><br><span class="line"></span><br><span class="line">remote-hostname-or-IP</span><br><span class="line">The remote debug server hostname or IP address. See jsadebugd(1).</span><br><span class="line"></span><br><span class="line">server-id</span><br><span class="line">An optional unique ID to use when multiple debug servers are running on the same remote host.</span><br><span class="line"></span><br><span class="line">Description</span><br><span class="line">The jinfo command prints Java configuration information for a specified Java process or core file or a remote debug server. The configuration information includes Java system properties and Java Virtual Machine (JVM) command-line flags. If the specified process is running on a 64-bit JVM, then you might need to specify the -J-d64 option, for example: jinfo -J-d64 -sysprops pid.</span><br><span class="line"></span><br><span class="line">This utility is unsupported and might not be available in future releases of the JDK. In Windows Systems where dbgeng.dll is not present, Debugging Tools For Windows must be installed to have these tools working. The PATH environment variable should contain the location of the jvm.dll that is used by the target process or the location from which the crash dump file was produced. For example, set PATH=%JDK_HOME%\jre\bin\client;%PATH% .</span><br><span class="line"></span><br><span class="line">Options</span><br><span class="line">no-option</span><br><span class="line">Prints both command-line flags and system property name-value pairs.</span><br><span class="line"></span><br><span class="line">-flag name</span><br><span class="line">Prints the name and value of the specified command-line flag.</span><br><span class="line"></span><br><span class="line">-flag [+|-]name</span><br><span class="line">enables or disables the specified Boolean command-line flag.</span><br><span class="line"></span><br><span class="line">-flag name=value</span><br><span class="line">Sets the specified command-line flag to the specified value.</span><br><span class="line"></span><br><span class="line">-flags</span><br><span class="line">Prints command-line flags passed to the JVM.</span><br><span class="line"></span><br><span class="line">-sysprops</span><br><span class="line">Prints Java system properties as name-value pairs.</span><br><span class="line"></span><br><span class="line">-h</span><br><span class="line">Prints a help message.</span><br><span class="line"></span><br><span class="line">-help</span><br><span class="line">Prints a help message.</span><br></pre></td></tr></table></figure>
+<p>例如:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">⇒  jinfo -flag MaxHeapSize 5796  ##查看最大内存</span><br><span class="line">-XX:MaxHeapSize=4294967296</span><br><span class="line"></span><br><span class="line">jinfo -flag UseConcMarkSweepGC 5796 ##查看是否垃圾回收器 +使用 -表示未使用</span><br><span class="line">-XX:-UseConcMarkSweepGC</span><br><span class="line"></span><br><span class="line">⇒  jinfo -flag UseG1GC 5796 ##查看是否垃圾回收器 +使用 -表示未使用</span><br><span class="line">-XX:-UseG1GC</span><br><span class="line"></span><br><span class="line">⇒  jinfo -flag UseParallelGC 5796 ##查看是否垃圾回收器 +使用 -表示未使用</span><br><span class="line">-XX:+UseParallelGC</span><br></pre></td></tr></table></figure>
+<h3 id="jstat-查看-JVM-统计信息"><a href="#jstat-查看-JVM-统计信息" class="headerlink" title="jstat 查看 JVM 统计信息"></a>jstat 查看 JVM 统计信息</h3><ul>
+<li>查看类装载信息</li>
+<li>查看垃圾收集信息</li>
+<li>查看JIT 编译信息</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">jstat [ generalOption | outputOptions vmid [ interval[s|ms] [ count ] ]</span><br><span class="line"></span><br><span class="line">generalOption: -help 、 -options</span><br><span class="line"></span><br><span class="line">outputOptions:</span><br><span class="line">class: 显示有关类加载器行为的统计信息.</span><br><span class="line"></span><br><span class="line">compiler: 显示有关Java HotSpot VM实时编译器（JIT）行为的统计信息.</span><br><span class="line"></span><br><span class="line">gc: 显示有关垃圾回收堆行为的统计信息.</span><br><span class="line"></span><br><span class="line">gccapacity: 显示有关代的容量及其相应空间的统计信息.</span><br><span class="line"></span><br><span class="line">gccause: 显示有关垃圾收集统计信息的摘要（与-gcutil相同），以及最后一个和当前（适用时）垃圾收集事件的原因.</span><br><span class="line"></span><br><span class="line">gcnew: 显示新生代行为的统计信息.</span><br><span class="line"></span><br><span class="line">gcnewcapacity: 显示有关新生代及其相应空间大小的统计信息.</span><br><span class="line"></span><br><span class="line">gcold: 显示有关老年代和元空间统计信息行为的统计信息.</span><br><span class="line"></span><br><span class="line">gcoldcapacity: 显示有关老年代大小的统计信息.</span><br><span class="line"></span><br><span class="line">gcmetacapacity: 显示有关元空间大小的统计信息.</span><br><span class="line"></span><br><span class="line">gcutil: 显示有关垃圾收集统计信息的摘要.</span><br><span class="line"></span><br><span class="line">printcompilation: 显示Java HotSpot VM编译方法统计信息.</span><br><span class="line"></span><br><span class="line">参考：[链接](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html#BEHIGDGJ)</span><br></pre></td></tr></table></figure>
+<h5 id="gc-输出结果"><a href="#gc-输出结果" class="headerlink" title="-gc 输出结果"></a>-gc 输出结果</h5><p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1ftkaz5fm0ej311c0j7tib.jpg" alt=""></p>
+<p>这里不得不提一下 JVM 内存结构：<br><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1ftkb1vazonj30w40pk7eo.jpg" alt=""></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/" target="_blank" rel="noopener">官网</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/07/12/java-reference/" rel="prev" title="java 引用类型">
+      <i class="fa fa-chevron-left"></i> java 引用类型
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/07/24/jmap-MAT-内存溢出/" rel="next" title="Java内存泄漏分析系列之七：jmap + MAT 内存溢出">
+      Java内存泄漏分析系列之七：jmap + MAT 内存溢出 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM参数类型"><span class="nav-number">1.</span> <span class="nav-text">JVM参数类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#标准参数"><span class="nav-number">1.1.</span> <span class="nav-text">标准参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非标准参数-X"><span class="nav-number">1.2.</span> <span class="nav-text">非标准参数: -X</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XX参数分类"><span class="nav-number">1.3.</span> <span class="nav-text">XX参数分类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看-JVM-运行时参数"><span class="nav-number">2.</span> <span class="nav-text">查看 JVM 运行时参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JPS"><span class="nav-number">2.1.</span> <span class="nav-text">JPS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jinfo-查看运行时参数"><span class="nav-number">2.2.</span> <span class="nav-text">jinfo 查看运行时参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jstat-查看-JVM-统计信息"><span class="nav-number">2.3.</span> <span class="nav-text">jstat 查看 JVM 统计信息</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#gc-输出结果"><span class="nav-number">2.3.0.1.</span> <span class="nav-text">-gc 输出结果</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-number">3.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Evan</p>
+  <div class="site-description" itemprop="description">记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Evan</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.7.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.6.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
