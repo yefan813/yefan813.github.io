@@ -46,18 +46,21 @@
   };
 </script>
 
-  <meta name="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
-<meta property="og:type" content="website">
-<meta property="og:title" content="奋斗不息">
-<meta property="og:url" content="https://yefan813.github.io/archives/2018/page/2/index.html">
+  <meta name="description" content="Spring 中 Bean 的生命周期图 源码地址项目中每个类的作用在上图中都写得非常清楚，可以下载下载直接运行看下整体效果，最好能 Debug 一下看下详细的流程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring中Bean的生命周期">
+<meta property="og:url" content="https://yefan813.github.io/2020/03/05/Spring中Bean的生命周期/index.html">
 <meta property="og:site_name" content="奋斗不息">
-<meta property="og:description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+<meta property="og:description" content="Spring 中 Bean 的生命周期图 源码地址项目中每个类的作用在上图中都写得非常清楚，可以下载下载直接运行看下整体效果，最好能 Debug 一下看下详细的流程。">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/00831rSTgy1gcjbq7e3q8j30n8123agj.jpg">
+<meta property="og:updated_time" content="2020-03-05T12:30:47.147Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="奋斗不息">
-<meta name="twitter:description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+<meta name="twitter:title" content="Spring中Bean的生命周期">
+<meta name="twitter:description" content="Spring 中 Bean 的生命周期图 源码地址项目中每个类的作用在上图中都写得非常清楚，可以下载下载直接运行看下整体效果，最好能 Debug 一下看下详细的流程。">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/00831rSTgy1gcjbq7e3q8j30n8123agj.jpg">
 
-<link rel="canonical" href="https://yefan813.github.io/archives/2018/page/2/">
+<link rel="canonical" href="https://yefan813.github.io/2020/03/05/Spring中Bean的生命周期/">
 
 
 <script id="page-configurations">
@@ -65,11 +68,11 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: false
+    isPost: true
   };
 </script>
 
-  <title>归档 | 奋斗不息</title>
+  <title>Spring中Bean的生命周期 | 奋斗不息</title>
   
 
 
@@ -166,232 +169,79 @@
           <div class="content">
             
 
+  <div class="posts-expand">
+      
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 28 篇日志。 继续努力。</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2020/03/05/Spring中Bean的生命周期/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奋斗不息">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Spring中Bean的生命周期
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-05 20:15:25 / 修改时间：20:30:47" itemprop="dateCreated datePublished" datetime="2020-03-05T20:15:25+08:00">2020-03-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <h1 class="collection-header">2018</h1>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-25T16:36:19+08:00"
-              content="2018-07-25">
-          07-25
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/25/jstack使用/" itemprop="url">
-            <span itemprop="name">Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-24T23:45:47+08:00"
-              content="2018-07-24">
-          07-24
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/24/jmap-MAT-内存溢出/" itemprop="url">
-            <span itemprop="name">Java内存泄漏分析系列之七：jmap + MAT 内存溢出</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-23T23:54:55+08:00"
-              content="2018-07-23">
-          07-23
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/23/jvm概览/" itemprop="url">
-            <span itemprop="name">jvm概览</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-12T18:09:43+08:00"
-              content="2018-07-12">
-          07-12
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/12/java-reference/" itemprop="url">
-            <span itemprop="name">java 引用类型</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:34:32+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-Compose/" itemprop="url">
-            <span itemprop="name">Docker Compose</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:33:33+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-数据持久化/" itemprop="url">
-            <span itemprop="name">Docker 数据持久化：Data Volume and Bind Mouting</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:32:46+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-多机通讯/" itemprop="url">
-            <span itemprop="name">Docker 多机通讯</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:31:54+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-Network/" itemprop="url">
-            <span itemprop="name">Docker Network</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:30:51+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-Container-introduce/" itemprop="url">
-            <span itemprop="name">Docker Container 简介</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:29:40+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-image-introduce/" itemprop="url">
-            <span itemprop="name">Docker image 简介</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
+        <h1 id="Spring-中-Bean-的生命周期图"><a href="#Spring-中-Bean-的生命周期图" class="headerlink" title="Spring 中 Bean 的生命周期图"></a>Spring 中 Bean 的生命周期图</h1><p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gcjbq7e3q8j30n8123agj.jpg" alt=""></p>
+<p><a href="https://github.com/yefan813/spring-bean-life-cycle" target="_blank" rel="noopener">源码地址</a><br>项目中每个类的作用在上图中都写得非常清楚，可以下载下载直接运行看下整体效果，最好能 Debug 一下看下详细的流程。</p>
 
     </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/11/chrome模拟跨域访问/" rel="prev" title="chrome模拟跨域访问">
+      <i class="fa fa-chevron-left"></i> chrome模拟跨域访问
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
   </div>
-  
-  
-  
-
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/archives/2018/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/archives/2018/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/2018/page/3/">3</a><a class="extend next" rel="next" href="/archives/2018/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
-
 
 
           </div>
@@ -442,6 +292,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-中-Bean-的生命周期图"><span class="nav-number">1.</span> <span class="nav-text">Spring 中 Bean 的生命周期图</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

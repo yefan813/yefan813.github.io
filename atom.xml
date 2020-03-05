@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://yefan813.github.io/"/>
-  <updated>2020-02-11T06:37:31.666Z</updated>
+  <updated>2020-03-05T12:30:47.147Z</updated>
   <id>https://yefan813.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Spring中Bean的生命周期</title>
+    <link href="https://yefan813.github.io/2020/03/05/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"/>
+    <id>https://yefan813.github.io/2020/03/05/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</id>
+    <published>2020-03-05T12:15:25.000Z</published>
+    <updated>2020-03-05T12:30:47.147Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Spring-中-Bean-的生命周期图"><a href="#Spring-中-Bean-的生命周期图" class="headerlink" title="Spring 中 Bean 的生命周期图"></a>Spring 中 Bean 的生命周期图</h1><p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gcjbq7e3q8j30n8123agj.jpg" alt=""></p><p><a href="https://github.com/yefan813/spring-bean-life-cycle" target="_blank" rel="noopener">源码地址</a><br>项目中每个类的作用在上图中都写得非常清楚，可以下载下载直接运行看下整体效果，最好能 Debug 一下看下详细的流程。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;Spring-中-Bean-的生命周期图&quot;&gt;&lt;a href=&quot;#Spring-中-Bean-的生命周期图&quot; class=&quot;headerlink&quot; title=&quot;Spring 中 Bean 的生命周期图&quot;&gt;&lt;/a&gt;Spring 中 Bean 的生命周期图&lt;/h1&gt;&lt;
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>chrome模拟跨域访问</title>
@@ -504,30 +526,6 @@
 &lt;p&gt;远程 image 例如：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;https://ws2.sinaimg.cn/large/006tNc79gy1fsy1ovdmngj30mh0cf79r.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
 &lt;p&gt;本地 dockFile 例如：&lt;br&gt;&lt;img src=&quot;https://ws4.sinaimg.cn/large/006tNc79gy1fsy1qccx18j30jw0cgmz9.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="docker" scheme="https://yefan813.github.io/tags/docker/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Docker 数据持久化：Data Volume and Bind Mouting</title>
-    <link href="https://yefan813.github.io/2018/07/11/Docker-%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/"/>
-    <id>https://yefan813.github.io/2018/07/11/Docker-%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/</id>
-    <published>2018-07-11T07:33:33.000Z</published>
-    <updated>2018-08-31T07:22:51.600Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>数据不会随着容器的消失而消失，例如 mysql ，redis</strong></p><p><strong>docker volume</strong></p><p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fsx5mzmlprj30f005xabi.jpg" alt="image"></p><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fsx53ne9s0j30hz088wf7.jpg" alt="image"></p><a id="more"></a><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建一个 mysql container 别名mysql ，挂载到宿主机的/var/lib/mysql下</span></span><br></pre></td></tr></table></figure><p><strong>docker bind mouting</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -v /home/aa:/root/aaa</span><br></pre></td></tr></table></figure></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -v $(pwd):/usr/share/nginx/html -p <span class="number">80</span>:<span class="number">80</span> --name web yefan/my-nginx</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;strong&gt;数据不会随着容器的消失而消失，例如 mysql ，redis&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;docker volume&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://ws1.sinaimg.cn/large/006tNc79gy1fsx5mzmlprj30f005xabi.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://ws3.sinaimg.cn/large/006tNc79gy1fsx53ne9s0j30hz088wf7.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
     
     </summary>
     
