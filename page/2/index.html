@@ -171,6 +171,89 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2018/07/29/JVM2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奋斗不息">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/07/29/JVM2/" class="post-title-link" itemprop="url">JVM之垃圾回收算法</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-07-29 17:59:14" itemprop="dateCreated datePublished" datetime="2018-07-29T17:59:14+08:00">2018-07-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2018-08-31 15:24:30" itemprop="dateModified" datetime="2018-08-31T15:24:30+08:00">2018-08-31</time>
+              </span>
+
+          
+            <span id="/2018/07/29/JVM2/" class="post-meta-item leancloud_visitors" data-flag-title="JVM之垃圾回收算法" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftqvzd2erdj30zs0datd1.jpg" alt=""></p>
+<p>##标记清楚算法(Mark-Sweep)<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqw93v8ldj30y30ba789.jpg" alt=""><br><img src="https://ws4.sinaimg.cn/large/006tNc79ly1ftqwdlfu4cj30p40dq0us.jpg" alt=""></p>
+<p>##复制算法(Copying)<br>为了解决Mark-Sweep算法内存碎片化的缺陷而被提出的算法。按内存容量将内存划分为等大小的两块。每次只使用其中一块，当这一块内存满后将尚存活的对象复制到另一块上去，把已使用的内存清掉，如图：</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqwirry1nj30l00blac4.jpg" alt=""></p>
+<p>这种算法虽然实现简单，内存效率高，不易产生碎片，但是最大的问题是可用内存被压缩到了原本的一半。且存活对象增多的话，Copying算法的效率会大大降低。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/07/29/JVM2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2018/07/29/JVM1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -918,92 +1001,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2018/07/12/java-reference/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Evan">
-      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奋斗不息">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/07/12/java-reference/" class="post-title-link" itemprop="url">java 引用类型</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-07-12 18:09:43" itemprop="dateCreated datePublished" datetime="2018-07-12T18:09:43+08:00">2018-07-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2018-08-31 15:23:38" itemprop="dateModified" datetime="2018-08-31T15:23:38+08:00">2018-08-31</time>
-              </span>
-
-          
-            <span id="/2018/07/12/java-reference/" class="post-meta-item leancloud_visitors" data-flag-title="java 引用类型" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>java中提供了四个级别的引用：</strong></p>
-<ol>
-<li>强引用（Final Reference）</li>
-<li>软引用(Soft Reference)</li>
-<li>弱引用(Weak Reference)</li>
-<li>虚引用(Phantom Reference)</li>
-</ol>
-<p><strong>这四个引用定义在java.lang.ref的包下</strong><br><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1ft80n8gk8uj306104o0sr.jpg" alt=""></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/07/12/java-reference/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1074,12 +1071,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
