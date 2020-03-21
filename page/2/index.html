@@ -171,6 +171,78 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2018/07/29/JVM3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奋斗不息">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/07/29/JVM3/" class="post-title-link" itemprop="url">GC日志分析工具</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2018-07-29 21:14:10 / 修改时间：21:17:23" itemprop="dateCreated datePublished" datetime="2018-07-29T21:14:10+08:00">2018-07-29</time>
+            </span>
+
+          
+            <span id="/2018/07/29/JVM3/" class="post-meta-item leancloud_visitors" data-flag-title="GC日志分析工具" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ol>
+<li><p>在线工具：<a href="http://gceasy.io" target="_blank" rel="noopener">http://gceasy.io</a></p>
+</li>
+<li><p>GCViewer</p>
+</li>
+</ol>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1ftr1n1v45qj30ww0ddaey.jpg" alt=""></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2018/07/29/JVM2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -909,103 +981,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2018/07/23/jvm概览/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Evan">
-      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奋斗不息">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/07/23/jvm概览/" class="post-title-link" itemprop="url">jvm概览</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-07-23 23:54:55" itemprop="dateCreated datePublished" datetime="2018-07-23T23:54:55+08:00">2018-07-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2018-08-31 15:24:42" itemprop="dateModified" datetime="2018-08-31T15:24:42+08:00">2018-08-31</time>
-              </span>
-
-          
-            <span id="/2018/07/23/jvm概览/" class="post-meta-item leancloud_visitors" data-flag-title="jvm概览" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="JVM参数类型"><a href="#JVM参数类型" class="headerlink" title="JVM参数类型"></a>JVM参数类型</h2><ul>
-<li>标准参数</li>
-<li>X 参数</li>
-<li>XX 参数</li>
-</ul>
-<h3 id="标准参数"><a href="#标准参数" class="headerlink" title="标准参数"></a>标准参数</h3><ul>
-<li>-help</li>
-<li>-server :选择 “server” VM,默认 VM 是 server,因为您是在服务器类计算机上运行</li>
-<li>-client</li>
-<li>-version :输出产品版本并退出</li>
-<li>-showversion :输出产品版本并继续</li>
-<li>-cp :&lt;目录和 zip/jar 文件的类搜索路径&gt;</li>
-<li>-classpath:&lt;目录和 zip/jar 文件的类搜索路径&gt;用 : 分隔的目录, JAR 档案和 ZIP 档案列表, 用于搜索类文件。</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/07/23/jvm概览/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1071,12 +1051,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>

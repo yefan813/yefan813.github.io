@@ -1,5 +1,5 @@
+https://yefan813.github.io/2020/03/21/数据库，缓存一致性方案/
 https://yefan813.github.io/2020/03/13/Dubbo和Spring-Cloud优缺点/
 https://yefan813.github.io/2020/03/06/SpringBoot自定义starter/
 https://yefan813.github.io/2020/03/05/Spring中Bean的生命周期/
 https://yefan813.github.io/2020/02/11/chrome模拟跨域访问/
-https://yefan813.github.io/2019/10/31/mybatis-常见面试问题及答案/

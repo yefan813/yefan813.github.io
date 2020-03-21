@@ -46,18 +46,22 @@
   };
 </script>
 
-  <meta name="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
-<meta property="og:type" content="website">
-<meta property="og:title" content="奋斗不息">
-<meta property="og:url" content="https://yefan813.github.io/archives/2018/page/2/index.html">
+  <meta name="description" content="代码地址 问题1：如果是先修改数据库，再删除缓存，如果删除缓存失败，那么会导致数据库中的数据是新数据，缓存中的是旧数据，数据不一致。 解决思路：先删除缓存，再修改数据库，如果删除缓存成功了，修改数据库失败了，那么数据库中是旧数据，缓存中是空的，那么数据不会不一致，因为读的时候缓存没有，则读数据库中旧数据，然后更新到缓存中 Cache Aside Pattern 读的时候，先读缓存，缓存没有的话，那">
+<meta name="keywords" content="Mysql,Redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库，缓存一致性方案">
+<meta property="og:url" content="https://yefan813.github.io/2020/03/21/数据库，缓存一致性方案/index.html">
 <meta property="og:site_name" content="奋斗不息">
-<meta property="og:description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+<meta property="og:description" content="代码地址 问题1：如果是先修改数据库，再删除缓存，如果删除缓存失败，那么会导致数据库中的数据是新数据，缓存中的是旧数据，数据不一致。 解决思路：先删除缓存，再修改数据库，如果删除缓存成功了，修改数据库失败了，那么数据库中是旧数据，缓存中是空的，那么数据不会不一致，因为读的时候缓存没有，则读数据库中旧数据，然后更新到缓存中 Cache Aside Pattern 读的时候，先读缓存，缓存没有的话，那">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-21-143455.png">
+<meta property="og:updated_time" content="2020-03-21T14:55:46.941Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="奋斗不息">
-<meta name="twitter:description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+<meta name="twitter:title" content="数据库，缓存一致性方案">
+<meta name="twitter:description" content="代码地址 问题1：如果是先修改数据库，再删除缓存，如果删除缓存失败，那么会导致数据库中的数据是新数据，缓存中的是旧数据，数据不一致。 解决思路：先删除缓存，再修改数据库，如果删除缓存成功了，修改数据库失败了，那么数据库中是旧数据，缓存中是空的，那么数据不会不一致，因为读的时候缓存没有，则读数据库中旧数据，然后更新到缓存中 Cache Aside Pattern 读的时候，先读缓存，缓存没有的话，那">
+<meta name="twitter:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-21-143455.png">
 
-<link rel="canonical" href="https://yefan813.github.io/archives/2018/page/2/">
+<link rel="canonical" href="https://yefan813.github.io/2020/03/21/数据库，缓存一致性方案/">
 
 
 <script id="page-configurations">
@@ -65,11 +69,11 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: false
+    isPost: true
   };
 </script>
 
-  <title>归档 | 奋斗不息</title>
+  <title>数据库，缓存一致性方案 | 奋斗不息</title>
   
 
 
@@ -166,237 +170,123 @@
           <div class="content">
             
 
+  <div class="posts-expand">
+      
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        
-        <span class="collection-header">还行! 目前共计 31 篇日志。 继续努力。</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2020/03/21/数据库，缓存一致性方案/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奋斗不息">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据库，缓存一致性方案
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-21 22:54:39 / 修改时间：22:55:46" itemprop="dateCreated datePublished" datetime="2020-03-21T22:54:39+08:00">2020-03-21</time>
+            </span>
+
+          
+            <span id="/2020/03/21/数据库，缓存一致性方案/" class="post-meta-item leancloud_visitors" data-flag-title="数据库，缓存一致性方案" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <h1 class="collection-header">2018</h1>
+        <p><a href="https://github.com/yefan813/eshop-inventory.git" target="_blank" rel="noopener">代码地址</a></p>
+<p><strong>问题1</strong>：如果是先修改数据库，再删除缓存，如果删除缓存失败，那么会导致数据库中的数据是新数据，缓存中的是旧数据<br>，数据不一致。</p>
+<p><strong>解决思路</strong>：先删除缓存，再修改数据库，如果删除缓存成功了，修改数据库失败了，那么数据库中是旧数据，缓存中是空的，那么数据不会不一致，因为读的时候缓存没有，则读数据库中旧数据，然后更新到缓存中</p>
+<h1 id="Cache-Aside-Pattern"><a href="#Cache-Aside-Pattern" class="headerlink" title="Cache Aside Pattern"></a>Cache Aside Pattern</h1><ul>
+<li><p>读的时候，先读缓存，缓存没有的话，那么就读数据库，然后取出数据后放入缓存，同时返回响应</p>
+</li>
+<li><p>更新的时候，先删除缓存，然后再更新数据库</p>
+</li>
+</ul>
+<h1 id="为什么是删除缓存，而不是更新缓存"><a href="#为什么是删除缓存，而不是更新缓存" class="headerlink" title="为什么是删除缓存，而不是更新缓存"></a>为什么是删除缓存，而不是更新缓存</h1><p>1，因为很多时候缓存不是直接数据库直接取出来的值，很可能做了逻辑运算以后再存入数据库<br>如果这类的数据要更新，则需要将相关的数据都查出来再去计算更新，这样代价太高了。</p>
+<p>2，如果你频繁修改一个缓存涉及的多个表，那么这个缓存会被频繁的更新，频繁的更新缓存，但是问题在于，这个缓存到底会不会被频繁访问到？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">举个例子，一个缓存涉及的表的字段，在 1 分钟内就修改了 20 次，或者是 100 次，那么缓存更新 20 次，100 次; 但是这个缓存在 1 分钟内就被读取了 1 次，有大量的冷数据</span><br><span class="line"></span><br><span class="line">热冷数据的 28 黄金法则：20% 的数据，占用了 80% 的访问量</span><br><span class="line"></span><br><span class="line">实际上，如果你只是删除缓存的话，那么 1 分钟内，这个缓存不过就重新计算一次而已，开销大幅度降低</span><br><span class="line"></span><br><span class="line">每次数据过来，就只是删除缓存，然后修改数据库，如果这个缓存，在 1 分钟内只是被访问了 1 次，那么只有那 1 次缓存是要被重新计算的，用缓存才去算缓存</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>其实删除缓存，而不是更新缓存，就是一个 lazy 计算的思想，不要每次都重新做复杂的计算，不管它会不会用到，而是让它到需要被使用的时候再重新计算<br>mybatis、hibernate 就是懒加载思想</p>
+</blockquote>
+<p><strong>问题2</strong>：一个比较复杂的数据不一致问题<br>1，数据发生了变更，先删除缓存，然后要去修改数据库，此时还没修改<br>2，一个并发请求过来，去读缓存，发现缓存空了，然后去查询数据库，查到了修改前的值，放到缓存<br>这时候出现数据库和缓存不一致。</p>
+<p><strong><em>解决思路</em></strong>： 导致这种情况出现的原因是读写并发请求造成的，根据某个规则比如商品 ID 相同的请求路由到一台服务器上，可以尝试将读请求和更新请求进行串行化处理,</p>
+<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-21-143455.png" alt=""></p>
+<p><strong><em>具体流程如下</em></strong>：</p>
+<ul><br><li>更新数据的时候，根据数据的唯一标识，将操作路由之后，发送到一个 jvm 内部的队列中</li><br><li>读取数据的时候，如果发现数据不在缓存中，那么将重新读取数据 + 更新缓存的操作，根据唯一标识路由之后，也发送同一个 jvm 内部的队列中</li><br><li>一个队列对应一个工作线程，每个工作线程串行拿到对应的操作，然后一条一条的执行</li><br></ul>
+
+<p>这样的话，一个数据变更的操作，先执行，删除缓存，然后再去更新数据库，但是还没完成更新<br>此时如果一个读请求过来，读到了空的缓存，那么可以先将缓存更新的请求发送到队列中，此时会在队列中积压，然后同步等待缓存更新完成<br>待那个队列对应的工作线程完成了上一个操作的数据库的修改之后，才会去执行下一个操作，也就是缓存更新的操作，此时会从数据库中读取最新的值，然后写入缓存中<br>如果请求还在等待时间范围内，不断轮询发现可以取到值了，那么就直接返回;<br>如果请求等待的时间超过一定时长，那么这一次直接从数据库中读取当前的旧值</p>
+<h3 id="需要优化的点"><a href="#需要优化的点" class="headerlink" title="需要优化的点"></a>需要优化的点</h3><p>1，一个队列中已经存在一个更新操作 + 一个读取操作，则后续的读请求可以尝试等待一段时间从缓存读取，因为前面的更新会删除缓存，后面的读取请求会将<br>再次放入到缓存中，后续的读请求可以尝试等待一段时间从缓存读取，如果等待时间过了再尝试从数据库去拿</p>
+<h2 id="此方案的风险点"><a href="#此方案的风险点" class="headerlink" title="此方案的风险点"></a><b style="color:red">此方案的风险点</b></h2><p>1，可能 数据更新很频繁，导致队列中积压了大量更新操作在里面，然后读请求会发生大量的超时，最后导致大量的请求直接走数据库。所以务必通过一些模拟真实的测试，看看更新数据的频繁是怎样的</p>
+<p>2,因为一个队列中，可能会积压针对多个数据项的更新操作，因此需要根据自己的业务情况进行测试，可能需要部署多个服务，每个服务分摊一些数据的更新操作</p>
+<p>3, 会存在热点数据都打到同一台机器上的，可能造成某台机器压力过大的问题。</p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-25T16:36:19+08:00"
-              content="2018-07-25">
-          07-25
-        </time>
-      </div>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Mysql-Redis/" rel="tag"># Mysql,Redis</a>
+          </div>
 
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/25/jstack使用/" itemprop="url">
-            <span itemprop="name">Java内存泄漏分析系列之一：使用jstack定位线程堆栈信息</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-24T23:45:47+08:00"
-              content="2018-07-24">
-          07-24
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/24/jmap-MAT-内存溢出/" itemprop="url">
-            <span itemprop="name">Java内存泄漏分析系列之七：jmap + MAT 内存溢出</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-23T23:54:55+08:00"
-              content="2018-07-23">
-          07-23
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/23/jvm概览/" itemprop="url">
-            <span itemprop="name">jvm概览</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-12T18:09:43+08:00"
-              content="2018-07-12">
-          07-12
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/12/java-reference/" itemprop="url">
-            <span itemprop="name">java 引用类型</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:34:32+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-Compose/" itemprop="url">
-            <span itemprop="name">Docker Compose</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:33:33+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-数据持久化/" itemprop="url">
-            <span itemprop="name">Docker 数据持久化：Data Volume and Bind Mouting</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:32:46+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-多机通讯/" itemprop="url">
-            <span itemprop="name">Docker 多机通讯</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:31:54+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-Network/" itemprop="url">
-            <span itemprop="name">Docker Network</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:30:51+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-Container-introduce/" itemprop="url">
-            <span itemprop="name">Docker Container 简介</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-11T15:29:40+08:00"
-              content="2018-07-11">
-          07-11
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/11/Docker-image-introduce/" itemprop="url">
-            <span itemprop="name">Docker image 简介</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
     </div>
   </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/13/Dubbo和Spring-Cloud优缺点/" rel="prev" title="Dubbo和Spring Cloud优缺点">
+      <i class="fa fa-chevron-left"></i> Dubbo和Spring Cloud优缺点
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
   
   
   
 
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/archives/2018/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/archives/2018/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/2018/page/3/">3</a><a class="extend next" rel="next" href="/archives/2018/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
-
+  </div>
 
 
           </div>
           
+    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -443,6 +333,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Cache-Aside-Pattern"><span class="nav-number">1.</span> <span class="nav-text">Cache Aside Pattern</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么是删除缓存，而不是更新缓存"><span class="nav-number">2.</span> <span class="nav-text">为什么是删除缓存，而不是更新缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#需要优化的点"><span class="nav-number">2.0.1.</span> <span class="nav-text">需要优化的点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#此方案的风险点"><span class="nav-number">2.1.</span> <span class="nav-text">此方案的风险点</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -661,6 +552,25 @@
 
   
 
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '2455a080684681f2ec15',
+      clientSecret: 'c13587843c6e1839680fa3786cdb9beb9a346bba',
+      repo: 'yefan813-blog-comment',
+      owner: 'yefan813',
+      admin: ['yefan813'],
+      id: 'ec733d54873a21a369ae4792ee8f2c79',
+        language: 'zh-CN',
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
 
 </body>
 </html>
