@@ -194,10 +194,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-03-23 18:29:02 / 修改时间：18:42:07" itemprop="dateCreated datePublished" datetime="2020-03-23T18:29:02+08:00">2020-03-23</time>
+              <time title="创建时间：2020-03-23 18:29:02" itemprop="dateCreated datePublished" datetime="2020-03-23T18:29:02+08:00">2020-03-23</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-24 00:48:21" itemprop="dateModified" datetime="2020-03-24T00:48:21+08:00">2020-03-24</time>
+              </span>
 
           
             <span id="/2020/03/23/如何实现一个短链接服务/" class="post-meta-item leancloud_visitors" data-flag-title="如何实现一个短链接服务 " title="阅读次数">
@@ -217,7 +223,48 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="实现一个短连接服务"><a href="#实现一个短连接服务" class="headerlink" title="实现一个短连接服务"></a>实现一个短连接服务</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><ul>
+          <h1 id="实现一个短连接服务"><a href="#实现一个短连接服务" class="headerlink" title="实现一个短连接服务"></a>实现一个短连接服务</h1><table>
+<thead>
+<tr>
+<th style="text-align:left">所用技术</th>
+<th style="text-align:left">功能</th>
+<th style="text-align:left">完成度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Spring Boot</td>
+<td style="text-align:left">框架</td>
+<td style="text-align:left">已完成</td>
+</tr>
+<tr>
+<td style="text-align:left">MySQL</td>
+<td style="text-align:left">数据存储</td>
+<td style="text-align:left">已完成</td>
+</tr>
+<tr>
+<td style="text-align:left">Redis</td>
+<td style="text-align:left">二级缓存</td>
+<td style="text-align:left">X</td>
+</tr>
+<tr>
+<td style="text-align:left">OpenResty</td>
+<td style="text-align:left">代理 + 一级缓存</td>
+<td style="text-align:left">X</td>
+</tr>
+<tr>
+<td style="text-align:left">EhCache</td>
+<td style="text-align:left">三级缓存</td>
+<td style="text-align:left">X</td>
+</tr>
+<tr>
+<td style="text-align:left">Zookeeper</td>
+<td style="text-align:left">分布式锁</td>
+<td style="text-align:left">X</td>
+</tr>
+</tbody>
+</table>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><ul>
 <li>短链接好处</li>
 <li>短链跳转的原理</li>
 <li>锻炼生成的几种方式</li>
@@ -251,6 +298,15 @@
 <li>数据库存在：对应的长链接一样，这时说明其他人已经将次长链接生成了对应的短链接，这时候直接返回即可。</li>
 <li>数据库存在：对应的长链接不一样，则说明冲突了，此时可以将长链接尾部，拼接一串特殊字符，比如“[DUPLICATED]”，然后跟再重新计算哈希值，两次哈希计算都冲突的概率，显然是非常低的。假设出现非常极端的情况，又发生冲突了，我们可以再拼接字符串，再计算哈希值。然后把计算得到的哈希值，跟原始网址拼接了特殊字符串之后的文本，一并存储在 MySQL 数据库中</li>
 </ol>
+<h3 id="压测一下看看性能"><a href="#压测一下看看性能" class="headerlink" title="压测一下看看性能"></a>压测一下看看性能</h3><p>其实这里没有做任何的缓存，所以请求全部落到数据库，很容易就能想到不能支持高并发，但还是压测一下装个 X</p>
+<blockquote>
+<p>100线程 并发执行生成短链接接口<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-134741.png" alt=""><br>短链接跳转接口结果和上面差不多</p>
+</blockquote>
+<h3 id="短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到-redis（二级缓存）-，也可以放入到-Nginx（一级缓存）"><a href="#短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到-redis（二级缓存）-，也可以放入到-Nginx（一级缓存）" class="headerlink" title="短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到 redis（二级缓存） ，也可以放入到 Nginx（一级缓存）"></a>短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到 redis（二级缓存） ，也可以放入到 Nginx（一级缓存）</h3><h4 id="加入本地缓存-Ehcache"><a href="#加入本地缓存-Ehcache" class="headerlink" title="加入本地缓存 Ehcache"></a>加入本地缓存 Ehcache</h4><blockquote>
+<p>服务使用 Ehcache 后，压测短链接跳转结果<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-164034.png" alt=""></p>
+</blockquote>
+<h4 id="加入-Redis-缓存"><a href="#加入-Redis-缓存" class="headerlink" title="加入 Redis 缓存"></a>加入 Redis 缓存</h4><p>TODO</p>
+<h4 id="加入-OpenResty"><a href="#加入-OpenResty" class="headerlink" title="加入 OpenResty"></a>加入 OpenResty</h4><p>TODO</p>
 <h3 id="3-如何优化哈希算法生成短连接的性能"><a href="#3-如何优化哈希算法生成短连接的性能" class="headerlink" title="3.如何优化哈希算法生成短连接的性能"></a>3.如何优化哈希算法生成短连接的性能</h3><p>TODO</p>
 <h2 id="利用-ID-生成器生成短链接"><a href="#利用-ID-生成器生成短链接" class="headerlink" title="利用 ID 生成器生成短链接"></a>利用 ID 生成器生成短链接</h2><p>TODO</p>
 <h2 id="阶段一：实现一个简单的短连接服务"><a href="#阶段一：实现一个简单的短连接服务" class="headerlink" title="阶段一：实现一个简单的短连接服务"></a>阶段一：实现一个简单的短连接服务</h2><ol>
