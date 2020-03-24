@@ -202,7 +202,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-24 00:50:09" itemprop="dateModified" datetime="2020-03-24T00:50:09+08:00">2020-03-24</time>
+                <time title="修改时间：2020-03-24 14:25:09" itemprop="dateModified" datetime="2020-03-24T14:25:09+08:00">2020-03-24</time>
               </span>
 
           
@@ -262,6 +262,11 @@
 <td style="text-align:left">分布式锁</td>
 <td style="text-align:left">X</td>
 </tr>
+<tr>
+<td style="text-align:left">布隆过滤器</td>
+<td style="text-align:left">判断hash是否存在</td>
+<td style="text-align:left">已完成</td>
+</tr>
 </tbody>
 </table>
 <p><a href="https://github.com/yefan813/short-url.git" target="_blank" rel="noopener">代码地址</a></p>
@@ -285,14 +290,15 @@
 <li>301: 代表 永久重定向，也就是说第一次请求拿到长链接后，下次浏览器再去请求短链的话，不会向短网址服务器请求了，而是直接从浏览器的缓存里拿，这样在 server 层面就无法获取到短网址的点击数了，如果这个链接刚好是某个活动的链接，也就无法分析此活动的效果。所以我们一般不采用 301</li>
 <li>302: 代表 临时重定向，也就是说每次去请求短链都会去请求短网址服务器（除非响应中用 Cache-Control 或 Expired 暗示浏览器缓存）,这样就便于 server 统计点击数，所以虽然用 302 会给 server 增加一点压力，但在数据异常重要的今天，这点代码是值得的，所以推荐使用 302</li>
 </ul>
-<h2 id="短链接生成的几种方式"><a href="#短链接生成的几种方式" class="headerlink" title="短链接生成的几种方式"></a>短链接生成的几种方式</h2><p><img src="https://mmbiz.qpic.cn/mmbiz_png/OyweysCSeLUfZAfjEBvhtLG8agdgGG77YI1YKHq1WXqCbAfOTOjp0ESKRiabmSByVJgEgJRrkoJHhg7TeX48NWw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt=""><br>通过观察发现上面提到的短链接能发现，它是由固定的短链接域名 + 长链接映射成的一串字母组成，那么长链接怎么才能映射成一串字母呢？</p>
-<h3 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h3><p>  哈希算法非常多，我们如何选择呢？ 很多人可能会想到MD5, SHA等算法，但是我们选择 hash 算法的时候需要考虑的，生成的性能，<br>和产生冲突的概率。我们不回去考虑反向解码的性能或者难度，因为我们之直接将生成的 hash 字符串和长链接映射，不需反向生成。  </p>
+<h2 id="短链接生成的几种方式"><a href="#短链接生成的几种方式" class="headerlink" title="短链接生成的几种方式"></a>短链接生成的几种方式</h2><p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-24-062346.png" alt=""></p>
+<p>通过观察发现上面提到的短链接能发现，它是由固定的短链接域名 + 长链接映射成的一串字母组成，那么长链接怎么才能映射成一串字母呢？</p>
+<h3 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h3><p>  哈希算法非常多，我们如何选择呢？ 很多人可能会想到MD5, SHA等算法，但是我们选择 hash 算法的时候需要考虑的，生成的性能，<br>和产生冲突的概率。我们不回去考虑反向解码的性能或者难度，因为我们之直接将生成的 hash 字符串和长链接映射，不需反向生成。</p>
 <p>  我们项目中使用Google 出品的 MurmurHash 算法，MurmurHash 是一种非加密型哈希函数，适用于一般的哈希检索操作。与其它流行的哈希函数相比，对于规律性较强的 key，MurmurHash 的随机分布特征表现更良好</p>
 <p>  非加密意味着着相比 MD5，SHA 这些函数它的性能肯定更高（实际上性能是 MD5 等加密算法的十倍以上），也正是由于它的这些优点，所以虽然它出现于 2008，但目前已经广泛应用到 Redis、MemCache、Cassandra、HBase、Lucene 等众多著名的软件中</p>
 <p>  MurmurHash 提供了两种长度的哈希值，32 bit，128 bit，为了让网址尽可通地短，我们选择 32 bit 的哈希值，32 bit 能表示的最大值近 43 亿，对于中小型公司的业务而言绰绰有余。</p>
 <p>  对长链(<a href="https://yefan813.github.io/)做">https://yefan813.github.io/)做</a> MurmurHash 计算，得到的哈希值为 849756688，于是我们现在得到的短链为 固定短链域名+哈希值 = <a href="http://xxxx.cn/849756688" target="_blank" rel="noopener">http://xxxx.cn/849756688</a></p>
 <h4 id="1-如何让短网址更短？"><a href="#1-如何让短网址更短？" class="headerlink" title="1.如何让短网址更短？"></a>1.如何让短网址更短？</h4><p>  不过，你可能已经看出来了，通过 MurmurHash 算法得到的短网址还是很长啊，而且跟我们开头那个网址的格式好像也不一样。别着急，我们只需要稍微改变一个哈希值的表示方法，就可以轻松把短网址变得更短些。</p>
-<p>  我们可以将 10 进制的哈希值，转化成更高进制的哈希值，这样哈希值就变短了。我们知道，16 进制中，我们用 A～E，来表示 10～15。在网址 URL 中，常用的合法字符有 0～9、a～z、A～Z 这样 62 个字符。为了让哈希值表示起来尽可能短，我们可以将 10 进制的哈希值转化成 62 进制。具体的计算过程，我写在这里了。最终用 62 进制表示的短网址就是<br>  <img src="https://static001.geekbang.org/resource/image/15/f8/15e486a7db8d56a7b1c5ecf873b477f8.jpg" alt=""></p>
+<p>  我们可以将 10 进制的哈希值，转化成更高进制的哈希值，这样哈希值就变短了。我们知道，16 进制中，我们用 A～E，来表示 10～15。在网址 URL 中，常用的合法字符有 0～9、a～z、A～Z 这样 62 个字符。为了让哈希值表示起来尽可能短，我们可以将 10 进制的哈希值转化成 62 进制。具体的计算过程，我写在这里了。最终用 62 进制表示的短网址就是<br>  <img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-24-062239.png" alt=""></p>
 <h3 id="2-如何解决哈希冲突"><a href="#2-如何解决哈希冲突" class="headerlink" title="2.如何解决哈希冲突"></a>2.如何解决哈希冲突</h3><p>  解决思路，根据长链接生成hash字符串，然后去查找数据库会出现以下几种情况</p>
 <ol>
 <li>数据库不存在：这时候直接插入字符串和对应的长链接即可。</li>
@@ -301,11 +307,16 @@
 </ol>
 <h3 id="压测一下看看性能"><a href="#压测一下看看性能" class="headerlink" title="压测一下看看性能"></a>压测一下看看性能</h3><p>其实这里没有做任何的缓存，所以请求全部落到数据库，很容易就能想到不能支持高并发，但还是压测一下装个 X</p>
 <blockquote>
-<p>100线程 并发执行生成短链接接口<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-134741.png" alt=""><br>短链接跳转接口结果和上面差不多</p>
+<p>100线程 并发执行生成短链接接口</p>
+</blockquote>
+<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-134741.png" alt=""></p>
+<blockquote>
+<p>短链接跳转接口结果和上面差不多</p>
 </blockquote>
 <h3 id="短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到-redis（二级缓存）-，也可以放入到-Nginx（一级缓存）"><a href="#短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到-redis（二级缓存）-，也可以放入到-Nginx（一级缓存）" class="headerlink" title="短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到 redis（二级缓存） ，也可以放入到 Nginx（一级缓存）"></a>短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到 redis（二级缓存） ，也可以放入到 Nginx（一级缓存）</h3><h4 id="加入本地缓存-Ehcache"><a href="#加入本地缓存-Ehcache" class="headerlink" title="加入本地缓存 Ehcache"></a>加入本地缓存 Ehcache</h4><blockquote>
-<p>服务使用 Ehcache 后，压测短链接跳转结果<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-164034.png" alt=""></p>
+<p>服务使用 Ehcache 后，压测短链接跳转结果</p>
 </blockquote>
+<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-164034.png" alt=""></p>
 <h4 id="加入-Redis-缓存"><a href="#加入-Redis-缓存" class="headerlink" title="加入 Redis 缓存"></a>加入 Redis 缓存</h4><p>TODO</p>
 <h4 id="加入-OpenResty"><a href="#加入-OpenResty" class="headerlink" title="加入 OpenResty"></a>加入 OpenResty</h4><p>TODO</p>
 <h3 id="3-如何优化哈希算法生成短连接的性能"><a href="#3-如何优化哈希算法生成短连接的性能" class="headerlink" title="3.如何优化哈希算法生成短连接的性能"></a>3.如何优化哈希算法生成短连接的性能</h3><p>TODO</p>
