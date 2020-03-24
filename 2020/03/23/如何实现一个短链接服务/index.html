@@ -46,13 +46,13 @@
   };
 </script>
 
-  <meta name="description" content="实现一个短连接服务   所用技术 功能 完成度     Spring Boot 框架 已完成   MySQL 数据存储 已完成   Redis 二级缓存 X   OpenResty 代理 + 一级缓存 X   EhCache 三级缓存 已完成   Zookeeper 分布式锁 X   布隆过滤器 判断hash是否存在 已完成    代码地址 简介 短链接好处 短链跳转的原理 锻炼生成的几种方式">
+  <meta name="description" content="实现一个短连接服务   所用技术 功能 完成度     Spring Boot 框架 已完成   MySQL 数据存储 已完成   Redis 二级缓存 X   OpenResty 代理 + 一级缓存 已完成   EhCache 三级缓存 已完成   Zookeeper 分布式锁 X   布隆过滤器 判断hash是否存在 已完成    代码地址 简介 短链接好处 短链跳转的原理 锻炼生成的几种方式">
 <meta name="keywords" content="短链接,短网址,302,Spring Boot,Redis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何实现一个短链接服务 ">
 <meta property="og:url" content="https://yefan813.github.io/2020/03/23/如何实现一个短链接服务/index.html">
 <meta property="og:site_name" content="奋斗不息">
-<meta property="og:description" content="实现一个短连接服务   所用技术 功能 完成度     Spring Boot 框架 已完成   MySQL 数据存储 已完成   Redis 二级缓存 X   OpenResty 代理 + 一级缓存 X   EhCache 三级缓存 已完成   Zookeeper 分布式锁 X   布隆过滤器 判断hash是否存在 已完成    代码地址 简介 短链接好处 短链跳转的原理 锻炼生成的几种方式">
+<meta property="og:description" content="实现一个短连接服务   所用技术 功能 完成度     Spring Boot 框架 已完成   MySQL 数据存储 已完成   Redis 二级缓存 X   OpenResty 代理 + 一级缓存 已完成   EhCache 三级缓存 已完成   Zookeeper 分布式锁 X   布隆过滤器 判断hash是否存在 已完成    代码地址 简介 短链接好处 短链跳转的原理 锻炼生成的几种方式">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://img2018.cnblogs.com/blog/725429/201911/725429-20191109192512207-1372819004.png">
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-103507.png">
@@ -61,10 +61,10 @@
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-24-062239.png">
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-134741.png">
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-164034.png">
-<meta property="og:updated_time" content="2020-03-24T06:25:09.845Z">
+<meta property="og:updated_time" content="2020-03-24T09:39:41.730Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何实现一个短链接服务 ">
-<meta name="twitter:description" content="实现一个短连接服务   所用技术 功能 完成度     Spring Boot 框架 已完成   MySQL 数据存储 已完成   Redis 二级缓存 X   OpenResty 代理 + 一级缓存 X   EhCache 三级缓存 已完成   Zookeeper 分布式锁 X   布隆过滤器 判断hash是否存在 已完成    代码地址 简介 短链接好处 短链跳转的原理 锻炼生成的几种方式">
+<meta name="twitter:description" content="实现一个短连接服务   所用技术 功能 完成度     Spring Boot 框架 已完成   MySQL 数据存储 已完成   Redis 二级缓存 X   OpenResty 代理 + 一级缓存 已完成   EhCache 三级缓存 已完成   Zookeeper 分布式锁 X   布隆过滤器 判断hash是否存在 已完成    代码地址 简介 短链接好处 短链跳转的原理 锻炼生成的几种方式">
 <meta name="twitter:image" content="https://img2018.cnblogs.com/blog/725429/201911/725429-20191109192512207-1372819004.png">
 
 <link rel="canonical" href="https://yefan813.github.io/2020/03/23/如何实现一个短链接服务/">
@@ -211,7 +211,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-24 14:25:09" itemprop="dateModified" datetime="2020-03-24T14:25:09+08:00">2020-03-24</time>
+                <time title="修改时间：2020-03-24 17:39:41" itemprop="dateModified" datetime="2020-03-24T17:39:41+08:00">2020-03-24</time>
               </span>
 
           
@@ -259,7 +259,7 @@
 <tr>
 <td style="text-align:left">OpenResty</td>
 <td style="text-align:left">代理 + 一级缓存</td>
-<td style="text-align:left">X</td>
+<td style="text-align:left">已完成</td>
 </tr>
 <tr>
 <td style="text-align:left">EhCache</td>
