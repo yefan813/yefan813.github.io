@@ -202,7 +202,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-27 16:58:07" itemprop="dateModified" datetime="2020-03-27T16:58:07+08:00">2020-03-27</time>
+                <time title="修改时间：2020-03-27 16:58:59" itemprop="dateModified" datetime="2020-03-27T16:58:59+08:00">2020-03-27</time>
               </span>
 
           
@@ -224,8 +224,7 @@
 
       
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在介绍 Netty之前一定要先搞明白同步和异步、阻塞和非阻塞、BIO、NIO、AIO 都是什么，然后有哪些优缺点，再来看 Netty 出现的原因，有哪些优势，使用场景是什么。这样循序渐进的学习，更容易理解。</p>
-<h1 id="同步和异步、阻塞和非阻塞"><a href="#同步和异步、阻塞和非阻塞" class="headerlink" title="同步和异步、阻塞和非阻塞"></a>同步和异步、阻塞和非阻塞</h1><h2 id="同步和异步"><a href="#同步和异步" class="headerlink" title="同步和异步"></a>同步和异步</h2><p>####同步和异步关注的是消息通信机制</p>
-<p><strong>同步</strong>：同步，就是在发出一个<strong>调用</strong>时，在没有得到结果之前，该<strong>调用</strong>就不返回。但是一旦调用返回，就得到返回值了。</p>
+<h1 id="同步和异步、阻塞和非阻塞"><a href="#同步和异步、阻塞和非阻塞" class="headerlink" title="同步和异步、阻塞和非阻塞"></a>同步和异步、阻塞和非阻塞</h1><h2 id="同步和异步"><a href="#同步和异步" class="headerlink" title="同步和异步"></a>同步和异步</h2><h4 id="同步和异步关注的是消息通信机制"><a href="#同步和异步关注的是消息通信机制" class="headerlink" title="同步和异步关注的是消息通信机制"></a>同步和异步关注的是消息通信机制</h4><p><strong>同步</strong>：同步，就是在发出一个<strong>调用</strong>时，在没有得到结果之前，该<strong>调用</strong>就不返回。但是一旦调用返回，就得到返回值了。</p>
 <blockquote>
 <p>举例：你去收发室问老大爷有没快递，老大爷说你等等，我找找，然后你就等啊等啊，可能 5s 分钟就找到了，可能一天才找到，你就一直等着知道大爷回答你</p>
 </blockquote>
@@ -233,8 +232,7 @@
 <blockquote>
 <p>举例：你去收发室问老大爷有没快递，老大爷就说我找一下，找到了我给你打电话。然后你就直接走了，干自己的事去了</p>
 </blockquote>
-<h2 id="阻塞和非阻塞"><a href="#阻塞和非阻塞" class="headerlink" title="阻塞和非阻塞"></a>阻塞和非阻塞</h2><p>####阻塞和非阻塞关注的是程序在等待调用结果（消息，返回值）时的状态.</p>
-<p><strong>阻塞</strong>：是指调用结果返回之前，当前线程会被挂起。调用线程只有在得到结果之后才会返回</p>
+<h2 id="阻塞和非阻塞"><a href="#阻塞和非阻塞" class="headerlink" title="阻塞和非阻塞"></a>阻塞和非阻塞</h2><h4 id="阻塞和非阻塞关注的是程序在等待调用结果（消息，返回值）时的状态"><a href="#阻塞和非阻塞关注的是程序在等待调用结果（消息，返回值）时的状态" class="headerlink" title="阻塞和非阻塞关注的是程序在等待调用结果（消息，返回值）时的状态."></a>阻塞和非阻塞关注的是程序在等待调用结果（消息，返回值）时的状态.</h4><p><strong>阻塞</strong>：是指调用结果返回之前，当前线程会被挂起。调用线程只有在得到结果之后才会返回</p>
 <blockquote>
 <p>举例：你去收发室问大爷有没快递，在大爷没回复你之前，你就把自己‘挂起’啥都不干，知道大爷回复你。</p>
 </blockquote>
