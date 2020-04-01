@@ -171,6 +171,113 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2020/04/01/Kafka数据存储结构详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奋斗不息">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/01/Kafka数据存储结构详解/" class="post-title-link" itemprop="url">Kafka数据存储结构详解</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-04-01 17:44:59 / 修改时间：17:46:13" itemprop="dateCreated datePublished" datetime="2020-04-01T17:44:59+08:00">2020-04-01</time>
+            </span>
+
+          
+            <span id="/2020/04/01/Kafka数据存储结构详解/" class="post-meta-item leancloud_visitors" data-flag-title="Kafka数据存储结构详解" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Kafka存储结构详解"><a href="#Kafka存储结构详解" class="headerlink" title="Kafka存储结构详解"></a>Kafka存储结构详解</h1><h2 id="1-Topic"><a href="#1-Topic" class="headerlink" title="1 Topic"></a>1 Topic</h2><ul>
+<li>用一个Topic的消息可以分布在一个或者多个broker上</li>
+<li>一个 Topic 包含一个或者多个 partation</li>
+<li>每个消息都属于且仅属于一个Topic</li>
+<li>Producer 发布数据时，必须指定该消息发布到哪一个 Topic 上</li>
+<li>Consumer 订阅消息时，必须制定订阅哪个 Topic</li>
+</ul>
+<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-082344.png" alt=""></p>
+<h2 id="2-Partition"><a href="#2-Partition" class="headerlink" title="2 Partition"></a>2 Partition</h2><ul>
+<li>物理概念，一个 partition 只分布在一个 broker 上（不考虑备份）</li>
+<li>一个 partition 物理上对应一个文件夹</li>
+<li>一个 partition 包含多个 segment（逻辑上的概念，不存在具体物理文件）</li>
+<li>一个 segment 对应一个文件</li>
+<li>segment由一个个不变记录组成</li>
+<li>记录只会被 append 到 segment，不会被单独修改或者删除</li>
+<li>清除过期日志时，直接删除一个或者多个 segment</li>
+</ul>
+<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-065909.png" alt=""></p>
+<p><strong>topic名称-分区数命名</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//分布在不同的broker节点上  </span><br><span class="line">test-topic-0  </span><br><span class="line">test-topic-1  </span><br><span class="line">test-topic-2</span><br></pre></td></tr></table></figure></p>
+<p><strong>partition文件存储方式</strong><br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-075742.png" alt=""></p>
+<h3 id="疑问：-为什么需要分区"><a href="#疑问：-为什么需要分区" class="headerlink" title="疑问： 为什么需要分区"></a>疑问： 为什么需要分区</h3><p>为了性能考虑，如果不分区每个topic的消息只存在一个broker上，那么所有的消费者都是从这个broker上消费消息，那么单节点的broker成为性能的瓶颈，如果有分区的话生产者发过来的消息分别存储在各个broker不同的partition上，这样消费者可以并行的从不同的broker不同的partition上读消息，实现了水平扩展。 </p>
+<p style="color:red">总结一句话：可以多个 broker 同事操作，提高并行度</p>
+
+<h3 id="2-2-分区文件下存了哪些东西"><a href="#2-2-分区文件下存了哪些东西" class="headerlink" title="2.2 分区文件下存了哪些东西"></a>2.2 分区文件下存了哪些东西</h3><p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-082719.png" alt=""></p>
+<h2 id="3-Segment"><a href="#3-Segment" class="headerlink" title="3 Segment"></a>3 Segment</h2><p>segment 是个逻辑上的概念，并不存在真实的 segment 文件<br>Segment 是由一个 .index 和 一个 .log文件组成的。所以从可看到一个上图一个 partition 存在一个或者多个 segment。</p>
+<ul>
+<li>.index 文件是索引文件用来快速的查找真实消息数据</li>
+<li>.log 文件是用来存储数据的文件<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-074720.png" alt=""><br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-084529.png" alt=""></li>
+</ul>
+<h3 id="疑问：-为什么有了-Partition-还需要-segment"><a href="#疑问：-为什么有了-Partition-还需要-segment" class="headerlink" title="疑问： 为什么有了 Partition 还需要 segment"></a>疑问： 为什么有了 Partition 还需要 segment</h3><p>通过上面的图，可以了解到一个 partition 下存在多个 segment，一个 segment 由有一个.index和一个.log文件组成，如果不用这种方式，那可以使用一个.index和一个.log文件组成（类似RocketMQ中使用CommitLog文件来保存所有的数据文件，由多个 indexfile 来存储索引文件）。这样的坏处是，随着消息的不断写入这个文件，由于kafka的消息不会做更新操作都是顺序写入的，如果做消息清理的时候只能删除文件的前面部分删除，不符合kafka顺序写入的设计，如果多个segment的话那就比较方便了，直接删除整个文件即可保证了每个segment的顺序写入。</p>
+<p style="color:red">总结一句话：为了提高写入的效率，以及方便清除不需要的数据</p>
+
+<h3 id="3-1-index文件内部存储了哪些数据"><a href="#3-1-index文件内部存储了哪些数据" class="headerlink" title="3.1 .index文件内部存储了哪些数据"></a>3.1 .index文件内部存储了哪些数据</h3><p>存储了对应数据文件的部分offset，以及 position（表示具体消息存储在log中的物理地址）。可以看待 offset 并不是连续的，而是每隔 6 个 offset 存储一条索引数据。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">offset: 1049 position: 16205  </span><br><span class="line">offset: 1065 position: 32410  </span><br><span class="line">offset: 1081 position: 48615  </span><br><span class="line">offset: 1097 position: 64820  </span><br><span class="line">offset: 1113 position: 81025  </span><br><span class="line">offset: 1129 position: 97230</span><br></pre></td></tr></table></figure></p>
+<h4 id="疑问：-为什么-index-文件中这些-offset-不是连续的编号呢？"><a href="#疑问：-为什么-index-文件中这些-offset-不是连续的编号呢？" class="headerlink" title="疑问： 为什么 index 文件中这些 offset 不是连续的编号呢？"></a>疑问： 为什么 index 文件中这些 offset 不是连续的编号呢？</h4><p>因为index文件中并没有为数据文件中的每条消息都建立索引，而是采用了稀疏存储的方式，每隔一定字节的数据建立一条索引。这样避免了索引文件占用过多的空间，从而可以将索引文件保留在内存中。但缺点是没有建立索引的Message也不能一次定位到其在数据文件的位置，从而需要做一次顺序扫描，但是这次顺序扫描的范围就很小了。这种存储方式叫做稀疏索引<br>也可以配置成稠密索引，带来的问题就是索引文件太大。但是查找效率会高一点</p>
+<p></p><p style="color:red">总结一句话：减小 index 文件大小，可以将 index 文件内容加载到内存中，从而减小占用内存空间大小</p><p></p>
+<h3 id="3-2-log文件存储了那些数据"><a href="#3-2-log文件存储了那些数据" class="headerlink" title="3.2 .log文件存储了那些数据"></a>3.2 .log文件存储了那些数据</h3><p>log数据文件中并不是直接存储数据，而是通过许多的message组成，message包含了实际的消息数据。<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-091728.png" alt=""><br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-091807.png" alt=""></p>
+<h2 id="4-消费者如何根据-offset-查找-message"><a href="#4-消费者如何根据-offset-查找-message" class="headerlink" title="4 消费者如何根据 offset 查找 message"></a>4 消费者如何根据 offset 查找 message</h2><p>假如我们想要读取offset=1066的message，需要通过下面2个步骤查找。</p>
+<ol>
+<li>查找segment file<br>00000000000000000000.index表示最开始的文件，起始偏移量(offset)为0.第二个文件00000000000000001018.index的消息量起始偏移量为1019 = 1018 + 1.同样，第三个文件00000000000000002042.index的起始偏移量为2043=2042 + 1，其他后续文件依次类推，以起始偏移量命名并排序这些文件，只要根据offset 二分查找文件列表，就可以快速定位到具体文件。 当offset=1066时定位到00000000000000001018.index|log</li>
+<li>通过segment file查找message<br>通过第一步定位到segment file，当offset=1066时，依次定位到00000000000000001018.index的元数据物理位置和00000000000000001018.log的物理偏移地址，此时我们只能拿到1065的物理偏移地址，然后再通过00000000000000368769.log顺序查找直到offset=1066为止。每个message都有固定的格式很容易判断是否是下一条消息</li>
+</ol>
+<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-092404.png" alt=""></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2020/03/26/Netty入门/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1079,100 +1186,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2019/10/11/java远程调试/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Evan">
-      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奋斗不息">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/10/11/java远程调试/" class="post-title-link" itemprop="url">java远程调试</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-10-11 18:29:05" itemprop="dateCreated datePublished" datetime="2019-10-11T18:29:05+08:00">2019-10-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-13 17:25:22" itemprop="dateModified" datetime="2019-12-13T17:25:22+08:00">2019-12-13</time>
-              </span>
-
-          
-            <span id="/2019/10/11/java远程调试/" class="post-meta-item leancloud_visitors" data-flag-title="java远程调试" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="java-远程调试"><a href="#java-远程调试" class="headerlink" title="java 远程调试"></a>java 远程调试</h2><p>调试对于排查 java 各种异常问题非常重要，相信本地调试大家都很熟悉，今天分享一下如何开启远程调试。</p>
-<ol>
-<li><p>如果需要编译.java文件执行命令javac,生成.class文件件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javac SynchronizedStudy.java</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>执行编译过后的.class文件</p>
-<ul>
-<li><p>如果当前类有包路径到包的根路径下执行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java com.xxx.xx.SynchronizedStudy</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>如果当前类没有包直接执行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java SynchronizedStudy</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/10/11/java远程调试/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1243,12 +1256,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">34</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
