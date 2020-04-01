@@ -46,23 +46,18 @@
   };
 </script>
 
-  <meta name="description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume">
-<meta name="keywords" content="docker">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Docker 数据持久化：Data Volume and Bind Mouting">
-<meta property="og:url" content="https://yefan813.github.io/2018/07/11/Docker-数据持久化/index.html">
+  <meta name="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="奋斗不息">
+<meta property="og:url" content="https://yefan813.github.io/tags/消息队列，MQ，RocketMQ/index.html">
 <meta property="og:site_name" content="奋斗不息">
-<meta property="og:description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume">
+<meta property="og:description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fsx5mzmlprj30f005xabi.jpg">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fsx53ne9s0j30hz088wf7.jpg">
-<meta property="og:updated_time" content="2018-08-31T07:22:51.600Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Docker 数据持久化：Data Volume and Bind Mouting">
-<meta name="twitter:description" content="数据不会随着容器的消失而消失，例如 mysql ，redis docker volume">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fsx5mzmlprj30f005xabi.jpg">
+<meta name="twitter:title" content="奋斗不息">
+<meta name="twitter:description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
 
-<link rel="canonical" href="https://yefan813.github.io/2018/07/11/Docker-数据持久化/">
+<link rel="canonical" href="https://yefan813.github.io/tags/消息队列，MQ，RocketMQ/">
 
 
 <script id="page-configurations">
@@ -70,11 +65,11 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: true
+    isPost: false
   };
 </script>
 
-  <title>Docker 数据持久化：Data Volume and Bind Mouting | 奋斗不息</title>
+  <title>标签: 消息队列，MQ，RocketMQ | 奋斗不息</title>
   
 
 
@@ -171,114 +166,54 @@
           <div class="content">
             
 
-  <div class="posts-expand">
-      
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2018/07/11/Docker-数据持久化/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Evan">
-      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奋斗不息">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Docker 数据持久化：Data Volume and Bind Mouting
+  
+  <div class="post-block">
+    <div class="posts-collapse">
+      <div class="collection-title">
+        <h1 class="collection-header">消息队列，MQ，RocketMQ
+          <small>标签</small>
         </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-07-11 15:33:33" itemprop="dateCreated datePublished" datetime="2018-07-11T15:33:33+08:00">2018-07-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2018-08-31 15:22:51" itemprop="dateModified" datetime="2018-08-31T15:22:51+08:00">2018-08-31</time>
-              </span>
-
-          
-            <span id="/2018/07/11/Docker-数据持久化/" class="post-meta-item leancloud_visitors" data-flag-title="Docker 数据持久化：Data Volume and Bind Mouting" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
+      </div>
 
       
-        <p><strong>数据不会随着容器的消失而消失，例如 mysql ，redis</strong></p>
-<p><strong>docker volume</strong></p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fsx5mzmlprj30f005xabi.jpg" alt="image"></p>
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fsx53ne9s0j30hz088wf7.jpg" alt="image"></p>
-<a id="more"></a>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d -v mysql:/var/lib/mysql --name mysql1 -e  MYSQL_ALLOW_EMPTY_PASSWORD=true mysql</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建一个 mysql container 别名mysql ，挂载到宿主机的/var/lib/mysql下</span></span><br></pre></td></tr></table></figure>
-<p><strong>docker bind mouting</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -v /home/aa:/root/aaa</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -v $(pwd):/usr/share/nginx/html -p <span class="number">80</span>:<span class="number">80</span> --name web yefan/my-nginx</span><br></pre></td></tr></table></figure>
-
+    <div class="collection-year">
+      <h1 class="collection-header">2020</h1>
     </div>
 
-    
-    
-    
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
 
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/docker/" rel="tag"># docker</a>
-          </div>
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2020-04-01T17:47:33+08:00"
+              content="2020-04-01">
+          04-01
+        </time>
+      </div>
 
-        
-  <div class="post-widgets">
-    <div class="wp_rating">
-      <div id="wpac-rating"></div>
-    </div>
-  </div>
+      <h2 class="post-title">
+          <a class="post-title-link" href="/2020/04/01/RocketMQ数据存储结构详解/" itemprop="url">
+            <span itemprop="name">RocketMQ数据存储结构详解</span>
+          </a>
+      </h2>
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/07/11/Docker-多机通讯/" rel="prev" title="Docker 多机通讯">
-      <i class="fa fa-chevron-left"></i> Docker 多机通讯
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/07/11/Docker-Compose/" rel="next" title="Docker Compose">
-      Docker Compose <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
+    </header>
   </article>
+
+    </div>
+  </div>
   
   
   
 
-  </div>
+  
+
 
 
           </div>
           
-    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -543,25 +478,6 @@
 
   
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
-
-<script>
-NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
-    var gitalk = new Gitalk({
-      clientID: '2455a080684681f2ec15',
-      clientSecret: 'c13587843c6e1839680fa3786cdb9beb9a346bba',
-      repo: 'yefan813-blog-comment',
-      owner: 'yefan813',
-      admin: ['yefan813'],
-      id: '48ff62d6c71915e7d6d29abd6da34852',
-        language: 'zh-CN',
-      distractionFreeMode: 'true'
-    });
-    gitalk.render('gitalk-container');
-  }, window.Gitalk);
-});
-</script>
 
 </body>
 </html>
