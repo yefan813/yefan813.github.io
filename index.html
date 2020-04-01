@@ -196,7 +196,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-04-01 17:47:33 / 修改时间：17:49:46" itemprop="dateCreated datePublished" datetime="2020-04-01T17:47:33+08:00">2020-04-01</time>
+              <time title="创建时间：2020-04-01 17:47:33 / 修改时间：18:02:42" itemprop="dateCreated datePublished" datetime="2020-04-01T17:47:33+08:00">2020-04-01</time>
             </span>
 
           
@@ -218,106 +218,14 @@
 
       
           <h1 id="1-RocketMQ消息存储结构"><a href="#1-RocketMQ消息存储结构" class="headerlink" title="1 RocketMQ消息存储结构"></a>1 RocketMQ消息存储结构</h1><p><strong>Broker 整体架构图</strong><br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-065911.png" alt=""></p>
-<p><strong>消息体结构</strong><br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-071537.png" alt=""></p>
-<p><a href="https://github.com/apache/rocketmq/blob/master/docs/cn/design.md" target="_blank" rel="noopener">官网地址</a></p>
-<h2 id="1-1-commitLog-（类似Mysql的redolog）"><a href="#1-1-commitLog-（类似Mysql的redolog）" class="headerlink" title="1.1 commitLog （类似Mysql的redolog）"></a>1.1 commitLog （类似Mysql的redolog）</h2><p>消息存放的物理文件，是消息主体以及元数据存储的主体。<strong>每个broker上的 CommitLog被本机所有的Consumequeue共享</strong>，用于存储Producer端写入的消息主体内容，消息内容不是定长的，文件<strong>顺序写，随机读</strong>。单个文件大小默认1G 可以配置，文件名长度为20位，左边补零，剩余为起始偏移量，比如00000000000000000000代表了第一个文件，起始偏移量为0，文件大小为1G=1073741824；当第一个文件写满了，第二个文件为00000000001073741824，起始偏移量为1073741824，以此类推。消息主要是顺序写入日志文件，当文件满了，写入下一个文件。</p>
-<blockquote>
-<p>commitlog存储单元结构图<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-073520.png" alt=""></p>
-</blockquote>
-<h2 id="1-2-ConsumeQueue"><a href="#1-2-ConsumeQueue" class="headerlink" title="1.2 ConsumeQueue"></a>1.2 ConsumeQueue</h2><p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-072604.png" alt=""><br>消息消费队列，引入的目的主要是提高消息消费的性能，由于RocketMQ是基于主题topic的订阅模式，消息消费是针对主题进行的，如果要遍历commitlog文件中根据topic检索消息是非常低效的。Consumer即可根据ConsumeQueue来查找待消费的消息。其中，ConsumeQueue（逻辑消费队列）作为消费消息的索引，保存了指定Topic下的队列消息在CommitLog中的起始物理偏移量offset，消息大小size和消息Tag的HashCode值。consumequeue文件可以看成是基于topic的commitlog索引文件，故consumequeue文件夹的组织方式如下：topic/queue/file三层组织结构，具体存储路径为：$HOME/store/consumequeue/{topic}/{queueId}/{fileName}。同样consumequeue文件采取定长设计，每一个条目共20个字节，分别为8字节的commitlog物理偏移量、4字节的消息长度、8字节tag hashcode，单个文件由30W个条目组成，可以像数组一样随机访问每一个条目，每个ConsumeQueue文件大小约5.72M；</p>
-<p><strong>consumerQueue 存储单元格结构</strong><br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-080408.png" alt=""></p>
-<h2 id="1-3-IndexFile"><a href="#1-3-IndexFile" class="headerlink" title="1.3 IndexFile"></a>1.3 IndexFile</h2><p>消息索引文件，Index 索引文件提供了对 CommitLog 进行数据检索，提供通过 key 或者时间区间来查询 CommitLog 中的消息的方法。在实际的物理存储上，文件名则是以创建时的时间戳命名的，固定的单个IndexFile文件大小约为400M，一个IndexFile可以保存 2000W个索引</p>
-<p>IndexFile结构分析<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-080600.png" alt=""></p>
-<p><strong>IndexHead</strong>： </p>
-<ul>
-<li>beginTimestamp：该索引文件包含消息的最小存储时间</li>
-<li>endTimestamp：该索引文件包含消息的最大存储时间</li>
-<li>beginPhyoffset：该索引文件中包含消息的最小物理偏移量（commitlog 文件偏移量）</li>
-<li>endPhyoffset：该索引文件中包含消息的最大物理偏移量（commitlog 文件偏移量）</li>
-<li>hashSlotCount：hashslot个数，并不是 hash 槽使用的个数，在这里意义不大，</li>
-<li>indexCount：已使用的 Index 条目个数</li>
-</ul>
-<p><strong>Hash 槽</strong>：</p>
-<ul>
-<li>一个 IndexFile 默认包含 500W 个 Hash 槽，每个 Hash 槽存储的是落在该 Hash 槽的 hashcode 最新的 Index 的索引</li>
-</ul>
-<p><strong>Index 条目列表</strong>：</p>
-<ul>
-<li>hashcode：key 的 hashcode</li>
-<li>phyoffset：消息对应的物理偏移量</li>
-<li>timedif：该消息存储时间与第一条消息的时间戳的差值，小于 0 表示该消息无效</li>
-<li>preIndexNo：该条目的前一条记录的 Index 索引，hash 冲突时，根据该值构建链表结构</li>
-</ul>
-<h2 id="1-5-消息发送到消息消费数据流转"><a href="#1-5-消息发送到消息消费数据流转" class="headerlink" title="1.5 消息发送到消息消费数据流转"></a>1.5 消息发送到消息消费数据流转</h2><ol>
-<li>Producer 将消息发送到 Broker 后，Broker 会采用同步或者异步的方式把消息写入到 CommitLog。RocketMQ 所有的消息都会存放在 CommitLog 中，为了保证消息存储不发生混乱，对 CommitLog 写之前会加锁，同时也可以使得消息能够被顺序写入到 CommitLog，只要消息被持久化到磁盘文件 CommitLog，那么就可以保证 Producer 发送的消息不会丢失<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-084704.png" alt=""></li>
-<li>CommitLog 持久化后，会把里面的消息 Dispatch 到对应的 Consume Queue 上，Consume Queue 相当于 Kafka 中的 Partition，是一个逻辑队列，存储了这个 Queue 在 CommitLog 中的起始 Offset，log 大小和 MessageTag 的 hashCode<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-084805.png" alt=""></li>
-<li>当消费者进行消息消费时，会先读取 ConsumerQueue，逻辑消费队列 ConsumeQueue 保存了指定 Topic 下的队列消息在 CommitLog 中的起始物理偏移量 Offset，消息大小、和消息 Tag 的 HashCode 值。<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-084857.png" alt=""></li>
-<li>直接从 ConsumerQueue 中读取消息是没有数据的，真正的消息主体在 CommitLog 中，所以还需要从 CommitLog 中读取消息。<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-084930.png" alt=""></li>
-</ol>
-<h2 id="1-6-消息存储流程代码流程"><a href="#1-6-消息存储流程代码流程" class="headerlink" title="1.6 消息存储流程代码流程"></a>1.6 消息存储流程代码流程</h2><p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-085936.png" alt=""></p>
-<ul>
-<li>Broker端收到消息后，将消息原始信息保存在CommitLog文件对应的MappedFile中，然后异步刷新到磁盘</li>
-<li>ReputMessageServie线程异步的将CommitLog中MappedFile中的消息保存到ConsumerQueue和IndexFile中</li>
-<li>ConsumerQueue和IndexFile只是原始文件的索引信息</li>
-</ul>
-<h1 id="2-同步刷盘和异步刷盘"><a href="#2-同步刷盘和异步刷盘" class="headerlink" title="2 同步刷盘和异步刷盘"></a>2 同步刷盘和异步刷盘</h1><p><strong>刷盘流程</strong><br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-025441.png" alt=""></p>
-<ul>
-<li>producer发送给broker的消息保存在MappedFile中，然后通过刷盘机制同步到磁盘中</li>
-<li>刷盘分为同步刷盘和异步刷盘</li>
-<li>异步刷盘后台线程按一定时间间隔执行</li>
-<li>同步刷盘也是生产者-消费者模型。broker保存消息到MappedFile后，创建GroupCommitRequest请求放入列表，并阻塞等待。后台线程从列表中获取请求并刷新磁盘，成功刷盘后通知等待线程。</li>
-</ul>
-<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-091530.png" alt=""><br>(1) 同步刷盘：如上图所示，只有在消息真正持久化至磁盘后RocketMQ的Broker端才会真正返回给Producer端一个成功的ACK响应。同步刷盘对MQ消息可靠性来说是一种不错的保障，但是性能上会有较大影响，一般适用于金融业务应用该模式较多。</p>
-<p>(2) 异步刷盘：能够充分利用OS的PageCache的优势，只要消息写入PageCache即可将成功的ACK返回给Producer端。消息刷盘采用后台异步线程提交的方式进行，降低了读写延迟，提高了MQ的性能和吞吐量。</p>
-<p>读取消息的ConsumeQueue文件也会加载到PageCache，读PageCache和内存速度差不多。</p>
-<h2 id="2-1-刷盘方法调用流程"><a href="#2-1-刷盘方法调用流程" class="headerlink" title="2.1 刷盘方法调用流程"></a>2.1 刷盘方法调用流程</h2><p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-090226.png" alt=""></p>
-<ul>
-<li>producer发送给broker的消息保存在MappedFile中，然后通过刷盘机制同步到磁盘中</li>
-<li>刷盘分为同步刷盘和异步刷盘</li>
-<li>异步刷盘后台线程按一定时间间隔执行</li>
-<li>同步刷盘也是生产者-消费者模型。broker保存消息到MappedFile后，创建GroupCommitRequest请求放入列表，并阻塞等待。后台线程从列表中获取请求并刷新磁盘，成功刷盘后通知等待线程</li>
-</ul>
-<h1 id="3-同步复制和异步复制"><a href="#3-同步复制和异步复制" class="headerlink" title="3 同步复制和异步复制"></a>3 同步复制和异步复制</h1><h2 id="3-1-异步复制"><a href="#3-1-异步复制" class="headerlink" title="3.1 异步复制"></a>3.1 异步复制</h2><p>消息写到 Broker 后，直接返回客户端成功，消息数据异步到 Slave 节点<br><strong>优点</strong>：性能高，不需要等到消息同步直接返回。适合能容忍消息丢失的场景<br><strong>缺点</strong>：这种可能会导致消息丢失</p>
-<h2 id="3-2-同步复制"><a href="#3-2-同步复制" class="headerlink" title="3.2 同步复制"></a>3.2 同步复制</h2><p>消息写到Broker 后，需要将消息同步复制到 Slave 节点才返回成功<br><strong>优点</strong>：能够保证消息绝对不丢失，保证高可用，这种适合和金融相关的业务<br><strong>缺点</strong>：性能不高，因为需要将消息同步到 slave 才能能返回成功</p>
-<h1 id="4-高可用机制"><a href="#4-高可用机制" class="headerlink" title="4 高可用机制"></a>4 高可用机制</h1><h2 id="4-1-Broker-集群"><a href="#4-1-Broker-集群" class="headerlink" title="4.1 Broker 集群"></a>4.1 Broker 集群</h2><table>
-<thead>
-<tr>
-<th>名称</th>
-<th>描述</th>
-<th>优点</th>
-<th>缺点</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>单个 Master</td>
-<td>这种方式风险较大，一旦Broker 重启或者宕机时，会导致整个服务不可用，不建议线上环境使用</td>
-<td>~</td>
-<td>~</td>
-</tr>
-<tr>
-<td>多 Master 模式</td>
-<td>一个集群无 Slave，全是 Master，例如 2 个 Master 或者 3 个 Master, 消息分别写到不同的 master 节点上</td>
-<td>配置简单，单个Master 宕机或重启维护对应用无影响，在磁盘配置为 RAID10 时，即使机器宕机不可恢复情况下，由与 RAID10 磁盘非常可靠，消息也不会丢（异步刷盘丢失少量消息，同步刷盘一条不丢）。性能最高</td>
-<td>单台机器宕机期间，这台机器上未被消费的消息在机器恢复之前不可订阅，消息实时性收到影响</td>
-</tr>
-<tr>
-<td>多 Master 多 Slave 模式，异步复制</td>
-<td>每个 Master 配置一个 Slave，有多对Master-Slave，HA 采用异步复制方式，主备有短暂消息延迟，毫秒级。消息写入 Master 节点，异步复制到 Slave节点</td>
-<td>即使磁盘损坏，消息丢失的非常少，且消息实时性不会受影响，因为 Master 宕机后，消费者仍然可以从 Slave 消费，此过程对应用透明。不需要人工干预。性能同多 Master 模式几乎一样</td>
-<td>Master 宕机，磁盘损坏情况，会丢失少量消息</td>
-</tr>
-<tr>
-<td>多 Master 多 Slave 模式，同步双写</td>
-<td>每个 Master 配置一个 Slave，有多对Master-Slave，HA 采用同步双写方式，master和slave都写成功，向应用返回成功。</td>
-<td>数据与服务都无单点，Master宕机情况下，消息无延迟，服务可用性与数据可用性都非常高</td>
-<td>性能比异步复制模式略低，大约低 10%左右，发送单个消息的 RT 会略高。目前主宕机后，备机不能自动切换为主机，后续会支持自动切换功能。</td>
-</tr>
-</tbody>
-</table>
-<h2 id="4-2-Dledger"><a href="#4-2-Dledger" class="headerlink" title="4.2 Dledger"></a>4.2 Dledger</h2><p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-31-140505.png" alt=""></p>
-<p>支持故障转移，自动将 slave 节点提升为 master 提供服务</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/01/RocketMQ数据存储结构详解/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -361,7 +269,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-04-01 17:44:59 / 修改时间：17:46:13" itemprop="dateCreated datePublished" datetime="2020-04-01T17:44:59+08:00">2020-04-01</time>
+              <time title="创建时间：2020-04-01 17:44:59 / 修改时间：18:02:16" itemprop="dateCreated datePublished" datetime="2020-04-01T17:44:59+08:00">2020-04-01</time>
             </span>
 
           
@@ -389,42 +297,15 @@
 <li>Producer 发布数据时，必须指定该消息发布到哪一个 Topic 上</li>
 <li>Consumer 订阅消息时，必须制定订阅哪个 Topic</li>
 </ul>
-<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-082344.png" alt=""></p>
-<h2 id="2-Partition"><a href="#2-Partition" class="headerlink" title="2 Partition"></a>2 Partition</h2><ul>
-<li>物理概念，一个 partition 只分布在一个 broker 上（不考虑备份）</li>
-<li>一个 partition 物理上对应一个文件夹</li>
-<li>一个 partition 包含多个 segment（逻辑上的概念，不存在具体物理文件）</li>
-<li>一个 segment 对应一个文件</li>
-<li>segment由一个个不变记录组成</li>
-<li>记录只会被 append 到 segment，不会被单独修改或者删除</li>
-<li>清除过期日志时，直接删除一个或者多个 segment</li>
-</ul>
-<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-065909.png" alt=""></p>
-<p><strong>topic名称-分区数命名</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//分布在不同的broker节点上  </span><br><span class="line">test-topic-0  </span><br><span class="line">test-topic-1  </span><br><span class="line">test-topic-2</span><br></pre></td></tr></table></figure></p>
-<p><strong>partition文件存储方式</strong><br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-075742.png" alt=""></p>
-<h3 id="疑问：-为什么需要分区"><a href="#疑问：-为什么需要分区" class="headerlink" title="疑问： 为什么需要分区"></a>疑问： 为什么需要分区</h3><p>为了性能考虑，如果不分区每个topic的消息只存在一个broker上，那么所有的消费者都是从这个broker上消费消息，那么单节点的broker成为性能的瓶颈，如果有分区的话生产者发过来的消息分别存储在各个broker不同的partition上，这样消费者可以并行的从不同的broker不同的partition上读消息，实现了水平扩展。 </p>
-<p style="color:red">总结一句话：可以多个 broker 同事操作，提高并行度</p>
-
-<h3 id="2-2-分区文件下存了哪些东西"><a href="#2-2-分区文件下存了哪些东西" class="headerlink" title="2.2 分区文件下存了哪些东西"></a>2.2 分区文件下存了哪些东西</h3><p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-082719.png" alt=""></p>
-<h2 id="3-Segment"><a href="#3-Segment" class="headerlink" title="3 Segment"></a>3 Segment</h2><p>segment 是个逻辑上的概念，并不存在真实的 segment 文件<br>Segment 是由一个 .index 和 一个 .log文件组成的。所以从可看到一个上图一个 partition 存在一个或者多个 segment。</p>
-<ul>
-<li>.index 文件是索引文件用来快速的查找真实消息数据</li>
-<li>.log 文件是用来存储数据的文件<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-074720.png" alt=""><br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-084529.png" alt=""></li>
-</ul>
-<h3 id="疑问：-为什么有了-Partition-还需要-segment"><a href="#疑问：-为什么有了-Partition-还需要-segment" class="headerlink" title="疑问： 为什么有了 Partition 还需要 segment"></a>疑问： 为什么有了 Partition 还需要 segment</h3><p>通过上面的图，可以了解到一个 partition 下存在多个 segment，一个 segment 由有一个.index和一个.log文件组成，如果不用这种方式，那可以使用一个.index和一个.log文件组成（类似RocketMQ中使用CommitLog文件来保存所有的数据文件，由多个 indexfile 来存储索引文件）。这样的坏处是，随着消息的不断写入这个文件，由于kafka的消息不会做更新操作都是顺序写入的，如果做消息清理的时候只能删除文件的前面部分删除，不符合kafka顺序写入的设计，如果多个segment的话那就比较方便了，直接删除整个文件即可保证了每个segment的顺序写入。</p>
-<p style="color:red">总结一句话：为了提高写入的效率，以及方便清除不需要的数据</p>
-
-<h3 id="3-1-index文件内部存储了哪些数据"><a href="#3-1-index文件内部存储了哪些数据" class="headerlink" title="3.1 .index文件内部存储了哪些数据"></a>3.1 .index文件内部存储了哪些数据</h3><p>存储了对应数据文件的部分offset，以及 position（表示具体消息存储在log中的物理地址）。可以看待 offset 并不是连续的，而是每隔 6 个 offset 存储一条索引数据。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">offset: 1049 position: 16205  </span><br><span class="line">offset: 1065 position: 32410  </span><br><span class="line">offset: 1081 position: 48615  </span><br><span class="line">offset: 1097 position: 64820  </span><br><span class="line">offset: 1113 position: 81025  </span><br><span class="line">offset: 1129 position: 97230</span><br></pre></td></tr></table></figure></p>
-<h4 id="疑问：-为什么-index-文件中这些-offset-不是连续的编号呢？"><a href="#疑问：-为什么-index-文件中这些-offset-不是连续的编号呢？" class="headerlink" title="疑问： 为什么 index 文件中这些 offset 不是连续的编号呢？"></a>疑问： 为什么 index 文件中这些 offset 不是连续的编号呢？</h4><p>因为index文件中并没有为数据文件中的每条消息都建立索引，而是采用了稀疏存储的方式，每隔一定字节的数据建立一条索引。这样避免了索引文件占用过多的空间，从而可以将索引文件保留在内存中。但缺点是没有建立索引的Message也不能一次定位到其在数据文件的位置，从而需要做一次顺序扫描，但是这次顺序扫描的范围就很小了。这种存储方式叫做稀疏索引<br>也可以配置成稠密索引，带来的问题就是索引文件太大。但是查找效率会高一点</p>
-<p></p><p style="color:red">总结一句话：减小 index 文件大小，可以将 index 文件内容加载到内存中，从而减小占用内存空间大小</p><p></p>
-<h3 id="3-2-log文件存储了那些数据"><a href="#3-2-log文件存储了那些数据" class="headerlink" title="3.2 .log文件存储了那些数据"></a>3.2 .log文件存储了那些数据</h3><p>log数据文件中并不是直接存储数据，而是通过许多的message组成，message包含了实际的消息数据。<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-091728.png" alt=""><br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-091807.png" alt=""></p>
-<h2 id="4-消费者如何根据-offset-查找-message"><a href="#4-消费者如何根据-offset-查找-message" class="headerlink" title="4 消费者如何根据 offset 查找 message"></a>4 消费者如何根据 offset 查找 message</h2><p>假如我们想要读取offset=1066的message，需要通过下面2个步骤查找。</p>
-<ol>
-<li>查找segment file<br>00000000000000000000.index表示最开始的文件，起始偏移量(offset)为0.第二个文件00000000000000001018.index的消息量起始偏移量为1019 = 1018 + 1.同样，第三个文件00000000000000002042.index的起始偏移量为2043=2042 + 1，其他后续文件依次类推，以起始偏移量命名并排序这些文件，只要根据offset 二分查找文件列表，就可以快速定位到具体文件。 当offset=1066时定位到00000000000000001018.index|log</li>
-<li>通过segment file查找message<br>通过第一步定位到segment file，当offset=1066时，依次定位到00000000000000001018.index的元数据物理位置和00000000000000001018.log的物理偏移地址，此时我们只能拿到1065的物理偏移地址，然后再通过00000000000000368769.log顺序查找直到offset=1066为止。每个message都有固定的格式很容易判断是否是下一条消息</li>
-</ol>
-<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-092404.png" alt=""></p>
-
+<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-082344.png" alt=""><br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/01/Kafka数据存储结构详解/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -474,7 +355,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-27 16:59:57" itemprop="dateModified" datetime="2020-03-27T16:59:57+08:00">2020-03-27</time>
+                <time title="修改时间：2020-04-01 18:02:34" itemprop="dateModified" datetime="2020-04-01T18:02:34+08:00">2020-04-01</time>
               </span>
 
           
@@ -496,90 +377,14 @@
 
       
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在介绍 Netty之前一定要先搞明白同步和异步、阻塞和非阻塞、BIO、NIO、AIO 都是什么，然后有哪些优缺点，再来看 Netty 出现的原因，有哪些优势，使用场景是什么。这样循序渐进的学习，更容易理解。</p>
-<h1 id="同步和异步、阻塞和非阻塞"><a href="#同步和异步、阻塞和非阻塞" class="headerlink" title="同步和异步、阻塞和非阻塞"></a>同步和异步、阻塞和非阻塞</h1><h2 id="同步和异步"><a href="#同步和异步" class="headerlink" title="同步和异步"></a>同步和异步</h2><h4 id="同步和异步关注的是消息通信机制"><a href="#同步和异步关注的是消息通信机制" class="headerlink" title="同步和异步关注的是消息通信机制"></a>同步和异步关注的是消息通信机制</h4><p><strong>同步</strong>：同步，就是在发出一个<strong>调用</strong>时，在没有得到结果之前，该<strong>调用</strong>就不返回。但是一旦调用返回，就得到返回值了。</p>
-<blockquote>
-<p>举例：你去收发室问老大爷有没快递，老大爷说你等等，我找找，然后你就等啊等啊，可能 5s 分钟就找到了，可能一天才找到，你就一直等着知道大爷回答你</p>
-</blockquote>
-<p><strong>异步</strong>：异步则是相反，<strong>调用</strong>在发出之后，这个调用就直接返回了，所以没有返回结果。换句话说，当一个异步过程调用发出后，调用者不会立刻得到结果。而是在<strong>调用</strong>发出后，<strong>被调用者</strong>通过状态、通知来通知调用者，或通过回调函数处理这个调用</p>
-<blockquote>
-<p>举例：你去收发室问老大爷有没快递，老大爷就说我找一下，找到了我给你打电话。然后你就直接走了，干自己的事去了</p>
-</blockquote>
-<h2 id="阻塞和非阻塞"><a href="#阻塞和非阻塞" class="headerlink" title="阻塞和非阻塞"></a>阻塞和非阻塞</h2><h4 id="阻塞和非阻塞关注的是程序在等待调用结果（消息，返回值）时的状态"><a href="#阻塞和非阻塞关注的是程序在等待调用结果（消息，返回值）时的状态" class="headerlink" title="阻塞和非阻塞关注的是程序在等待调用结果（消息，返回值）时的状态."></a>阻塞和非阻塞关注的是程序在等待调用结果（消息，返回值）时的状态.</h4><p><strong>阻塞</strong>：是指调用结果返回之前，当前线程会被挂起。调用线程只有在得到结果之后才会返回</p>
-<blockquote>
-<p>举例：你去收发室问大爷有没快递，在大爷没回复你之前，你就把自己‘挂起’啥都不干，知道大爷回复你。</p>
-</blockquote>
-<p><strong>非阻塞</strong>：在不能立刻得到结果之前，该调用不会阻塞当前线程</p>
-<blockquote>
-<p>举例：你去收发室问大爷有没快递，然后你就跑去玩了，时不时的过来问一下是否有结果。</p>
-</blockquote>
-<h1 id="BIO-NIO-AIO是什么"><a href="#BIO-NIO-AIO是什么" class="headerlink" title="BIO/NIO/AIO是什么"></a>BIO/NIO/AIO是什么</h1><h2 id="BIO（Block-IO）"><a href="#BIO（Block-IO）" class="headerlink" title="BIO（Block IO）"></a>BIO（Block IO）</h2><p>同步阻塞，服务器实现模式是一个连接一个线程，即客户端有连接请求是服务度就需要启动一个线程进行处理。<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-27-084253.png" alt=""></p>
-<p><strong>优点</strong>：编写简单,小请求量可以接受</p>
-<p><strong>缺点</strong>:针对高并发，超过100000的并发连接来说该方案并不可取，它所需要的线程资源太多，而且任何时候都可能存在大量线程处于阻塞状态，等待输入或者输出数据就绪，整个方案性能太差。</p>
-<p>代码示例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BioServer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        ServerSocket serverSocket = <span class="keyword">new</span> ServerSocket();</span><br><span class="line">        System.out.println(<span class="string">"启动服务器..."</span>);</span><br><span class="line">        serverSocket.bind(<span class="keyword">new</span> InetSocketAddress(<span class="string">"127.0.0.1"</span>, <span class="number">8888</span>));</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">"等待客户端链接..."</span>);</span><br><span class="line">            <span class="comment">//accept()方法阻塞，直到有新的连接</span></span><br><span class="line">            <span class="keyword">final</span> Socket socket = serverSocket.accept();</span><br><span class="line">            System.out.println(<span class="string">"客户已连接,创建新的线程处理"</span>);</span><br><span class="line">            <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">               handle(socket);</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(Socket socket)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">"读数据.."</span>);</span><br><span class="line">            <span class="comment">//read block method</span></span><br><span class="line">            <span class="keyword">int</span> len = socket.getInputStream().read(bytes);</span><br><span class="line">            System.out.println(<span class="keyword">new</span> String(bytes,<span class="number">0</span>,len));</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">"写数据.."</span>);</span><br><span class="line">            <span class="comment">//write block method</span></span><br><span class="line">            socket.getOutputStream().write(bytes,<span class="number">0</span>,len);</span><br><span class="line">            socket.getOutputStream().flush();</span><br><span class="line">        &#125;<span class="keyword">catch</span> (IOException ex) &#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-------</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        Socket socket = <span class="keyword">new</span> Socket(<span class="string">"127.0.0.1"</span>, <span class="number">8888</span>);</span><br><span class="line">        socket.getOutputStream().write(<span class="string">"hello server"</span>.getBytes());</span><br><span class="line">        socket.getOutputStream().flush();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"write over, wait for msg back"</span>);</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="keyword">int</span> len = socket.getInputStream().read(bytes);</span><br><span class="line">        System.out.println(<span class="keyword">new</span> String(bytes,<span class="number">0</span>,len));</span><br><span class="line">        socket.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="NIO（No-Block-IO）"><a href="#NIO（No-Block-IO）" class="headerlink" title="NIO（No-Block IO）"></a>NIO（No-Block IO）</h2><p>同步非阻塞，服务器实现是一个线程处理多个请求连接，即客户端发送的连接请求都会注册到多路复用器上，多路复用器轮训到连接有 IO 请求就进行处理</p>
-<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-27-084320.png" alt=""></p>
-<p>NIO核心组件：</p>
-<ol>
-<li>Channel: 对应JDK底层的Socket,它除了包含基本的I/O操作，如 bind(),connect()，read()，write()之外</li>
-<li>Buffer: 缓存 Buffer</li>
-<li>Selector:是 Java 非阻塞 I/O实现的关键，将通道Channel注册在 Selector上，如果某个通道 Channel发送 读或写事件，这个Channel处于就绪状态，会被Selector轮询出来，进而进行后续I/O操作</li>
-</ol>
-<p><strong>优点</strong>：使用 Java NIO可以让我们使用较少的线程处理很多连接，较少线程意味着减少了线程创建内存分配和线程上下文切换带来的开销。</p>
-<p><strong>缺点</strong>：编程复杂，需要处理各种问题，API 使用难度大，在高负载下可靠和高效地处理和调度I/O操作是一项繁琐而且容易出错的任务，使用 NIO编程很容易出错。</p>
-<p>代码示例：单线程处理连接<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NioServer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();</span><br><span class="line">        serverSocketChannel.socket().bind(<span class="keyword">new</span> InetSocketAddress(<span class="string">"127.0.0.1"</span>, <span class="number">8888</span>));</span><br><span class="line">        <span class="comment">// set block is false</span></span><br><span class="line">        serverSocketChannel.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"server is started, listen on :"</span> + serverSocketChannel.getLocalAddress());</span><br><span class="line">        Selector selector = Selector.open();</span><br><span class="line">        <span class="comment">//注册监听客户端连接事件</span></span><br><span class="line">        <span class="comment">//注册 accept 监听事件</span></span><br><span class="line">        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="comment">//轮训查看，阻塞方法。监听是否有事件发生</span></span><br><span class="line">            System.out.println(<span class="string">"轮训查看是否有监听事件发生..."</span>);</span><br><span class="line">            selector.select();</span><br><span class="line">            <span class="comment">//监听到有哪些 key 事件发生</span></span><br><span class="line">            System.out.println(<span class="string">"监听到事件发生..."</span>);</span><br><span class="line">            Set&lt;SelectionKey&gt; keys = selector.selectedKeys();</span><br><span class="line">            Iterator&lt;SelectionKey&gt; iterator = keys.iterator();</span><br><span class="line">            <span class="keyword">while</span>(iterator.hasNext()) &#123;</span><br><span class="line">                SelectionKey key = iterator.next();</span><br><span class="line">                <span class="comment">//需要将 key remove 掉不然下次轮训还会处理</span></span><br><span class="line">                iterator.remove();</span><br><span class="line">                handle(key);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(SelectionKey key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (key.isAcceptable()) &#123;</span><br><span class="line">            <span class="comment">//获得 channel</span></span><br><span class="line">            System.out.println(<span class="string">"accept事件发生，建立一条通道"</span>);</span><br><span class="line">            ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">//建立 channel</span></span><br><span class="line">                serverSocketChannel.accept();</span><br><span class="line">                <span class="comment">//设置通道是否阻塞</span></span><br><span class="line">                serverSocketChannel.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">                <span class="comment">//在通道上放置一个 read 的监听事件</span></span><br><span class="line">                System.out.println(<span class="string">"在 channel 通道上注册 read 事件..."</span>);</span><br><span class="line">                serverSocketChannel.register(key.selector(),SelectionKey.OP_READ);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(key.isReadable()) &#123;</span><br><span class="line">            System.out.println(<span class="string">"read事件发生..."</span>);</span><br><span class="line">            SocketChannel socketChannel = (SocketChannel) key.channel();</span><br><span class="line">            <span class="comment">//分配内存</span></span><br><span class="line">            ByteBuffer buffer = ByteBuffer.allocate(<span class="number">512</span>);</span><br><span class="line">            buffer.clear();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">//从通道读取数据</span></span><br><span class="line">                System.out.println(<span class="string">"读取数据..."</span>);</span><br><span class="line">                <span class="keyword">int</span> len = socketChannel.read(buffer);</span><br><span class="line">                <span class="keyword">if</span> (len != -<span class="number">1</span>) &#123;</span><br><span class="line">                    System.out.println(<span class="keyword">new</span> String(buffer.array(),<span class="number">0</span>,len));</span><br><span class="line">                &#125;</span><br><span class="line">                ByteBuffer bufferToWrite = ByteBuffer.wrap(<span class="string">"hello client"</span>.getBytes());</span><br><span class="line">                <span class="comment">//向通道写数据</span></span><br><span class="line">                socketChannel.write(bufferToWrite);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">----------</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        Socket socket = <span class="keyword">new</span> Socket(<span class="string">"127.0.0.1"</span>, <span class="number">8888</span>);</span><br><span class="line">        socket.getOutputStream().write(<span class="string">"hello server"</span>.getBytes());</span><br><span class="line">        socket.getOutputStream().flush();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"write over, wait for msg back"</span>);</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="keyword">int</span> len = socket.getInputStream().read(bytes);</span><br><span class="line">        System.out.println(<span class="keyword">new</span> String(bytes,<span class="number">0</span>,len));</span><br><span class="line">        socket.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>代码示例：线程池处理连接<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NioPoolServer</span> </span>&#123;</span><br><span class="line">    ExecutorService pool = Executors.newFixedThreadPool(<span class="number">50</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Selector selector;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initServer</span><span class="params">(<span class="keyword">int</span> port)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();</span><br><span class="line">        <span class="comment">// set block is false</span></span><br><span class="line">        serverSocketChannel.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">        serverSocketChannel.socket().bind(<span class="keyword">new</span> InetSocketAddress(<span class="number">8888</span>));</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"server is started, listen on :"</span> + serverSocketChannel.getLocalAddress());</span><br><span class="line">        selector = Selector.open();</span><br><span class="line">        <span class="comment">//注册监听客户端连接事件</span></span><br><span class="line">        <span class="comment">//注册 accept 监听事件</span></span><br><span class="line">        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);</span><br><span class="line">        System.out.println(<span class="string">"server run success!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        NioPoolServer server = <span class="keyword">new</span> NioPoolServer();</span><br><span class="line">        server.initServer(<span class="number">8000</span>);</span><br><span class="line">        server.listen();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">listen</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">"selector 轮训是否有事件.."</span>);</span><br><span class="line">            <span class="comment">// block method</span></span><br><span class="line">            selector.select();</span><br><span class="line">            Set&lt;SelectionKey&gt; keys = selector.selectedKeys();</span><br><span class="line">            Iterator&lt;SelectionKey&gt; iterator = keys.iterator();</span><br><span class="line">            <span class="keyword">while</span>(iterator.hasNext()) &#123;</span><br><span class="line">                SelectionKey key = iterator.next();</span><br><span class="line">                iterator.remove();</span><br><span class="line">                handle(key);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(SelectionKey key)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(key.isAcceptable()) &#123;</span><br><span class="line">            System.out.println(<span class="string">"有客户端链接.."</span>);</span><br><span class="line">            ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();</span><br><span class="line">            SocketChannel channel = serverSocketChannel.accept();</span><br><span class="line">            channel.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">            channel.register(key.selector(),SelectionKey.OP_READ);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(key.isReadable()) &#123;</span><br><span class="line">            System.out.println(<span class="string">"客户端写入数据..."</span>);</span><br><span class="line">            key.interestOps(key.interestOps() &amp; (~SelectionKey.OP_READ));</span><br><span class="line">            pool.execute(<span class="keyword">new</span> ThreadHandleChannel(key));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ThreadHandleChannel</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> SelectionKey selectionKey;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">ThreadHandleChannel</span><span class="params">(SelectionKey selectionKey)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.selectionKey = selectionKey;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            System.out.println(<span class="string">"读取客户端传入数据..."</span>);</span><br><span class="line">            SocketChannel socketChannel = (SocketChannel) selectionKey.channel();</span><br><span class="line">            <span class="comment">//分配内存</span></span><br><span class="line">            ByteBuffer buffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">            ByteOutputStream byteOutputStream = <span class="keyword">new</span> ByteOutputStream();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">//从通道读取数据</span></span><br><span class="line">                <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">while</span> ((size = socketChannel.read(buffer)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                    buffer.flip();</span><br><span class="line">                    byteOutputStream.write(buffer.array(),<span class="number">0</span>,size);</span><br><span class="line">                    buffer.clear();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">byte</span>[] content = byteOutputStream.toByteArray();</span><br><span class="line"></span><br><span class="line">                ByteBuffer writeBuffer = ByteBuffer.allocate(content.length);</span><br><span class="line">                writeBuffer.put(content);</span><br><span class="line">                writeBuffer.flip();</span><br><span class="line">                <span class="comment">//write data</span></span><br><span class="line">                socketChannel.write(writeBuffer);</span><br><span class="line">                <span class="keyword">if</span>(size == -<span class="number">1</span>)&#123;</span><br><span class="line">                    socketChannel.close();</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_READ);</span><br><span class="line">                selectionKey.selector().wakeup();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                System.out.println(e.getMessage());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="AIO（Async-IO）"><a href="#AIO（Async-IO）" class="headerlink" title="AIO（Async IO）"></a>AIO（Async IO）</h2><p>异步非阻塞,结果返回回调接口</p>
-<p>示例代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AioServer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line"></span><br><span class="line">        ExecutorService executorService = Executors.newCachedThreadPool();</span><br><span class="line">        AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withCachedThreadPool(executorService,<span class="number">2</span>);</span><br><span class="line">        AsynchronousServerSocketChannel serverSocketChannel = AsynchronousServerSocketChannel.open(channelGroup);</span><br><span class="line">        serverSocketChannel.bind(<span class="keyword">new</span> InetSocketAddress(<span class="number">8888</span>));</span><br><span class="line">        <span class="comment">//此处非阻塞,执行完成后就干下一步，返回结果会调用CompletionHandler#completed来处理</span></span><br><span class="line">        serverSocketChannel.accept(<span class="keyword">null</span>, <span class="keyword">new</span> CompletionHandler&lt;AsynchronousSocketChannel, Object&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">completed</span><span class="params">(AsynchronousSocketChannel channel, Object attachment)</span> </span>&#123;</span><br><span class="line">                serverSocketChannel.accept(<span class="keyword">null</span>,<span class="keyword">this</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    System.out.println(channel.getRemoteAddress());</span><br><span class="line">                    ByteBuffer allocate = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">                    channel.read(allocate, allocate, <span class="keyword">new</span> CompletionHandler&lt;Integer, ByteBuffer&gt;() &#123;</span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">completed</span><span class="params">(Integer result, ByteBuffer attachment)</span> </span>&#123;</span><br><span class="line">                            attachment.flip();</span><br><span class="line">                            System.out.println(<span class="keyword">new</span> String(attachment.array(),<span class="number">0</span>,result));</span><br><span class="line">                            channel.write(ByteBuffer.wrap(<span class="string">"hello client"</span>.getBytes()));</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">failed</span><span class="params">(Throwable exc, ByteBuffer attachment)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">failed</span><span class="params">(Throwable exc, Object attachment)</span> </span>&#123;</span><br><span class="line">                exc.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h1 id="Netty是什么"><a href="#Netty是什么" class="headerlink" title="Netty是什么"></a>Netty是什么</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>Netty是一款异步的事件驱动的网络应用程序框架，支持快速开发可维护的高性能的面向协议的服务器和客户端。Netty主要是对java的nio包进行的封装。本质是一个NIO框架，用于服务器通信相关的多种应用场景</p>
-<blockquote>
-<p><strong>事件驱动</strong>：例如 Client 端发送的是个连接操作或者读请求或者断开连接，Netty 服务端可以读这几种不同的事件做定制的处理</p>
-</blockquote>
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
-<li><p>对 NIO 进行封装，开发者不需要关注 NIO 的底层原理，只需要调用 Netty 组件就能够完成工作。</p>
-</li>
-<li><p>对网络调用透明，从 Socket 建立 TCP 连接到网络异常的处理都做了包装。</p>
-</li>
-<li><p>对数据处理灵活， Netty 支持多种序列化框架，通过“ChannelHandler”机制，可以自定义“编/解码器”。</p>
-</li>
-<li><p>对性能调优友好，Netty 提供了线程池模式以及 Buffer 的重用机制（对象池化），不需要构建复杂的多线程模型和操作队列。</p>
-</li>
-</ul>
-<h2 id="核心组件"><a href="#核心组件" class="headerlink" title="核心组件"></a>核心组件</h2><ul>
-<li>EventLoop：线程，负责处理IO 实践</li>
-<li>EventLoopGroup：线程池，包含了多个NioEventLoop</li>
-<li>Channel：类似 Socket 的抽象，提供了 Socket 的，read(),wirte()，flush（）等操作，可以通过 Channel 获取这个 Channel 绑定到的NioEventLoop</li>
-</ul>
-<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-27-083706.png" alt=""></p>
-<ul>
-<li>Bootstrap:客户端的引导类应用程序网络层配置提供容器</li>
-<li>ServerBootstrap：服务端的引导类应用程序网络层配置提供容器</li>
-<li>ChannelHandler:从应用开发者看来，ChannelHandler是最重要的组件，其中存放用来处理进站和出站数据的用户逻辑。ChannelHandler的方法被网络事件触发，ChannelHandler可以用于几乎任何类型的操作，如将数据从一种格式转换为另一种格式或处理抛出的异常。例如，其子接口ChannelInboundHandler，接受进站的事件和数据以便被用户定义的逻辑处理，或者当响应所连接的客户端时刷新ChannelInboundHandler的数据</li>
-<li>ChannelPipeline：ChannelPipeline为ChannelHandler链提供了一个容器并定义了用于沿着链传播入站和出站事件流的API。当创建Channel时，会自动创建一个附属的ChannelPipeline<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-27-083753.png" alt=""></li>
-</ul>
-<h3 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h3><p>统一的API，适用于不同的协议（阻塞和非阻塞）<br>基于灵活、可扩展的事件驱动模型<br>高度可定制的线程模型<br>可靠的无连接数据Socket支持（UDP）</p>
-<h3 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h3><p>更好的吞吐量，低延迟<br>更低的资源消耗<br>最少的内存复制</p>
-<h3 id="健壮性"><a href="#健壮性" class="headerlink" title="健壮性"></a>健壮性</h3><p>不再因过快、过慢或超负载连接导致OutOfMemoryError<br>不再有在高速网络环境下NIO读写频率不一致的问题</p>
-<h3 id="安全性："><a href="#安全性：" class="headerlink" title="安全性："></a>安全性：</h3><p>完整的SSL/TLS和STARTTLS的支持<br>可用于受限环境下，如 Applet 和OSGI</p>
-<h3 id="易用："><a href="#易用：" class="headerlink" title="易用："></a>易用：</h3><p>详实的Javadoc和大量的示例集</p>
-<p>示例代码：<br>server<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoServer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> port;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EchoServer</span><span class="params">(<span class="keyword">int</span> port)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.port = port;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> EchoServer(<span class="number">8888</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> EchoServerHandler serverHandler = <span class="keyword">new</span> EchoServerHandler();</span><br><span class="line">        <span class="comment">//创建EventLoopGroup，处理事件</span></span><br><span class="line">        EventLoopGroup boss = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">        EventLoopGroup worker = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ServerBootstrap b = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">            b.group(boss,worker)</span><br><span class="line">                    <span class="comment">//指定所使用的NIO传输 Channel</span></span><br><span class="line">                    .channel(NioServerSocketChannel.class)</span><br><span class="line">                    <span class="comment">//使用指定的端口设置套接字地址</span></span><br><span class="line">                    .localAddress(<span class="keyword">new</span> InetSocketAddress(port))</span><br><span class="line">                    <span class="comment">//添加一个EchoServerHandler到子Channel的ChannelPipeline</span></span><br><span class="line">                    .childHandler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel socketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                            <span class="comment">//EchoServerHandler标志为@Shareable,所以我们可以总是使用同样的实例</span></span><br><span class="line">                            socketChannel.pipeline().addLast(serverHandler);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;);</span><br><span class="line">            <span class="comment">//异步的绑定服务器，调用sync()方法阻塞等待直到绑定完成</span></span><br><span class="line">            ChannelFuture future = b.bind().sync();</span><br><span class="line">            future.channel().closeFuture().sync();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">//关闭EventLoopGroup,释放所有的资源</span></span><br><span class="line">            group.shutdownGracefully().sync();</span><br><span class="line">            worker.shutdownGracefully().sync();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ChannelHandler</span>.Sharable <span class="comment">//标识一个 ChannelHandler可以被多个Channel安全地共享</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ByteBuf buffer = (ByteBuf) msg;</span><br><span class="line">        <span class="comment">//将消息记录到控制台</span></span><br><span class="line">        System.out.println(<span class="string">"Server received: "</span> + buffer.toString(CharsetUtil.UTF_8));</span><br><span class="line">        <span class="comment">//将接受到消息回写给发送者</span></span><br><span class="line">        ctx.write(buffer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelReadComplete</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">hbv        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)</span><br><span class="line">                .addListener(ChannelFutureListener.CLOSE);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx, Throwable cause)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">//打印异常栈跟踪</span></span><br><span class="line">        cause.printStackTrace();</span><br><span class="line">        <span class="comment">//关闭该Channel</span></span><br><span class="line">        ctx.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Client<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoClient</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String host;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> port;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EchoClient</span><span class="params">(String host, <span class="keyword">int</span> port)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.host = host;</span><br><span class="line">        <span class="keyword">this</span>.port = port;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        EventLoopGroup group = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Bootstrap b = <span class="keyword">new</span> Bootstrap();</span><br><span class="line">            b.group(group)</span><br><span class="line">                    .channel(NioSocketChannel.class)</span><br><span class="line">                    .remoteAddress(<span class="keyword">new</span> InetSocketAddress(host, port))</span><br><span class="line">                    .handler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel socketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                            socketChannel.pipeline().addLast(<span class="keyword">new</span> EchoClientHandler());</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;);</span><br><span class="line">            ChannelFuture channelFuture = b.connect().sync();</span><br><span class="line">            channelFuture.channel().closeFuture().sync();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            group.shutdownGracefully().sync();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> EchoClient(<span class="string">"127.0.0.1"</span>, <span class="number">8888</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ChannelHandler</span>.Sharable</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoClientHandler</span> <span class="keyword">extends</span> <span class="title">SimpleChannelInboundHandler</span>&lt;<span class="title">ByteBuf</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">channelRead0</span><span class="params">(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Client received: "</span>+byteBuf.toString());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ctx.writeAndFlush(Unpooled.copiedBuffer(<span class="string">"Netty rocks"</span>,CharsetUtil.UTF_8));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx, Throwable cause)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        cause.printStackTrace();</span><br><span class="line">        ctx.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h1 id="Netty能够做什么"><a href="#Netty能够做什么" class="headerlink" title="Netty能够做什么"></a>Netty能够做什么</h1><ul>
-<li>远程服务调用，高性能网络通信如 Dubbo</li>
-<li>开发异步、非阻塞的 TCP 网络应用程序；</li>
-<li>开发异步、非阻塞的 UDP 网络应用程序；</li>
-<li>Flink，Cassandra，Spark 等</li>
-<li>开发异步文件传输应用程序；</li>
-<li>开发异步 HTTP 服务端和客户端应用程序；</li>
-<li>提供对多种编解码框架的集成，包括谷歌的 Protobuf、Jbossmarshalling、Java 序列化、压缩编解码、XML 解码、字符串编解码等，这些编解码框架可以被用户直接使用；</li>
-<li>提供形式多样的编解码基础类库，可以非常方便的实现私有协议栈编解码框架的二次定制和开发；</li>
-<li>基于职责链模式的 Pipeline-Handler 机制，用户可以非常方便的对网络事件进行拦截和定制；</li>
-<li>所有的 IO 操作都是异步的，用户可以通过 Future-Listener 机制主动 Get 结果或者由 IO 线程操作完成之后主动 Notify 结果，用户的业务线程不需要同步等待</li>
-<li>IP 黑白名单控制；</li>
-<li>打印消息码流；</li>
-<li>流量控制和整形；</li>
-<li>性能统计；</li>
-</ul>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/26/Netty入门/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -629,7 +434,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-24 17:39:41" itemprop="dateModified" datetime="2020-03-24T17:39:41+08:00">2020-03-24</time>
+                <time title="修改时间：2020-04-01 17:57:31" itemprop="dateModified" datetime="2020-04-01T17:57:31+08:00">2020-04-01</time>
               </span>
 
           
@@ -685,82 +490,21 @@
 <td style="text-align:left">已完成</td>
 </tr>
 <tr>
-<td style="text-align:left">Zookeeper</td>
-<td style="text-align:left">分布式锁</td>
-<td style="text-align:left">X</td>
-</tr>
-<tr>
 <td style="text-align:left">布隆过滤器</td>
 <td style="text-align:left">判断hash是否存在</td>
 <td style="text-align:left">已完成</td>
 </tr>
 </tbody>
 </table>
-<p><a href="https://github.com/yefan813/short-url.git" target="_blank" rel="noopener">代码地址</a></p>
-<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><ul>
-<li>短链接好处</li>
-<li>短链跳转的原理</li>
-<li>锻炼生成的几种方式</li>
-</ul>
-<h2 id="短链接好处"><a href="#短链接好处" class="headerlink" title="短链接好处"></a>短链接好处</h2><p><img src="https://img2018.cnblogs.com/blog/725429/201911/725429-20191109192512207-1372819004.png" alt=""></p>
-<h3 id="为啥要使用短链接"><a href="#为啥要使用短链接" class="headerlink" title="为啥要使用短链接"></a>为啥要使用短链接</h3><ul>
-<li>大家可能都收到过这样的推广短信，点击上面链接后会跳转到指定的地址，大家有没想过别后的实现细节</li>
-<li>我们经常需要将链接转成二维码的形式分享给他人，如果是长链的话二维码密集难识别，短链就不存在这个问题了,如图示</li>
-<li>链接太长在有些平台上无法自动识别为超链接</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">原始网址：https://yefan813.github.io/</span><br><span class="line">短网址：http://xxxx.cn/Vvux2</span><br></pre></td></tr></table></figure>
-<p>大家可能都收到过这样的推广短信，点击上面链接后会跳转到指定的地址，大家有没想过背后的实现细节</p>
-<h2 id="短链跳转的原理"><a href="#短链跳转的原理" class="headerlink" title="短链跳转的原理"></a>短链跳转的原理</h2><p> 我们可以从这些短链接请求看下原理<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-103507.png" alt=""><br>我们可以看到请求的http状态码是 302（重定向） 和 Location值具体跳转目标地址，浏览器拿到了得到这个长链接，发起重定向请求到目标地址</p>
-<p>整体交互流程如下<br><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-103324.png" alt=""></p>
-<p>这里有个问题http状态码, 301和302 有什么区别</p>
-<ul>
-<li>301: 代表 永久重定向，也就是说第一次请求拿到长链接后，下次浏览器再去请求短链的话，不会向短网址服务器请求了，而是直接从浏览器的缓存里拿，这样在 server 层面就无法获取到短网址的点击数了，如果这个链接刚好是某个活动的链接，也就无法分析此活动的效果。所以我们一般不采用 301</li>
-<li>302: 代表 临时重定向，也就是说每次去请求短链都会去请求短网址服务器（除非响应中用 Cache-Control 或 Expired 暗示浏览器缓存）,这样就便于 server 统计点击数，所以虽然用 302 会给 server 增加一点压力，但在数据异常重要的今天，这点代码是值得的，所以推荐使用 302</li>
-</ul>
-<h2 id="短链接生成的几种方式"><a href="#短链接生成的几种方式" class="headerlink" title="短链接生成的几种方式"></a>短链接生成的几种方式</h2><p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-24-062346.png" alt=""></p>
-<p>通过观察发现上面提到的短链接能发现，它是由固定的短链接域名 + 长链接映射成的一串字母组成，那么长链接怎么才能映射成一串字母呢？</p>
-<h3 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h3><p>  哈希算法非常多，我们如何选择呢？ 很多人可能会想到MD5, SHA等算法，但是我们选择 hash 算法的时候需要考虑的，生成的性能，<br>和产生冲突的概率。我们不回去考虑反向解码的性能或者难度，因为我们之直接将生成的 hash 字符串和长链接映射，不需反向生成。</p>
-<p>  我们项目中使用Google 出品的 MurmurHash 算法，MurmurHash 是一种非加密型哈希函数，适用于一般的哈希检索操作。与其它流行的哈希函数相比，对于规律性较强的 key，MurmurHash 的随机分布特征表现更良好</p>
-<p>  非加密意味着着相比 MD5，SHA 这些函数它的性能肯定更高（实际上性能是 MD5 等加密算法的十倍以上），也正是由于它的这些优点，所以虽然它出现于 2008，但目前已经广泛应用到 Redis、MemCache、Cassandra、HBase、Lucene 等众多著名的软件中</p>
-<p>  MurmurHash 提供了两种长度的哈希值，32 bit，128 bit，为了让网址尽可通地短，我们选择 32 bit 的哈希值，32 bit 能表示的最大值近 43 亿，对于中小型公司的业务而言绰绰有余。</p>
-<p>  对长链(<a href="https://yefan813.github.io/)做">https://yefan813.github.io/)做</a> MurmurHash 计算，得到的哈希值为 849756688，于是我们现在得到的短链为 固定短链域名+哈希值 = <a href="http://xxxx.cn/849756688" target="_blank" rel="noopener">http://xxxx.cn/849756688</a></p>
-<h4 id="1-如何让短网址更短？"><a href="#1-如何让短网址更短？" class="headerlink" title="1.如何让短网址更短？"></a>1.如何让短网址更短？</h4><p>  不过，你可能已经看出来了，通过 MurmurHash 算法得到的短网址还是很长啊，而且跟我们开头那个网址的格式好像也不一样。别着急，我们只需要稍微改变一个哈希值的表示方法，就可以轻松把短网址变得更短些。</p>
-<p>  我们可以将 10 进制的哈希值，转化成更高进制的哈希值，这样哈希值就变短了。我们知道，16 进制中，我们用 A～E，来表示 10～15。在网址 URL 中，常用的合法字符有 0～9、a～z、A～Z 这样 62 个字符。为了让哈希值表示起来尽可能短，我们可以将 10 进制的哈希值转化成 62 进制。具体的计算过程，我写在这里了。最终用 62 进制表示的短网址就是<br>  <img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-24-062239.png" alt=""></p>
-<h3 id="2-如何解决哈希冲突"><a href="#2-如何解决哈希冲突" class="headerlink" title="2.如何解决哈希冲突"></a>2.如何解决哈希冲突</h3><p>  解决思路，根据长链接生成hash字符串，然后去查找数据库会出现以下几种情况</p>
-<ol>
-<li>数据库不存在：这时候直接插入字符串和对应的长链接即可。</li>
-<li>数据库存在：对应的长链接一样，这时说明其他人已经将次长链接生成了对应的短链接，这时候直接返回即可。</li>
-<li>数据库存在：对应的长链接不一样，则说明冲突了，此时可以将长链接尾部，拼接一串特殊字符，比如“[DUPLICATED]”，然后跟再重新计算哈希值，两次哈希计算都冲突的概率，显然是非常低的。假设出现非常极端的情况，又发生冲突了，我们可以再拼接字符串，再计算哈希值。然后把计算得到的哈希值，跟原始网址拼接了特殊字符串之后的文本，一并存储在 MySQL 数据库中</li>
-</ol>
-<h3 id="压测一下看看性能"><a href="#压测一下看看性能" class="headerlink" title="压测一下看看性能"></a>压测一下看看性能</h3><p>其实这里没有做任何的缓存，所以请求全部落到数据库，很容易就能想到不能支持高并发，但还是压测一下装个 X</p>
-<blockquote>
-<p>100线程 并发执行生成短链接接口</p>
-</blockquote>
-<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-134741.png" alt=""></p>
-<blockquote>
-<p>短链接跳转接口结果和上面差不多</p>
-</blockquote>
-<h3 id="短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到-redis（二级缓存）-，也可以放入到-Nginx（一级缓存）"><a href="#短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到-redis（二级缓存）-，也可以放入到-Nginx（一级缓存）" class="headerlink" title="短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到 redis（二级缓存） ，也可以放入到 Nginx（一级缓存）"></a>短链接跳转需要查询数据库，这时候其实可以将查询到的数据放入到本地缓存（三级缓存）还可以放入到 redis（二级缓存） ，也可以放入到 Nginx（一级缓存）</h3><h4 id="加入本地缓存-Ehcache"><a href="#加入本地缓存-Ehcache" class="headerlink" title="加入本地缓存 Ehcache"></a>加入本地缓存 Ehcache</h4><blockquote>
-<p>服务使用 Ehcache 后，压测短链接跳转结果</p>
-</blockquote>
-<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-23-164034.png" alt=""></p>
-<h4 id="加入-Redis-缓存"><a href="#加入-Redis-缓存" class="headerlink" title="加入 Redis 缓存"></a>加入 Redis 缓存</h4><p>TODO</p>
-<h4 id="加入-OpenResty"><a href="#加入-OpenResty" class="headerlink" title="加入 OpenResty"></a>加入 OpenResty</h4><p>TODO</p>
-<h3 id="3-如何优化哈希算法生成短连接的性能"><a href="#3-如何优化哈希算法生成短连接的性能" class="headerlink" title="3.如何优化哈希算法生成短连接的性能"></a>3.如何优化哈希算法生成短连接的性能</h3><p>TODO</p>
-<h2 id="利用-ID-生成器生成短链接"><a href="#利用-ID-生成器生成短链接" class="headerlink" title="利用 ID 生成器生成短链接"></a>利用 ID 生成器生成短链接</h2><p>TODO</p>
-<h2 id="阶段一：实现一个简单的短连接服务"><a href="#阶段一：实现一个简单的短连接服务" class="headerlink" title="阶段一：实现一个简单的短连接服务"></a>阶段一：实现一个简单的短连接服务</h2><ol>
-<li>根据URL生成短连接</li>
-<li>实现短连接的跳转</li>
-</ol>
-<p>问题：</p>
-<ol>
-<li>如何解决Hash冲突问题</li>
-<li>如何支持高性能短连接结构设计，例如：如何支持大量的并发生成短连接请求</li>
-</ol>
-<h2 id="阶段二：实现一个高性能的短链接服务器"><a href="#阶段二：实现一个高性能的短链接服务器" class="headerlink" title="阶段二：实现一个高性能的短链接服务器"></a>阶段二：实现一个高性能的短链接服务器</h2><ol>
-<li>支持大并发访问生成短链接</li>
-</ol>
-
+<p><a href="https://github.com/yefan813/short-url.git" target="_blank" rel="noopener">代码地址</a><br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/23/如何实现一个短链接服务/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -802,10 +546,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-03-21 22:54:39 / 修改时间：22:55:46" itemprop="dateCreated datePublished" datetime="2020-03-21T22:54:39+08:00">2020-03-21</time>
+              <time title="创建时间：2020-03-21 22:54:39" itemprop="dateCreated datePublished" datetime="2020-03-21T22:54:39+08:00">2020-03-21</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-01 17:57:54" itemprop="dateModified" datetime="2020-04-01T17:57:54+08:00">2020-04-01</time>
+              </span>
 
           
             <span id="/2020/03/21/数据库，缓存一致性方案/" class="post-meta-item leancloud_visitors" data-flag-title="数据库，缓存一致性方案" title="阅读次数">
@@ -834,24 +584,15 @@
 <li><p>更新的时候，先删除缓存，然后再更新数据库</p>
 </li>
 </ul>
-<h1 id="为什么是删除缓存，而不是更新缓存"><a href="#为什么是删除缓存，而不是更新缓存" class="headerlink" title="为什么是删除缓存，而不是更新缓存"></a>为什么是删除缓存，而不是更新缓存</h1><p>1，因为很多时候缓存不是直接数据库直接取出来的值，很可能做了逻辑运算以后再存入数据库<br>如果这类的数据要更新，则需要将相关的数据都查出来再去计算更新，这样代价太高了。</p>
-<p>2，如果你频繁修改一个缓存涉及的多个表，那么这个缓存会被频繁的更新，频繁的更新缓存，但是问题在于，这个缓存到底会不会被频繁访问到？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">举个例子，一个缓存涉及的表的字段，在 1 分钟内就修改了 20 次，或者是 100 次，那么缓存更新 20 次，100 次; 但是这个缓存在 1 分钟内就被读取了 1 次，有大量的冷数据</span><br><span class="line"></span><br><span class="line">热冷数据的 28 黄金法则：20% 的数据，占用了 80% 的访问量</span><br><span class="line"></span><br><span class="line">实际上，如果你只是删除缓存的话，那么 1 分钟内，这个缓存不过就重新计算一次而已，开销大幅度降低</span><br><span class="line"></span><br><span class="line">每次数据过来，就只是删除缓存，然后修改数据库，如果这个缓存，在 1 分钟内只是被访问了 1 次，那么只有那 1 次缓存是要被重新计算的，用缓存才去算缓存</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>其实删除缓存，而不是更新缓存，就是一个 lazy 计算的思想，不要每次都重新做复杂的计算，不管它会不会用到，而是让它到需要被使用的时候再重新计算<br>mybatis、hibernate 就是懒加载思想</p>
-</blockquote>
-<p><strong>问题2</strong>：一个比较复杂的数据不一致问题<br>1，数据发生了变更，先删除缓存，然后要去修改数据库，此时还没修改<br>2，一个并发请求过来，去读缓存，发现缓存空了，然后去查询数据库，查到了修改前的值，放到缓存<br>这时候出现数据库和缓存不一致。</p>
-<p><strong><em>解决思路</em></strong>： 导致这种情况出现的原因是读写并发请求造成的，根据某个规则比如商品 ID 相同的请求路由到一台服务器上，可以尝试将读请求和更新请求进行串行化处理,</p>
-<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-03-21-143455.png" alt=""></p>
-<p><strong><em>具体流程如下</em></strong>：</p>
-<ul><br><li>更新数据的时候，根据数据的唯一标识，将操作路由之后，发送到一个 jvm 内部的队列中</li><br><li>读取数据的时候，如果发现数据不在缓存中，那么将重新读取数据 + 更新缓存的操作，根据唯一标识路由之后，也发送同一个 jvm 内部的队列中</li><br><li>一个队列对应一个工作线程，每个工作线程串行拿到对应的操作，然后一条一条的执行</li><br></ul>
-
-<p>这样的话，一个数据变更的操作，先执行，删除缓存，然后再去更新数据库，但是还没完成更新<br>此时如果一个读请求过来，读到了空的缓存，那么可以先将缓存更新的请求发送到队列中，此时会在队列中积压，然后同步等待缓存更新完成<br>待那个队列对应的工作线程完成了上一个操作的数据库的修改之后，才会去执行下一个操作，也就是缓存更新的操作，此时会从数据库中读取最新的值，然后写入缓存中<br>如果请求还在等待时间范围内，不断轮询发现可以取到值了，那么就直接返回;<br>如果请求等待的时间超过一定时长，那么这一次直接从数据库中读取当前的旧值</p>
-<h3 id="需要优化的点"><a href="#需要优化的点" class="headerlink" title="需要优化的点"></a>需要优化的点</h3><p>1，一个队列中已经存在一个更新操作 + 一个读取操作，则后续的读请求可以尝试等待一段时间从缓存读取，因为前面的更新会删除缓存，后面的读取请求会将<br>再次放入到缓存中，后续的读请求可以尝试等待一段时间从缓存读取，如果等待时间过了再尝试从数据库去拿</p>
-<h2 id="此方案的风险点"><a href="#此方案的风险点" class="headerlink" title="此方案的风险点"></a><b style="color:red">此方案的风险点</b></h2><p>1，可能 数据更新很频繁，导致队列中积压了大量更新操作在里面，然后读请求会发生大量的超时，最后导致大量的请求直接走数据库。所以务必通过一些模拟真实的测试，看看更新数据的频繁是怎样的</p>
-<p>2,因为一个队列中，可能会积压针对多个数据项的更新操作，因此需要根据自己的业务情况进行测试，可能需要部署多个服务，每个服务分摊一些数据的更新操作</p>
-<p>3, 会存在热点数据都打到同一台机器上的，可能造成某台机器压力过大的问题。</p>
-
+<h1 id="为什么是删除缓存，而不是更新缓存"><a href="#为什么是删除缓存，而不是更新缓存" class="headerlink" title="为什么是删除缓存，而不是更新缓存"></a>为什么是删除缓存，而不是更新缓存</h1>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/21/数据库，缓存一致性方案/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -967,7 +708,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-08 22:57:32" itemprop="dateModified" datetime="2020-03-08T22:57:32+08:00">2020-03-08</time>
+                <time title="修改时间：2020-04-01 18:03:08" itemprop="dateModified" datetime="2020-04-01T18:03:08+08:00">2020-04-01</time>
               </span>
 
           
@@ -989,49 +730,14 @@
 
       
           <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Spring Boot已经为很多的开源项目提供了很多的 starter项目，你也可以开发你自定义的 starter。再开始之前让我们先理解下Spring Boot是如何自动配置的，如果你已经知道 Spring Boot自动配置的过程可以直接调到创建自定义starter步骤。</p>
-<h2 id="Spring-Boot-自动配置"><a href="#Spring-Boot-自动配置" class="headerlink" title="Spring Boot 自动配置"></a>Spring Boot 自动配置</h2><p>当你启动 Spring Boot 应用的时候，Spring Boot 会检测一个特殊的文件，它是 spring-boot-autoconfigure 这个包内的META-INF/spring.factories</p>
-<p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gckiuxcwefj30pk09q402.jpg" alt=""></p>
-<p>它里面的内容我们重点关注这里<br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gckivm3o4hj31500qq7d6.jpg" alt=""></p>
-<p>这里是利用的spring SPI提供的扩展机制。</p>
-<p>这里简单介绍下 SPI （全称Service Provider Interface），是Java提供的一套用来被第三方实现或者扩展的接口，它可以用来启用框架扩展和替换组件。 SPI的作用就是为这些被扩展的API寻找服务实现。</p>
-<p>通俗一点讲就是SPI 就是服务方提供接口，具体的实现由其他方来实现，只需要将实现了的类全路径加入到文件中，服务方启动的时候就会把这些文件内容解析出来，由于配置了类全路径地址，直接利用反射机制将这些类初始化提供使用。</p>
-<h2 id="开始创建自定义的starter"><a href="#开始创建自定义的starter" class="headerlink" title="开始创建自定义的starter"></a>开始创建自定义的starter</h2><ul>
-<li>创建一个Spring Boot 项目，在pom.xml中引入</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-autoconfigure<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.2.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>创建一个类 。该类starter 引入后自动加入到 Spring 容器中</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class HelloService &#123;</span><br><span class="line">    private String prefix;</span><br><span class="line">    private String suffix;</span><br><span class="line">    </span><br><span class="line">    public HelloService() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public HelloService(String prefix, String suffix) &#123;</span><br><span class="line">        this.prefix = prefix;</span><br><span class="line">        this.suffix = suffix;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String sayHello(String word) &#123;</span><br><span class="line">        return prefix + word + suffix;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>创建一个配置类，提供 starter 引入方自定义属性</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">//prefix = &quot;hello&quot; 引入 starter 的项目配置文件的前置是 hello</span><br><span class="line">@ConfigurationProperties(prefix = &quot;hello&quot;)</span><br><span class="line">public class HelloProperties &#123;</span><br><span class="line">    private String prefix;</span><br><span class="line">    private String suffix;</span><br><span class="line"></span><br><span class="line">    public String getPrefix() &#123;</span><br><span class="line">        return prefix;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setPrefix(String prefix) &#123;</span><br><span class="line">        this.prefix = prefix;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getSuffix() &#123;</span><br><span class="line">        return suffix;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setSuffix(String suffix) &#123;</span><br><span class="line">        this.suffix = suffix;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>创建自动配置类</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @Configuration 定义当前类是个配置类</span><br><span class="line"> * @ConditionalOnClass，当classpath下发现该类（HelloService）的情况下进行自动配置。</span><br><span class="line"> * @ConditionalOnMissingBean，当Spring Context中不存在该Bean时。</span><br><span class="line"> * @ConditionalOnProperty(prefix = &quot;example.service&quot;,value = &quot;enabled&quot;,havingValue = &quot;true&quot;)，</span><br><span class="line"> * 当配置文件中example.service.enabled=true时将这个类创建为一个 Spring Bean</span><br><span class="line"> * @EnableConfigurationProperties(HelloProperties.class) 让使用 @ConfigurationProperties 注解的类生效</span><br><span class="line"> */</span><br><span class="line">@Configuration</span><br><span class="line">@ConditionalOnClass(HelloService.class)</span><br><span class="line">@EnableConfigurationProperties(HelloProperties.class)</span><br><span class="line">public class HelloAutoConfiguration &#123;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    private HelloProperties helloProperties;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    @ConditionalOnMissingBean</span><br><span class="line">    @ConditionalOnProperty(prefix = &quot;hello&quot;, value = &quot;enable&quot;, havingValue = &quot;true&quot;)</span><br><span class="line">    HelloService helloService() &#123;</span><br><span class="line">        return new HelloService(helloProperties.getPrefix(),helloProperties.getSuffix());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>在/resources/META-INF/spring.factories 创建这个文件<br>文件写入内容</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.yefan.hello.HelloAutoConfiguration</span><br></pre></td></tr></table></figure>
-<ul>
-<li>mvn install 将项目安装到本地仓库</li>
-</ul>
-<hr>
-<ul>
-<li>创建另外一个Spring Boot 项目，像引入其他 starter 方式引入上面创建的 maven 依赖</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.yefan.study<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hello-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>在application.yml中配置</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hello:</span><br><span class="line">  enable: true</span><br><span class="line">  prefix: xxx</span><br><span class="line">  suffix: xxx</span><br></pre></td></tr></table></figure>
-<ul>
-<li>注入 HelloService 即可使用</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@Autowired</span><br><span class="line">HelloService helloService;</span><br></pre></td></tr></table></figure>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/06/SpringBoot自定义starter/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1073,10 +779,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-03-05 20:15:25 / 修改时间：20:37:18" itemprop="dateCreated datePublished" datetime="2020-03-05T20:15:25+08:00">2020-03-05</time>
+              <time title="创建时间：2020-03-05 20:15:25" itemprop="dateCreated datePublished" datetime="2020-03-05T20:15:25+08:00">2020-03-05</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-01 18:02:56" itemprop="dateModified" datetime="2020-04-01T18:02:56+08:00">2020-04-01</time>
+              </span>
 
           
             <span id="/2020/03/05/Spring中Bean的生命周期/" class="post-meta-item leancloud_visitors" data-flag-title="Spring中Bean的生命周期" title="阅读次数">
@@ -1096,10 +808,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="Spring-中-Bean-的生命周期图"><a href="#Spring-中-Bean-的生命周期图" class="headerlink" title="Spring 中 Bean 的生命周期图"></a>Spring 中 Bean 的生命周期图</h1><p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gcjbq7e3q8j30n8123agj.jpg" alt=""></p>
-<p><a href="https://github.com/yefan813/spring-bean-life-cycle" target="_blank" rel="noopener">源码地址</a><br>项目中每个类的作用在上图中都写得非常清楚，可以下载下载直接运行看下整体效果，最好能 Debug 一下看下详细的流程。</p>
-<p>###参考文献：<br><a href="https://www.cnblogs.com/xrq730/p/5721366.html" target="_blank" rel="noopener">https://www.cnblogs.com/xrq730/p/5721366.html</a><br><a href="https://blog.csdn.net/caihaijiang/article/details/35552859" target="_blank" rel="noopener">https://blog.csdn.net/caihaijiang/article/details/35552859</a><br><a href="https://www.cnblogs.com/zrtqsk/p/3735273.html" target="_blank" rel="noopener">https://www.cnblogs.com/zrtqsk/p/3735273.html</a></p>
-
+          <h1 id="Spring-中-Bean-的生命周期图"><a href="#Spring-中-Bean-的生命周期图" class="headerlink" title="Spring 中 Bean 的生命周期图"></a>Spring 中 Bean 的生命周期图</h1>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/05/Spring中Bean的生命周期/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

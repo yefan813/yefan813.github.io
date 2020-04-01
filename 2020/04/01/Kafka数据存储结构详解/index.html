@@ -46,13 +46,13 @@
   };
 </script>
 
-  <meta name="description" content="Kafka存储结构详解1 Topic 用一个Topic的消息可以分布在一个或者多个broker上 一个 Topic 包含一个或者多个 partation 每个消息都属于且仅属于一个Topic Producer 发布数据时，必须指定该消息发布到哪一个 Topic 上 Consumer 订阅消息时，必须制定订阅哪个 Topic   2 Partition 物理概念，一个 partition 只分布在一">
+  <meta name="description" content="Kafka存储结构详解1 Topic 用一个Topic的消息可以分布在一个或者多个broker上 一个 Topic 包含一个或者多个 partation 每个消息都属于且仅属于一个Topic Producer 发布数据时，必须指定该消息发布到哪一个 Topic 上 Consumer 订阅消息时，必须制定订阅哪个 Topic">
 <meta name="keywords" content="消息队列,MQ,Kafka">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kafka数据存储结构详解">
 <meta property="og:url" content="https://yefan813.github.io/2020/04/01/Kafka数据存储结构详解/index.html">
 <meta property="og:site_name" content="奋斗不息">
-<meta property="og:description" content="Kafka存储结构详解1 Topic 用一个Topic的消息可以分布在一个或者多个broker上 一个 Topic 包含一个或者多个 partation 每个消息都属于且仅属于一个Topic Producer 发布数据时，必须指定该消息发布到哪一个 Topic 上 Consumer 订阅消息时，必须制定订阅哪个 Topic   2 Partition 物理概念，一个 partition 只分布在一">
+<meta property="og:description" content="Kafka存储结构详解1 Topic 用一个Topic的消息可以分布在一个或者多个broker上 一个 Topic 包含一个或者多个 partation 每个消息都属于且仅属于一个Topic Producer 发布数据时，必须指定该消息发布到哪一个 Topic 上 Consumer 订阅消息时，必须制定订阅哪个 Topic">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-082344.png">
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-065909.png">
@@ -63,10 +63,10 @@
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-091728.png">
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-091807.png">
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-092404.png">
-<meta property="og:updated_time" content="2020-04-01T09:46:13.156Z">
+<meta property="og:updated_time" content="2020-04-01T10:02:16.504Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kafka数据存储结构详解">
-<meta name="twitter:description" content="Kafka存储结构详解1 Topic 用一个Topic的消息可以分布在一个或者多个broker上 一个 Topic 包含一个或者多个 partation 每个消息都属于且仅属于一个Topic Producer 发布数据时，必须指定该消息发布到哪一个 Topic 上 Consumer 订阅消息时，必须制定订阅哪个 Topic   2 Partition 物理概念，一个 partition 只分布在一">
+<meta name="twitter:description" content="Kafka存储结构详解1 Topic 用一个Topic的消息可以分布在一个或者多个broker上 一个 Topic 包含一个或者多个 partation 每个消息都属于且仅属于一个Topic Producer 发布数据时，必须指定该消息发布到哪一个 Topic 上 Consumer 订阅消息时，必须制定订阅哪个 Topic">
 <meta name="twitter:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-082344.png">
 
 <link rel="canonical" href="https://yefan813.github.io/2020/04/01/Kafka数据存储结构详解/">
@@ -207,7 +207,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-04-01 17:44:59 / 修改时间：17:46:13" itemprop="dateCreated datePublished" datetime="2020-04-01T17:44:59+08:00">2020-04-01</time>
+              <time title="创建时间：2020-04-01 17:44:59 / 修改时间：18:02:16" itemprop="dateCreated datePublished" datetime="2020-04-01T17:44:59+08:00">2020-04-01</time>
             </span>
 
           
@@ -235,7 +235,7 @@
 <li>Producer 发布数据时，必须指定该消息发布到哪一个 Topic 上</li>
 <li>Consumer 订阅消息时，必须制定订阅哪个 Topic</li>
 </ul>
-<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-082344.png" alt=""></p>
+<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-082344.png" alt=""><br><a id="more"></a></p>
 <h2 id="2-Partition"><a href="#2-Partition" class="headerlink" title="2 Partition"></a>2 Partition</h2><ul>
 <li>物理概念，一个 partition 只分布在一个 broker 上（不考虑备份）</li>
 <li>一个 partition 物理上对应一个文件夹</li>
