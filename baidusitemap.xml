@@ -4,6 +4,23 @@
 
     
   <url>
+    <loc>https://yefan813.github.io/2020/04/01/Kafka%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3/</loc>
+    <lastmod>2020-04-02T02:14:51.666Z</lastmod>
+    <data>
+        <display>
+        <title>Kafka数据存储结构详解</title>
+        <pubTime>2020-04-01T09:44:59.000Z</pubTime>
+        
+        <tag>消息队列,MQ,Kafka</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://yefan813.github.io/2019/10/24/tcc-traction%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2020-04-01T10:03:16.785Z</lastmod>
     <data>
@@ -76,23 +93,6 @@
         <pubTime>2020-03-26T12:53:58.000Z</pubTime>
         
         <tag>Netty,NIO</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://yefan813.github.io/2020/04/01/Kafka%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3/</loc>
-    <lastmod>2020-04-01T10:02:16.504Z</lastmod>
-    <data>
-        <display>
-        <title>Kafka数据存储结构详解</title>
-        <pubTime>2020-04-01T09:44:59.000Z</pubTime>
-        
-        <tag>消息队列,MQ,Kafka</tag>
          
          
            
