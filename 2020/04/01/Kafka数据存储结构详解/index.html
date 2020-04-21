@@ -63,7 +63,7 @@
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-091728.png">
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-091807.png">
 <meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-092404.png">
-<meta property="og:updated_time" content="2020-04-02T02:14:51.666Z">
+<meta property="og:updated_time" content="2020-04-20T12:16:19.396Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kafka数据存储结构详解">
 <meta name="twitter:description" content="Kafka存储结构详解1 Topic 用一个Topic的消息可以分布在一个或者多个broker上 一个 Topic 包含一个或者多个 partation 每个消息都属于且仅属于一个Topic Producer 发布数据时，必须指定该消息发布到哪一个 Topic 上 Consumer 订阅消息时，必须制定订阅哪个 Topic">
@@ -213,7 +213,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-02 10:14:51" itemprop="dateModified" datetime="2020-04-02T10:14:51+08:00">2020-04-02</time>
+                <time title="修改时间：2020-04-20 20:16:19" itemprop="dateModified" datetime="2020-04-20T20:16:19+08:00">2020-04-20</time>
               </span>
 
           
@@ -273,7 +273,7 @@
 <h2 id="4-消费者如何根据-offset-查找-message"><a href="#4-消费者如何根据-offset-查找-message" class="headerlink" title="4 消费者如何根据 offset 查找 message"></a>4 消费者如何根据 offset 查找 message</h2><p>假如我们想要读取offset=1066的message，需要通过下面2个步骤查找。</p>
 <ol>
 <li>查找segment file<br>00000000000000000000.index表示最开始的文件，起始偏移量(offset)为0.第二个文件00000000000000001018.index的消息量起始偏移量为1019 = 1018 + 1.同样，第三个文件00000000000000002042.index的起始偏移量为2043=2042 + 1，其他后续文件依次类推，以起始偏移量命名并排序这些文件，只要根据offset 二分查找文件列表，就可以快速定位到具体文件。 当offset=1066时定位到00000000000000001018.index|log</li>
-<li>通过segment file查找message<br>通过第一步定位到segment file，当offset=1066时，依次定位到00000000000000001018.index的元数据物理位置和00000000000000001018.log的物理偏移地址，此时我们只能拿到1065的物理偏移地址，然后再通过00000000000000368769.log顺序查找直到offset=1066为止。每个message都有固定的格式很容易判断是否是下一条消息</li>
+<li>通过segment file查找message<br>通过第一步定位到segment file，当offset=1066时，依次定位到00000000000000001018.index的元数据物理位置和00000000000000001018.log的物理偏移地址，此时我们只能拿到1065的物理偏移地址，然后再通过00000000000000001018.log顺序查找直到offset=1066为止。每个message都有固定的格式很容易判断是否是下一条消息</li>
 </ol>
 <p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-04-01-092404.png" alt=""></p>
 
