@@ -171,6 +171,91 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2020/05/20/记一次生产异常问题排查过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奋斗不息">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/20/记一次生产异常问题排查过程/" class="post-title-link" itemprop="url">记一次生产异常问题排查过程</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-20 14:59:34 / 修改时间：16:16:50" itemprop="dateCreated datePublished" datetime="2020-05-20T14:59:34+08:00">2020-05-20</time>
+            </span>
+
+          
+            <span id="/2020/05/20/记一次生产异常问题排查过程/" class="post-meta-item leancloud_visitors" data-flag-title="记一次生产异常问题排查过程" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="账号中心异常日志问题排查"><a href="#账号中心异常日志问题排查" class="headerlink" title="账号中心异常日志问题排查"></a>账号中心异常日志问题排查</h1><p>今天上午发现调用账号中心接口异常，于是立马去线上查看日志发现了大量的异常信息，异常日志如下：<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fyzjeapsjtj31ez0u0wud.jpg" alt=""><br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fyzjp2hwa4j327y0m4wn7.jpg" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error querying database.  Cause: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure</span><br></pre></td></tr></table></figure>
+<p>于是上网查了下相关文章，给出如下解释</p>
+<p>MySQL默认连接存活时长为28800秒，即8小时。如果在wait_timeout期间内，数据库连接(java.sql.Connection)一直处于等待状态，MySQL就将该连接关闭。此时，数据库连接池仍然合法地持有该连接，当用该连接来进行数据库操作时，就报上述错误。</p>
+<p><em>查了下线上账号中心库的 wait_timeout时间为259200s=3天</em></p>
+<p>确实从异常日志文件也能看到异常信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Caused by: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: The last packet successfully received from the server was 1,536,593,656 milliseconds ago.  The last packet sent successfully to the server was 1,536,593,656 milliseconds ago. is longer than the server configured value of &apos;wait_timeout&apos;. You should consider either expiring and/or testing connection validity before use in your application, increasing the server configured values for client timeouts, or using the Connector/J connection property &apos;autoReconnect=true&apos; to avoid this problem.</span><br></pre></td></tr></table></figure></p>
+<p>从日志文件看出有些数据库操作正常的，有些查询是异常的，所有猜测大概是数据库连接池中部分链接其实已经断开。</p>
+<p>其中异常日志也给出了原因和响应的解决办法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">or using the Connector/J connection property &apos;autoReconnect=true&apos; to avoid this problem.</span><br></pre></td></tr></table></figure>
+<p>方法一：<br>即使用autoReconnect=true来避免面这个这个问题，但是查了下配置文件中发现已经配置了此参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxxauth.datasource.url=jdbc:mysql://xxxxx?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;rewriteBatchedStatements=TRUE&amp;useSSL=false</span><br></pre></td></tr></table></figure>
+<p>既然已经配置了那为什么还有这个问题，于是查了想相关文档<br>autoReconnect=true这个参数对 mysql5以上的版本不生效，现在公司 mysql 使用的都是5.6版本，所以这个方法不行。</p>
+<p>方法二：<br>将数据库 wait_timeout调大，但是就算调大可能链接空闲等待的时间还是会超出等待时间还是不能解决实际问题。</p>
+<p>方法三：<br>数据库连接池配置：testOnBorrow、testOnReturn、testWhileIdle属性，意义分别是取得、返回对象和空闲时，是否进行对象有效性检查，默认都是False关闭状态。只要都设置为True，并提供validationQuery语句即可保证数据库连接始终有效。<br>检查了下账号中心相关配置<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fyzkv8yl3pj318c0eqjuw.jpg" alt=""><br>账号中心是有配置但是为啥还是有这个问题？<br>于是 debug 了下DataSourceConfig这个类加载过程发现这么些个配置文件竟然只加载了前四项<br>有图有真相<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fyzkwmregnj31dm0u0tqr.jpg" alt=""></p>
+<p>xxxauth.datasource.tomcat开头的都解析不了咯。<br>继续看，发现如下代码<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fyzl0epyazj31fp0u0toe.jpg" alt=""><br>系统会在家 prefix + “.” + reflaxName的的配置信息，而这里的prefix是在类注解是这样的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@ConfigurationProperties(prefix = &quot;xxxauth.datasource&quot;)</span><br></pre></td></tr></table></figure>
+<p>所以只会加载xxxauth.datasource.test-on-borrow这样的配置加载不到xxxauth.datasource.tomcat.test-on-borrow类似这样的配置。</p>
+<p>将配置文件修改</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">xxxauth.datasource.driver-class-name=com.mysql.jdbc.Driver</span><br><span class="line">xxxauth.datasource.test-on-borrow=true</span><br><span class="line">xxxauth.datasource.test-while-idle=true</span><br><span class="line">xxxauth.datasource.max-active=30</span><br><span class="line">xxxauth.datasource.test-on-return=true</span><br><span class="line">xxxauth.datasource.test-on-connect=true</span><br><span class="line">xxxauth.datasource.initial-size=10</span><br><span class="line">xxxauth.datasource.min-idle=10</span><br><span class="line">xxxauth.datasource.validation-query=SELECT 1</span><br><span class="line">xxxauth.datasource.validation-interval=5000</span><br><span class="line">xxxauth.datasource.log-validation-errors=true</span><br></pre></td></tr></table></figure>
+<p>再次 debug 发现 这些配置以及加载到了<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fyzl7w8uh3j323c0u0tnr.jpg" alt=""></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2020/04/01/RocketMQ数据存储结构详解/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -916,88 +1001,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2019/10/31/mybatis-常见面试问题及答案/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Evan">
-      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="奋斗不息">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/10/31/mybatis-常见面试问题及答案/" class="post-title-link" itemprop="url">mybatis 常见面试问题及答案</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-10-31 20:56:23" itemprop="dateCreated datePublished" datetime="2019-10-31T20:56:23+08:00">2019-10-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-13 17:23:25" itemprop="dateModified" datetime="2019-12-13T17:23:25+08:00">2019-12-13</time>
-              </span>
-
-          
-            <span id="/2019/10/31/mybatis-常见面试问题及答案/" class="post-meta-item leancloud_visitors" data-flag-title="mybatis 常见面试问题及答案" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Mybatis面试连环炮"><a href="#Mybatis面试连环炮" class="headerlink" title="Mybatis面试连环炮"></a>Mybatis面试连环炮</h2><p>先抛出几个问题，然后带着问题一起看下 <a href="https://mybatis.org/mybatis-3/" target="_blank" rel="noopener">Mybatis官网</a>如何解释这个问题。</p>
-<h3 id="什么是Mybatis"><a href="#什么是Mybatis" class="headerlink" title="什么是Mybatis?"></a><em>什么是Mybatis?</em></h3><blockquote>
-<p>MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集。MyBatis 可以使用简单的 XML 或注解来配置和映射原生类型、接口和 Java 的 POJO（Plain Old Java Objects，普通老式 Java 对象）为数据库中的记录。</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/10/31/mybatis-常见面试问题及答案/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1068,7 +1071,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">36</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

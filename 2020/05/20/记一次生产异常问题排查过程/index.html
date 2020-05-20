@@ -46,18 +46,26 @@
   };
 </script>
 
-  <meta name="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
-<meta property="og:type" content="website">
-<meta property="og:title" content="奋斗不息">
-<meta property="og:url" content="https://yefan813.github.io/tags/MAT-内存泄漏/index.html">
+  <meta name="description" content="账号中心异常日志问题排查今天上午发现调用账号中心接口异常，于是立马去线上查看日志发现了大量的异常信息，异常日志如下： 1Error querying database.  Cause: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure 于是上网查了下相关文章，给出如下解释 MyS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次生产异常问题排查过程">
+<meta property="og:url" content="https://yefan813.github.io/2020/05/20/记一次生产异常问题排查过程/index.html">
 <meta property="og:site_name" content="奋斗不息">
-<meta property="og:description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+<meta property="og:description" content="账号中心异常日志问题排查今天上午发现调用账号中心接口异常，于是立马去线上查看日志发现了大量的异常信息，异常日志如下： 1Error querying database.  Cause: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure 于是上网查了下相关文章，给出如下解释 MyS">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fyzjeapsjtj31ez0u0wud.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fyzjp2hwa4j327y0m4wn7.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fyzkv8yl3pj318c0eqjuw.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fyzkwmregnj31dm0u0tqr.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fyzl0epyazj31fp0u0toe.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fyzl7w8uh3j323c0u0tnr.jpg">
+<meta property="og:updated_time" content="2020-05-20T08:16:50.022Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="奋斗不息">
-<meta name="twitter:description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+<meta name="twitter:title" content="记一次生产异常问题排查过程">
+<meta name="twitter:description" content="账号中心异常日志问题排查今天上午发现调用账号中心接口异常，于是立马去线上查看日志发现了大量的异常信息，异常日志如下： 1Error querying database.  Cause: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure 于是上网查了下相关文章，给出如下解释 MyS">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fyzjeapsjtj31ez0u0wud.jpg">
 
-<link rel="canonical" href="https://yefan813.github.io/tags/MAT-内存泄漏/">
+<link rel="canonical" href="https://yefan813.github.io/2020/05/20/记一次生产异常问题排查过程/">
 
 
 <script id="page-configurations">
@@ -65,11 +73,11 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: false
+    isPost: true
   };
 </script>
 
-  <title>标签: MAT 内存泄漏 | 奋斗不息</title>
+  <title>记一次生产异常问题排查过程 | 奋斗不息</title>
   
 
 
@@ -166,54 +174,114 @@
           <div class="content">
             
 
+  <div class="posts-expand">
+      
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h1 class="collection-header">MAT 内存泄漏
-          <small>标签</small>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2020/05/20/记一次生产异常问题排查过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Evan">
+      <meta itemprop="description" content="记录工作中的点滴，方便以后查阅，也能提升下文笔水平 :)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="奋斗不息">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记一次生产异常问题排查过程
         </h1>
-      </div>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-20 14:59:34 / 修改时间：16:16:50" itemprop="dateCreated datePublished" datetime="2020-05-20T14:59:34+08:00">2020-05-20</time>
+            </span>
+
+          
+            <span id="/2020/05/20/记一次生产异常问题排查过程/" class="post-meta-item leancloud_visitors" data-flag-title="记一次生产异常问题排查过程" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <h1 class="collection-header">2018</h1>
+        <h1 id="账号中心异常日志问题排查"><a href="#账号中心异常日志问题排查" class="headerlink" title="账号中心异常日志问题排查"></a>账号中心异常日志问题排查</h1><p>今天上午发现调用账号中心接口异常，于是立马去线上查看日志发现了大量的异常信息，异常日志如下：<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fyzjeapsjtj31ez0u0wud.jpg" alt=""><br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fyzjp2hwa4j327y0m4wn7.jpg" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error querying database.  Cause: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure</span><br></pre></td></tr></table></figure>
+<p>于是上网查了下相关文章，给出如下解释</p>
+<p>MySQL默认连接存活时长为28800秒，即8小时。如果在wait_timeout期间内，数据库连接(java.sql.Connection)一直处于等待状态，MySQL就将该连接关闭。此时，数据库连接池仍然合法地持有该连接，当用该连接来进行数据库操作时，就报上述错误。</p>
+<p><em>查了下线上账号中心库的 wait_timeout时间为259200s=3天</em></p>
+<p>确实从异常日志文件也能看到异常信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Caused by: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: The last packet successfully received from the server was 1,536,593,656 milliseconds ago.  The last packet sent successfully to the server was 1,536,593,656 milliseconds ago. is longer than the server configured value of &apos;wait_timeout&apos;. You should consider either expiring and/or testing connection validity before use in your application, increasing the server configured values for client timeouts, or using the Connector/J connection property &apos;autoReconnect=true&apos; to avoid this problem.</span><br></pre></td></tr></table></figure></p>
+<p>从日志文件看出有些数据库操作正常的，有些查询是异常的，所有猜测大概是数据库连接池中部分链接其实已经断开。</p>
+<p>其中异常日志也给出了原因和响应的解决办法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">or using the Connector/J connection property &apos;autoReconnect=true&apos; to avoid this problem.</span><br></pre></td></tr></table></figure>
+<p>方法一：<br>即使用autoReconnect=true来避免面这个这个问题，但是查了下配置文件中发现已经配置了此参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxxauth.datasource.url=jdbc:mysql://xxxxx?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;rewriteBatchedStatements=TRUE&amp;useSSL=false</span><br></pre></td></tr></table></figure>
+<p>既然已经配置了那为什么还有这个问题，于是查了想相关文档<br>autoReconnect=true这个参数对 mysql5以上的版本不生效，现在公司 mysql 使用的都是5.6版本，所以这个方法不行。</p>
+<p>方法二：<br>将数据库 wait_timeout调大，但是就算调大可能链接空闲等待的时间还是会超出等待时间还是不能解决实际问题。</p>
+<p>方法三：<br>数据库连接池配置：testOnBorrow、testOnReturn、testWhileIdle属性，意义分别是取得、返回对象和空闲时，是否进行对象有效性检查，默认都是False关闭状态。只要都设置为True，并提供validationQuery语句即可保证数据库连接始终有效。<br>检查了下账号中心相关配置<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fyzkv8yl3pj318c0eqjuw.jpg" alt=""><br>账号中心是有配置但是为啥还是有这个问题？<br>于是 debug 了下DataSourceConfig这个类加载过程发现这么些个配置文件竟然只加载了前四项<br>有图有真相<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fyzkwmregnj31dm0u0tqr.jpg" alt=""></p>
+<p>xxxauth.datasource.tomcat开头的都解析不了咯。<br>继续看，发现如下代码<br><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fyzl0epyazj31fp0u0toe.jpg" alt=""><br>系统会在家 prefix + “.” + reflaxName的的配置信息，而这里的prefix是在类注解是这样的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@ConfigurationProperties(prefix = &quot;xxxauth.datasource&quot;)</span><br></pre></td></tr></table></figure>
+<p>所以只会加载xxxauth.datasource.test-on-borrow这样的配置加载不到xxxauth.datasource.tomcat.test-on-borrow类似这样的配置。</p>
+<p>将配置文件修改</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">xxxauth.datasource.driver-class-name=com.mysql.jdbc.Driver</span><br><span class="line">xxxauth.datasource.test-on-borrow=true</span><br><span class="line">xxxauth.datasource.test-while-idle=true</span><br><span class="line">xxxauth.datasource.max-active=30</span><br><span class="line">xxxauth.datasource.test-on-return=true</span><br><span class="line">xxxauth.datasource.test-on-connect=true</span><br><span class="line">xxxauth.datasource.initial-size=10</span><br><span class="line">xxxauth.datasource.min-idle=10</span><br><span class="line">xxxauth.datasource.validation-query=SELECT 1</span><br><span class="line">xxxauth.datasource.validation-interval=5000</span><br><span class="line">xxxauth.datasource.log-validation-errors=true</span><br></pre></td></tr></table></figure>
+<p>再次 debug 发现 这些配置以及加载到了<br><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fyzl7w8uh3j323c0u0tnr.jpg" alt=""></p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-07-26T18:06:22+08:00"
-              content="2018-07-26">
-          07-26
-        </time>
-      </div>
+      <footer class="post-footer">
 
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2018/07/26/jvm内存分析6/" itemprop="url">
-            <span itemprop="name">Java内存泄漏分析系列之六：JVM Heap Dump（堆转储文件）的生成和内存分析工具MAT的使用</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
     </div>
   </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/01/RocketMQ数据存储结构详解/" rel="prev" title="RocketMQ数据存储结构详解">
+      <i class="fa fa-chevron-left"></i> RocketMQ数据存储结构详解
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
   
   
   
 
-  
-
+  </div>
 
 
           </div>
           
+    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -260,6 +328,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#账号中心异常日志问题排查"><span class="nav-number">1.</span> <span class="nav-text">账号中心异常日志问题排查</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -484,6 +553,25 @@
 
   
 
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '2455a080684681f2ec15',
+      clientSecret: 'c13587843c6e1839680fa3786cdb9beb9a346bba',
+      repo: 'yefan813-blog-comment',
+      owner: 'yefan813',
+      admin: ['yefan813'],
+      id: 'b04a822df6b8e6b0911533c02858581d',
+        language: 'zh-CN',
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
 
 </body>
 </html>
