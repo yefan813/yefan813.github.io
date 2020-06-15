@@ -46,23 +46,21 @@
   };
 </script>
 
-  <meta name="description" content="简介Spring Boot已经为很多的开源项目提供了很多的 starter项目，你也可以开发你自定义的 starter。再开始之前让我们先理解下Spring Boot是如何自动配置的，如果你已经知道 Spring Boot自动配置的过程可以直接调到创建自定义starter步骤。">
-<meta name="keywords" content="spring boot starter">
+  <meta name="description" content="总结一下秒杀系统架构设计的一些思考">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spring Boot自定义starter">
-<meta property="og:url" content="https://yefan813.github.io/2020/03/06/SpringBoot自定义starter/index.html">
+<meta property="og:title" content="秒杀系统设计思考">
+<meta property="og:url" content="https://yefan813.github.io/2020/06/15/秒杀系统设计思考/index.html">
 <meta property="og:site_name" content="奋斗不息">
-<meta property="og:description" content="简介Spring Boot已经为很多的开源项目提供了很多的 starter项目，你也可以开发你自定义的 starter。再开始之前让我们先理解下Spring Boot是如何自动配置的，如果你已经知道 Spring Boot自动配置的过程可以直接调到创建自定义starter步骤。">
+<meta property="og:description" content="总结一下秒杀系统架构设计的一些思考">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00831rSTgy1gckiuxcwefj30pk09q402.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00831rSTgy1gckivm3o4hj31500qq7d6.jpg">
-<meta property="og:updated_time" content="2020-04-01T10:03:08.124Z">
+<meta property="og:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-06-15-%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F.png">
+<meta property="og:updated_time" content="2020-06-15T02:57:01.716Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spring Boot自定义starter">
-<meta name="twitter:description" content="简介Spring Boot已经为很多的开源项目提供了很多的 starter项目，你也可以开发你自定义的 starter。再开始之前让我们先理解下Spring Boot是如何自动配置的，如果你已经知道 Spring Boot自动配置的过程可以直接调到创建自定义starter步骤。">
-<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/00831rSTgy1gckiuxcwefj30pk09q402.jpg">
+<meta name="twitter:title" content="秒杀系统设计思考">
+<meta name="twitter:description" content="总结一下秒杀系统架构设计的一些思考">
+<meta name="twitter:image" content="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-06-15-%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F.png">
 
-<link rel="canonical" href="https://yefan813.github.io/2020/03/06/SpringBoot自定义starter/">
+<link rel="canonical" href="https://yefan813.github.io/2020/06/15/秒杀系统设计思考/">
 
 
 <script id="page-configurations">
@@ -74,7 +72,7 @@
   };
 </script>
 
-  <title>Spring Boot自定义starter | 奋斗不息</title>
+  <title>秒杀系统设计思考 | 奋斗不息</title>
   
 
 
@@ -176,7 +174,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2020/03/06/SpringBoot自定义starter/">
+    <link itemprop="mainEntityOfPage" href="https://yefan813.github.io/2020/06/15/秒杀系统设计思考/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -189,7 +187,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Spring Boot自定义starter
+          秒杀系统设计思考
         </h1>
 
         <div class="post-meta">
@@ -198,19 +196,13 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-03-06 20:52:13" itemprop="dateCreated datePublished" datetime="2020-03-06T20:52:13+08:00">2020-03-06</time>
+              <time title="创建时间：2020-06-15 10:55:18 / 修改时间：10:57:01" itemprop="dateCreated datePublished" datetime="2020-06-15T10:55:18+08:00">2020-06-15</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-01 18:03:08" itemprop="dateModified" datetime="2020-04-01T18:03:08+08:00">2020-04-01</time>
-              </span>
 
           
-            <span id="/2020/03/06/SpringBoot自定义starter/" class="post-meta-item leancloud_visitors" data-flag-title="Spring Boot自定义starter" title="阅读次数">
+            <span id="/2020/06/15/秒杀系统设计思考/" class="post-meta-item leancloud_visitors" data-flag-title="秒杀系统设计思考" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -227,50 +219,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Spring Boot已经为很多的开源项目提供了很多的 starter项目，你也可以开发你自定义的 starter。再开始之前让我们先理解下Spring Boot是如何自动配置的，如果你已经知道 Spring Boot自动配置的过程可以直接调到创建自定义starter步骤。</p>
+        <p>总结一下秒杀系统架构设计的一些思考</p>
 <a id="more"></a>
-<h2 id="Spring-Boot-自动配置"><a href="#Spring-Boot-自动配置" class="headerlink" title="Spring Boot 自动配置"></a>Spring Boot 自动配置</h2><p>当你启动 Spring Boot 应用的时候，Spring Boot 会检测一个特殊的文件，它是 spring-boot-autoconfigure 这个包内的META-INF/spring.factories</p>
-<p><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gckiuxcwefj30pk09q402.jpg" alt=""></p>
-<p>它里面的内容我们重点关注这里<br><img src="https://tva1.sinaimg.cn/large/00831rSTgy1gckivm3o4hj31500qq7d6.jpg" alt=""></p>
-<p>这里是利用的spring SPI提供的扩展机制。</p>
-<p>这里简单介绍下 SPI （全称Service Provider Interface），是Java提供的一套用来被第三方实现或者扩展的接口，它可以用来启用框架扩展和替换组件。 SPI的作用就是为这些被扩展的API寻找服务实现。</p>
-<p>通俗一点讲就是SPI 就是服务方提供接口，具体的实现由其他方来实现，只需要将实现了的类全路径加入到文件中，服务方启动的时候就会把这些文件内容解析出来，由于配置了类全路径地址，直接利用反射机制将这些类初始化提供使用。</p>
-<h2 id="开始创建自定义的starter"><a href="#开始创建自定义的starter" class="headerlink" title="开始创建自定义的starter"></a>开始创建自定义的starter</h2><ul>
-<li>创建一个Spring Boot 项目，在pom.xml中引入</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-autoconfigure<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.2.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>创建一个类 。该类starter 引入后自动加入到 Spring 容器中</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class HelloService &#123;</span><br><span class="line">    private String prefix;</span><br><span class="line">    private String suffix;</span><br><span class="line">    </span><br><span class="line">    public HelloService() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public HelloService(String prefix, String suffix) &#123;</span><br><span class="line">        this.prefix = prefix;</span><br><span class="line">        this.suffix = suffix;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String sayHello(String word) &#123;</span><br><span class="line">        return prefix + word + suffix;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>创建一个配置类，提供 starter 引入方自定义属性</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">//prefix = &quot;hello&quot; 引入 starter 的项目配置文件的前置是 hello</span><br><span class="line">@ConfigurationProperties(prefix = &quot;hello&quot;)</span><br><span class="line">public class HelloProperties &#123;</span><br><span class="line">    private String prefix;</span><br><span class="line">    private String suffix;</span><br><span class="line"></span><br><span class="line">    public String getPrefix() &#123;</span><br><span class="line">        return prefix;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setPrefix(String prefix) &#123;</span><br><span class="line">        this.prefix = prefix;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getSuffix() &#123;</span><br><span class="line">        return suffix;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setSuffix(String suffix) &#123;</span><br><span class="line">        this.suffix = suffix;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>创建自动配置类</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @Configuration 定义当前类是个配置类</span><br><span class="line"> * @ConditionalOnClass，当classpath下发现该类（HelloService）的情况下进行自动配置。</span><br><span class="line"> * @ConditionalOnMissingBean，当Spring Context中不存在该Bean时。</span><br><span class="line"> * @ConditionalOnProperty(prefix = &quot;example.service&quot;,value = &quot;enabled&quot;,havingValue = &quot;true&quot;)，</span><br><span class="line"> * 当配置文件中example.service.enabled=true时将这个类创建为一个 Spring Bean</span><br><span class="line"> * @EnableConfigurationProperties(HelloProperties.class) 让使用 @ConfigurationProperties 注解的类生效</span><br><span class="line"> */</span><br><span class="line">@Configuration</span><br><span class="line">@ConditionalOnClass(HelloService.class)</span><br><span class="line">@EnableConfigurationProperties(HelloProperties.class)</span><br><span class="line">public class HelloAutoConfiguration &#123;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    private HelloProperties helloProperties;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    @ConditionalOnMissingBean</span><br><span class="line">    @ConditionalOnProperty(prefix = &quot;hello&quot;, value = &quot;enable&quot;, havingValue = &quot;true&quot;)</span><br><span class="line">    HelloService helloService() &#123;</span><br><span class="line">        return new HelloService(helloProperties.getPrefix(),helloProperties.getSuffix());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>在/resources/META-INF/spring.factories 创建这个文件<br>文件写入内容</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.yefan.hello.HelloAutoConfiguration</span><br></pre></td></tr></table></figure>
-<ul>
-<li>mvn install 将项目安装到本地仓库</li>
-</ul>
-<hr>
-<ul>
-<li>创建另外一个Spring Boot 项目，像引入其他 starter 方式引入上面创建的 maven 依赖</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.yefan.study<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hello-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>在application.yml中配置</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hello:</span><br><span class="line">  enable: true</span><br><span class="line">  prefix: xxx</span><br><span class="line">  suffix: xxx</span><br></pre></td></tr></table></figure>
-<ul>
-<li>注入 HelloService 即可使用</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@Autowired</span><br><span class="line">HelloService helloService;</span><br></pre></td></tr></table></figure>
+<p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-06-15-%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F.png" alt=""></p>
 
     </div>
 
@@ -279,9 +230,6 @@
     
 
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/spring-boot-starter/" rel="tag"># spring boot starter</a>
-          </div>
 
         
   <div class="post-widgets">
@@ -294,13 +242,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/03/05/Spring中Bean的生命周期/" rel="prev" title="Spring中Bean的生命周期">
-      <i class="fa fa-chevron-left"></i> Spring中Bean的生命周期
+    <a href="/2020/05/22/分布式事务解决方案/" rel="prev" title="分布式事务解决方案">
+      <i class="fa fa-chevron-left"></i> 分布式事务解决方案
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/03/13/Dubbo和Spring-Cloud优缺点/" rel="next" title="Dubbo和Spring Cloud优缺点">
-      Dubbo和Spring Cloud优缺点 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -361,7 +306,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Boot-自动配置"><span class="nav-number">2.</span> <span class="nav-text">Spring Boot 自动配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开始创建自定义的starter"><span class="nav-number">3.</span> <span class="nav-text">开始创建自定义的starter</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -597,7 +541,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo: 'yefan813-blog-comment',
       owner: 'yefan813',
       admin: ['yefan813'],
-      id: '7f7b16d540b41f214bb61c21cb22180c',
+      id: '29ff382e6518509be12ee2ef9495a409',
         language: 'zh-CN',
       distractionFreeMode: 'true'
     });

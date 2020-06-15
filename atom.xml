@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://yefan813.github.io/"/>
-  <updated>2020-05-22T04:26:04.766Z</updated>
+  <updated>2020-06-15T02:57:01.716Z</updated>
   <id>https://yefan813.github.io/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>秒杀系统设计思考</title>
+    <link href="https://yefan813.github.io/2020/06/15/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%80%83/"/>
+    <id>https://yefan813.github.io/2020/06/15/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%80%83/</id>
+    <published>2020-06-15T02:55:18.000Z</published>
+    <updated>2020-06-15T02:57:01.716Z</updated>
+    
+    <content type="html"><![CDATA[<p>总结一下秒杀系统架构设计的一些思考</p><a id="more"></a><p><img src="http://test-pic-yefan.oss-cn-beijing.aliyuncs.com/2020-06-15-%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F.png" alt=""></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;总结一下秒杀系统架构设计的一些思考&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>分布式事务解决方案</title>
@@ -531,30 +550,6 @@
     
     
       <category term="JVM 垃圾回收 算法" scheme="https://yefan813.github.io/tags/JVM-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6-%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>JVM之内存结构</title>
-    <link href="https://yefan813.github.io/2018/07/29/JVM1/"/>
-    <id>https://yefan813.github.io/2018/07/29/JVM1/</id>
-    <published>2018-07-29T09:30:38.000Z</published>
-    <updated>2018-08-31T07:24:26.380Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqvmlyu0uj30tu0l3tfs.jpg" alt=""></p><h2 id="运行时数据区"><a href="#运行时数据区" class="headerlink" title="运行时数据区"></a>运行时数据区</h2><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqv5mutquj30qy0e9q6b.jpg" alt=""></p><h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqv92b52xj30z30ajdlk.jpg" alt=""><br><strong>注：线程私有</strong></p><h3 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h3><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvbjk29mj30z10b60zf.jpg" alt=""><br><strong>注：线程私有</strong></p><a id="more"></a><h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvd5nd5dj30yw0agwk4.jpg" alt=""></p><p><strong>注：线程共享</strong></p><h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1ftqvghydnpj30xj08243t.jpg" alt=""></p><p><strong>注：线程共享，JDK8中是 Meta Space ，在 JDK8之前是 Perm Space 永久区</strong></p><h4 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h4><p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1ftqvin3ygbj30xv07ejwv.jpg" alt=""></p><h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvkjcrq6j30x806mgpu.jpg" alt=""></p><h3 id="非堆区"><a href="#非堆区" class="headerlink" title="非堆区"></a>非堆区</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1ftqvpdj5i8j30xe0eagpu.jpg" alt=""></p><p>参考文章：<br><a href="https://blog.csdn.net/aijiudu/article/details/72991993" target="_blank" rel="noopener">JVM架构和GC垃圾回收机制</a></p><p><a href="https://docs.oracle.com/javase/specs/jvms/se8/html/index.html" target="_blank" rel="noopener">jvm的运行时数据区</a><br><a href="http://ifeve.com/jvm-troubleshooting-guide-4/" target="_blank" rel="noopener">Metaspace</a><br><a href="https://blog.csdn.net/jijijijwwi111/article/details/51564271" target="_blank" rel="noopener">压缩类空间</a><br><a href="https://blog.csdn.net/yandaonan/article/details/50844806" target="_blank" rel="noopener">codecache</a><br><a href="http://engineering.indeedblog.com/blog/2016/09/job-search-web-app-java-8-migration/" target="_blank" rel="noopener">codecache2</a></p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;img src=&quot;https://ws3.sinaimg.cn/large/006tNc79gy1ftqvmlyu0uj30tu0l3tfs.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;h2 id=&quot;运行时数据区&quot;&gt;&lt;a href=&quot;#运行时数据区&quot; class=&quot;headerlink&quot; title=&quot;运行时数据区&quot;&gt;&lt;/a&gt;运行时数据区&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;https://ws4.sinaimg.cn/large/006tNc79gy1ftqv5mutquj30qy0e9q6b.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;h3 id=&quot;程序计数器&quot;&gt;&lt;a href=&quot;#程序计数器&quot; class=&quot;headerlink&quot; title=&quot;程序计数器&quot;&gt;&lt;/a&gt;程序计数器&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;https://ws3.sinaimg.cn/large/006tNc79gy1ftqv92b52xj30z30ajdlk.jpg&quot; alt=&quot;&quot;&gt;&lt;br&gt;&lt;strong&gt;注：线程私有&lt;/strong&gt;&lt;/p&gt;
-&lt;h3 id=&quot;虚拟机栈&quot;&gt;&lt;a href=&quot;#虚拟机栈&quot; class=&quot;headerlink&quot; title=&quot;虚拟机栈&quot;&gt;&lt;/a&gt;虚拟机栈&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;https://ws4.sinaimg.cn/large/006tNc79gy1ftqvbjk29mj30z10b60zf.jpg&quot; alt=&quot;&quot;&gt;&lt;br&gt;&lt;strong&gt;注：线程私有&lt;/strong&gt;&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="JVM 内存结构" scheme="https://yefan813.github.io/tags/JVM-%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/"/>
     
   </entry>
   
